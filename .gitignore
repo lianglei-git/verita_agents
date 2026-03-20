@@ -1,0 +1,5 @@
+.env
+
+# 忽略output目录
+output
+__pycache__
