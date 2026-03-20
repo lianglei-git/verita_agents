@@ -50,22 +50,52 @@ class LLMClient:
                         {"role": "user", "content": prompt},
                     ],
                 )
+                print(response)
                 self.call_count += 1
                 usage = response.usage
                 if usage:
                     self.total_input_tokens += usage.prompt_tokens
                     self.total_output_tokens += usage.completion_tokens
                 return response.choices[0].message.content or ""
+            except Exception as e:
+                print("报错了 曹：", e)
+                pass
             except (APITimeoutError, RateLimitError) as e:
                 last_err = e
                 wait = self.cfg.retry_delay * (2 ** attempt)
-                logger.warning("LLM transient error (attempt %d): %s — retry in %.1fs", attempt + 1, e, wait)
+                logger.warning("LLM transient error (attempt %d/%d): %s — retry in %.1fs", 
+                             attempt + 1, self.cfg.max_retries + 1, e, wait)
+                logger.info("API配置: model=%s, base_url=%s, timeout=%.1fs", 
+                          self.cfg.model, self.cfg.base_url, self.cfg.timeout)
                 time.sleep(wait)
-            except APIError as e:
+            except (APIError) as e:
                 last_err = e
-                logger.error("LLM API error: %s", e)
+                logger.error("LLM API error (attempt %d/%d): %s", 
+                           attempt + 1, self.cfg.max_retries + 1, e)
+                logger.error("详细错误信息: %s", str(e))
+                if hasattr(e, 'response') and e.response is not None:
+                    logger.error("响应状态码: %s", e.response.status_code)
+                    if hasattr(e.response, 'headers'):
+                        logger.error("响应头: %s", dict(e.response.headers))
+                logger.info("API配置诊断: model=%s, base_url=%s, timeout=%.1fs", 
+                          self.cfg.model, self.cfg.base_url, self.cfg.timeout)
+                # 检查API密钥是否配置
+                if not self.cfg.api_key:
+                    logger.error("❌ API密钥未配置! 请检查OPENAI_API_KEY环境变量")
+                else:
+                    logger.info("✅ API密钥已配置 (前10位): %s...", self.cfg.api_key[:10])
                 break
-        raise RuntimeError(f"LLM call failed after retries: {last_err}")
+        # 构建更详细的错误信息
+        error_details = f"LLM call failed after {self.cfg.max_retries + 1} retries"
+        if last_err:
+            error_details += f"\n最后错误: {last_err}"
+            error_details += f"\n错误类型: {type(last_err).__name__}"
+        error_details += f"\nAPI配置: model={self.cfg.model}, base_url={self.cfg.base_url}"
+        error_details += f"\nAPI密钥配置: {'已配置' if self.cfg.api_key else '未配置'}"
+        if self.cfg.api_key:
+            error_details += f" (前10位: {self.cfg.api_key[:10]}...)"
+        
+        raise RuntimeError(error_details)
 
     def chat_json(self, prompt: str, system: str = "You are a helpful assistant. Always respond with valid JSON only.") -> dict[str, Any]:
         """Call LLM and parse JSON from response."""

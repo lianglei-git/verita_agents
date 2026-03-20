@@ -81,14 +81,38 @@ def build_master_prompt(cfg, level: str, csv_data: list[dict[str, Any]]) -> str:
 """
     
     csv_count = len(csv_data)
+
+    items = []
+    for i, row in enumerate(csv_data):
+        egp_id = row.get("egp_id", "")
+        content = row.get("content", "")
+        chinese_human_name = row.get("chinese_human_name", "")
+        examples = row.get("examples", "")
+        category = row.get("category", "")
+        keywords = row.get("keywords", "")
+        
+        item_info = {
+            "序号": i + 1,
+            "egp_id": egp_id,
+            # "中文名称": chinese_human_name,
+            "语法内容": content,
+            "语法范畴": category,
+            # "关键词": keywords,
+            # "例句": examples,
+        }
+        items.append(item_info)
+    
+    items_text = json.dumps(items, ensure_ascii=False, indent=2)
     
     prompt = (
         f"{fixed_prompt}\n\n"
-        "将 {当前等级} 语法点按照由易到难、循环递进的顺序排列，必须遵循'认知负荷递增'原则，"
-        "分为若干阶段，总进度0-100分。不要只按语法范畴分类，而要考虑组与组之间的衔接关系。"
         "基于我提供的EGP CSV数据(包含{数量}个{等级}语法点)重新生成学习路径。\n\n"
         f"当前等级：{level}\n"
         f"语法点数量：{csv_count}\n\n"
+        "以下是语法点数据：\n"
+        f"{items_text}\n\n"
+        "请将语法点按照由易到难、循环递进的顺序排列，必须遵循'认知负荷递增'原则，"
+        "分为若干阶段，总进度0-100分。不要只按语法范畴分类，而要考虑组与组之间的衔接关系。\n\n"
         "输出内容要求：每个阶段需包含骨架名称（概括该阶段主题）、进度分数、学习方针（指导学习重点和方法）、"
         "路径清单（仅知识点名称，按学习顺序排列）。"
     )
@@ -342,7 +366,10 @@ def main() -> None:
         return
 
     if not cfg.llm.api_key:
-        logger.error("OPENAI_API_KEY is not set")
+        logger.error("❌ OPENAI_API_KEY is not set")
+        logger.error("   请设置环境变量: export OPENAI_API_KEY=your_api_key")
+        logger.error("   或在项目根目录创建 .env 文件并添加: OPENAI_API_KEY=your_api_key")
+        logger.error("   您也可以运行诊断脚本: python test_llm_connection.py")
         sys.exit(1)
 
     # 加载CSV数据

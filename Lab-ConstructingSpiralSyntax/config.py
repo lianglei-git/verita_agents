@@ -26,7 +26,7 @@ class LLMConfig:
     temperature: float = 0.2
     max_retries: int = 3
     retry_delay: float = 2.0
-    timeout: float = 180.0
+    timeout: float = 1800.0
     max_tokens: int = field(default_factory=lambda: int(os.getenv("LLM_MAX_TOKENS", "64000")))
     context_window: int = field(default_factory=lambda: int(os.getenv("LLM_CONTEXT_WINDOW", "128000")))
     response_preview_chars: int = field(default_factory=lambda: int(os.getenv("LLM_RESPONSE_PREVIEW_CHARS", "8000")))
