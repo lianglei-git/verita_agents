@@ -114,6 +114,7 @@ def load_path_document(cfg, input_path: Path | None) -> tuple[dict[str, Any], Pa
         cfg.output_dir / "phase2_same_score_latest.json",  # 旧的Phase 2输出路径
         cfg.output_dir / "latest.json",
         cfg.output_dir / "phase1" / "scored_items.json",
+        cfg.output_dir / "phase1" / "full_sort_latest.json",
     ]
     for path in possible_files:
         if path.exists():

@@ -46,7 +46,6 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Use LLM for same-score group ordering (default: no-LLM, sort by EGP id trailing number)",
     )
-    parser.add_argument("--model", default=None, help="Override LLM model name")
     parser.add_argument("--sleep", type=float, default=2.0, help="Sleep seconds between LLM calls")
     parser.add_argument("--resume", action="store_true", help="Resume from phase2_same_score_latest.json")
     parser.add_argument("--limit-groups", type=int, default=None, help="Only process first N duplicate-score groups")
@@ -424,7 +423,6 @@ def dry_run_phase2(cfg, source_doc, result_path: Path, latest_path: Path) -> lis
 def main() -> None:
     args = parse_args()
     cfg = get_config(level=args.level, lang=args.lang)
-    cfg.llm.model = args.model or "deepseek-reasoner"
     
     # 检查缓存
     cache_dir = Path("output") / args.level / "phase2"

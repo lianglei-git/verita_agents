@@ -315,7 +315,17 @@ def dry_run_phase0(cfg, level: str, result_path: Path, latest_path: Path) -> dic
         }
     }
     
-    # 保存结果
+    # 保存结果，保留 latest_path 中的历史 changeLog
+    if latest_path.exists():
+        try:
+            with open(latest_path, 'r', encoding='utf-8') as f:
+                existing_doc = json.load(f)
+            existing_changelog = existing_doc.get("LearningSyllabus", {}).get("changeLog", [])
+            new_changelog = output_doc["LearningSyllabus"].get("changeLog", [])
+            output_doc["LearningSyllabus"]["changeLog"] = existing_changelog + new_changelog
+        except Exception as e:
+            logger.warning("读取历史changeLog失败，将直接覆盖: %s", e)
+
     with open(result_path, 'w', encoding='utf-8') as f:
         json.dump(output_doc, f, ensure_ascii=False, indent=2)
     with open(latest_path, 'w', encoding='utf-8') as f:
@@ -327,8 +337,6 @@ def dry_run_phase0(cfg, level: str, result_path: Path, latest_path: Path) -> dic
 def main() -> None:
     args = parse_args()
     cfg = get_config(level=args.level, lang=args.lang)
-    if args.model:
-        cfg.llm.model = args.model
     
 
     # 检查缓存
@@ -402,8 +410,18 @@ def main() -> None:
     # 确保输出目录存在
     cfg.output_dir.mkdir(parents=True, exist_ok=True)
     
-    # 写入prompt.json文件
+    # 写入prompt.json文件，保留历史changeLog
     prompt_path = cfg.output_dir / "prompt.json"
+    if prompt_path.exists():
+        try:
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                existing_doc = json.load(f)
+            existing_changelog = existing_doc.get("LearningSyllabus", {}).get("changeLog", [])
+            new_changelog = output_doc["LearningSyllabus"].get("changeLog", [])
+            output_doc["LearningSyllabus"]["changeLog"] = existing_changelog + new_changelog
+        except Exception as e:
+            logger.warning("读取历史changeLog失败，将直接覆盖: %s", e)
+
     with open(prompt_path, 'w', encoding='utf-8') as f:
         json.dump(output_doc, f, ensure_ascii=False, indent=2)
     

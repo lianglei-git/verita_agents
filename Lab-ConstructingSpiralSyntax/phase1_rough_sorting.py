@@ -105,7 +105,6 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional input source. Supports CSV or JSON under output/",
     )
-    parser.add_argument("--model", default=None, help="Override LLM model name (default: deepseek-reasoner)")
     parser.add_argument("--limit", type=int, default=None, help="Only process first N rows")
     parser.add_argument("--sleep", type=float, default=2.0, help="Sleep seconds between LLM calls")
     parser.add_argument("--resume", action="store_true", help="Resume from output/latest.json if present")
@@ -1001,10 +1000,6 @@ def dry_run_scoring(cfg, rows, result_path: Path, latest_path: Path) -> list:
 def main() -> None:
     args = parse_args()
     cfg = get_config(level=args.level, lang=args.lang)
-    if args.model:
-        cfg.llm.model = args.model
-    else:
-        cfg.llm.model = "deepseek-reasoner"
     
     cfg.output_dir = cfg.output_dir / "phase1"
     cfg.output_dir.mkdir(parents=True, exist_ok=True)

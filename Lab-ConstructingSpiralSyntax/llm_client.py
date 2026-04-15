@@ -50,7 +50,7 @@ class LLMClient:
                         {"role": "user", "content": prompt},
                     ],
                 )
-                print(response)
+                # print(response)
                 self.call_count += 1
                 usage = response.usage
                 if usage:
