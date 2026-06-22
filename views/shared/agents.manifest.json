@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "default_workflow": "demo-pipeline",
+  "workflows": {
+    "demo-pipeline": "workflows/demo-pipeline.json",
+    "mvp-pipeline": "workflows/mvp-pipeline.json"
+  },
+  "agents": [
+    {
+      "id": "echo",
+      "dir": "echo",
+      "enabled": true
+    },
+    {
+      "id": "user-profile",
+      "dir": "user-profile",
+      "enabled": true
+    },
+    {
+      "id": "summarize",
+      "dir": null,
+      "enabled": true,
+      "builtin": true,
+      "note": "尚未迁到 agents/，由 views/backend 内置"
+    }
+  ]
+}

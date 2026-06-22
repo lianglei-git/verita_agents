@@ -1,0 +1,62 @@
+{
+  "version": "1",
+  "basePath": "/api",
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/agents",
+      "description": "获取所有 agent 列表"
+    },
+    {
+      "method": "GET",
+      "path": "/agents/{id}",
+      "description": "获取单个 agent 元信息"
+    },
+    {
+      "method": "POST",
+      "path": "/agents/{id}/run",
+      "description": "执行 agent（可选 run_id 记录到历史）",
+      "body": {
+        "input": "string",
+        "options": "object (optional)",
+        "run_id": "string (optional)"
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/runs",
+      "description": "创建新执行记录",
+      "body": { "source_input": "string" }
+    },
+    {
+      "method": "GET",
+      "path": "/runs",
+      "description": "获取执行历史列表"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{id}",
+      "description": "获取单次执行详情（含各步参数与结果）"
+    },
+    {
+      "method": "GET",
+      "path": "/runs/{id}/context/{agent_id}",
+      "description": "获取某次执行中指定 agent 的上下游参数与结果"
+    },
+    {
+      "method": "POST",
+      "path": "/runs/{id}/execute/{agent_id}",
+      "description": "在指定执行记录中运行 agent 并自动记录上下游数据"
+    },
+    {
+      "method": "GET",
+      "path": "/workflow",
+      "description": "获取工作流与执行顺序配置"
+    },
+    {
+      "method": "GET",
+      "path": "/spec",
+      "description": "获取 API 规格说明"
+    }
+  ]
+}

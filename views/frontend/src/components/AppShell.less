@@ -1,0 +1,39 @@
+@import '../styles/global.less';
+
+.app-header {
+  .header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+}
+
+.app-nav {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  background: @chassis;
+  border: 1px solid @rail;
+  border-radius: @radius-md;
+
+  a {
+    padding: 6px 14px;
+    border-radius: @radius-sm;
+    font-size: 13px;
+    font-weight: 500;
+    color: @ash;
+    text-decoration: none;
+    transition: color 0.18s @ease-out, background 0.18s @ease-out;
+
+    &:hover {
+      color: @ink;
+    }
+
+    &.active {
+      background: @signal-dim;
+      color: @signal;
+    }
+  }
+}

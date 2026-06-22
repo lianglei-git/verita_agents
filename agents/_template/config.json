@@ -1,0 +1,12 @@
+{
+  "id": "__template__",
+  "name": "Agent 名称",
+  "description": "一句话说明这个 agent 做什么",
+  "version": "0.1.0",
+  "phase": "mvp",
+  "view": {
+    "type": "default",
+    "comment": "default | custom — custom 时在 views/frontend/src/agents/{id}/ 放独立 UI"
+  },
+  "schema_ref": "schema.json"
+}

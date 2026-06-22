@@ -1,0 +1,54 @@
+@import '../styles/global.less';
+@import '../components/AgentPanel.less';
+
+.workbench-layout {
+  display: grid;
+  grid-template-columns: 272px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.workbench-main {
+  background: @bay;
+  border: 1px solid @rail;
+  border-radius: @radius-lg;
+  padding: 22px 24px;
+}
+
+.workbench-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid @rail;
+
+  .agent-badge {
+    padding: 4px 10px;
+    border-radius: @radius-sm;
+    font-family: @font-mono;
+    font-size: 11px;
+    background: @signal-dim;
+    color: @signal;
+    border: 1px solid fade(@signal, 30%);
+  }
+
+  .source {
+    font-family: @font-mono;
+    font-size: 10px;
+    color: @ash;
+  }
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: @signal;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .workbench-layout {
+    grid-template-columns: 1fr;
+  }
+}

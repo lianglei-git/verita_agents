@@ -1,0 +1,91 @@
+// Telemetry Bench — signal-routing palette for agent pipeline console
+
+@void: #080a0f;
+@chassis: #10141c;
+@bay: #161c28;
+@rail: #252d3d;
+@rail-light: #323d52;
+
+@signal: #f0a500;
+@signal-dim: fade(@signal, 14%);
+@signal-glow: fade(@signal, 45%);
+
+@flow: #3ddbb7;
+@flow-dim: fade(@flow, 12%);
+
+@ink: #e2e6ed;
+@ash: #7a8699;
+@fault: #e85a71;
+@fault-dim: fade(@fault, 12%);
+
+@font-display: 'Syne', system-ui, sans-serif;
+@font-body: 'DM Sans', system-ui, sans-serif;
+@font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+
+@radius-sm: 4px;
+@radius-md: 6px;
+@radius-lg: 10px;
+
+@ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: @font-body;
+  font-size: 15px;
+  line-height: 1.5;
+  background: @void;
+  color: @ink;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.18s @ease-out,
+    color 0.18s @ease-out,
+    background 0.18s @ease-out,
+    box-shadow 0.18s @ease-out;
+
+  &:focus-visible {
+    outline: 2px solid @signal;
+    outline-offset: 2px;
+  }
+}
+
+textarea {
+  font: inherit;
+  transition: border-color 0.18s @ease-out, box-shadow 0.18s @ease-out;
+
+  &:focus-visible {
+    outline: none;
+    border-color: @signal;
+    box-shadow: 0 0 0 3px @signal-dim;
+  }
+}
+
+code,
+pre {
+  font-family: @font-mono;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

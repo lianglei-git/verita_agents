@@ -1,0 +1,17 @@
+{
+  "input": {
+    "career": { "type": "string", "description": "职业 / 现状" },
+    "level": { "type": "string", "description": "英语水平" },
+    "goal": { "type": "string", "description": "学习目标" },
+    "preference": { "type": "string", "description": "学习偏好" },
+    "fear": { "type": "string", "description": "最害怕的场景" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "画像摘要" },
+    "profile": {
+      "type": "object",
+      "description": "结构化用户画像",
+      "fields": ["persona_title", "summary", "gaps"]
+    }
+  }
+}

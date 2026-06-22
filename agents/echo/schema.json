@@ -1,0 +1,9 @@
+{
+  "input": {
+    "input": { "type": "string", "description": "任意文本" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "带前缀的回显" },
+    "meta": { "type": "object" }
+  }
+}

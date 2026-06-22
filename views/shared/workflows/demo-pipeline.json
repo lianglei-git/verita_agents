@@ -1,0 +1,15 @@
+{
+  "version": "1",
+  "name": "demo-pipeline",
+  "description": "本地联通性测试：echo → summarize",
+  "nodes": [
+    { "id": "input", "type": "source", "label": "用户输入" },
+    { "id": "echo", "type": "agent", "agent_id": "echo", "label": "Echo Agent" },
+    { "id": "summarize", "type": "agent", "agent_id": "summarize", "label": "Summarize Agent" }
+  ],
+  "edges": [
+    { "from": "input", "to": "echo" },
+    { "from": "echo", "to": "summarize" }
+  ],
+  "execution_order": ["input", "echo", "summarize"]
+}

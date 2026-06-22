@@ -1,0 +1,10 @@
+{
+  "input": {
+    "input": { "type": "string", "description": "主输入" },
+    "options": { "type": "object", "description": "可选参数" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "主输出" },
+    "meta": { "type": "object", "description": "调试元信息" }
+  }
+}

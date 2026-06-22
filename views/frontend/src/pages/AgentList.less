@@ -1,0 +1,83 @@
+@import '../styles/global.less';
+
+.agent-list-page {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+
+  .agent-card {
+    display: block;
+    padding: 18px 20px;
+    background: @bay;
+    border: 1px solid @rail;
+    border-radius: @radius-lg;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.18s @ease-out,
+      box-shadow 0.18s @ease-out;
+
+    &:hover {
+      border-color: @signal;
+      box-shadow: 0 0 24px fade(@signal, 8%);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .agent-id {
+      font-family: @font-mono;
+      font-size: 11px;
+      color: @signal;
+    }
+
+    .view-tag {
+      font-family: @font-mono;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: @radius-sm;
+      background: fade(@ash, 12%);
+      color: @ash;
+
+      &.custom {
+        background: @flow-dim;
+        color: @flow;
+      }
+    }
+
+    h2 {
+      margin: 0 0 6px;
+      font-family: @font-display;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: @ash;
+      line-height: 1.45;
+    }
+
+    .phase {
+      display: inline-block;
+      margin-top: 12px;
+      font-family: @font-mono;
+      font-size: 10px;
+      color: @ash;
+      text-transform: uppercase;
+    }
+  }
+}

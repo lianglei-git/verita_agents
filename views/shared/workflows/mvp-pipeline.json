@@ -1,0 +1,31 @@
+{
+  "version": "1",
+  "name": "mvp-pipeline",
+  "description": "prd-pending MVP 闭环（节点先占位，agent 逐步接入）",
+  "nodes": [
+    { "id": "input", "type": "source", "label": "用户目标与画像输入" },
+    { "id": "user-profile", "type": "agent", "agent_id": "user-profile", "label": "用户画像", "status": "planned" },
+    { "id": "route-planner", "type": "agent", "agent_id": "route-planner", "label": "路线规划", "status": "planned" },
+    { "id": "story-scenario", "type": "agent", "agent_id": "story-scenario", "label": "故事场景", "status": "planned" },
+    { "id": "knowledge-mapping", "type": "agent", "agent_id": "knowledge-mapping", "label": "知识点映射", "status": "planned" },
+    { "id": "course-compiler", "type": "agent", "agent_id": "course-compiler", "label": "课程编译", "status": "planned" },
+    { "id": "content-exercise", "type": "agent", "agent_id": "content-exercise", "label": "内容练习", "status": "planned" }
+  ],
+  "edges": [
+    { "from": "input", "to": "user-profile" },
+    { "from": "user-profile", "to": "route-planner" },
+    { "from": "route-planner", "to": "story-scenario" },
+    { "from": "story-scenario", "to": "knowledge-mapping" },
+    { "from": "knowledge-mapping", "to": "course-compiler" },
+    { "from": "course-compiler", "to": "content-exercise" }
+  ],
+  "execution_order": [
+    "input",
+    "user-profile",
+    "route-planner",
+    "story-scenario",
+    "knowledge-mapping",
+    "course-compiler",
+    "content-exercise"
+  ]
+}

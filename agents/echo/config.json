@@ -1,0 +1,11 @@
+{
+  "id": "echo",
+  "name": "Echo Agent",
+  "description": "原样回显输入，用于联通性与 Views 接入测试",
+  "version": "0.1.0",
+  "phase": "dev",
+  "view": {
+    "type": "default"
+  },
+  "schema_ref": "schema.json"
+}
