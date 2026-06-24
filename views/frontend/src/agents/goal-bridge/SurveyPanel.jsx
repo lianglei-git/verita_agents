@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { gbLog } from './debug'
 import QuestionRenderer from './QuestionRenderer'
-import { buildAnswer, isAnswerValid } from './types'
+import { buildAnswer, buildPartialBatch, isAnswerValid } from './types'
 
 /**
  * 问卷模式：一次展示全部题目，答完后 answers_batch 提交重判
@@ -10,9 +10,17 @@ import { buildAnswer, isAnswerValid } from './types'
  * @param {string} [props.reply]
  * @param {boolean} [props.loading]
  * @param {(batch: import('./types').AnswerPayload[]) => void} props.onSubmitBatch
+ * @param {(batch: import('./types').AnswerPayload[]) => void} [props.onFinishHere]
  * @param {() => void} props.onReset
  */
-export default function SurveyPanel({ questions, reply, loading = false, onSubmitBatch, onReset }) {
+export default function SurveyPanel({
+  questions,
+  reply,
+  loading = false,
+  onSubmitBatch,
+  onFinishHere,
+  onReset,
+}) {
   const [drafts, setDrafts] = useState({})
 
   const draftFor = (q) => drafts[q.id] ?? (q.type === 'multi' ? [] : '')
@@ -25,6 +33,12 @@ export default function SurveyPanel({ questions, reply, loading = false, onSubmi
     questions
       .filter((q) => q.required !== false)
       .every((q) => isAnswerValid(buildAnswer(q, draftFor(q))))
+
+  const handleFinishHere = () => {
+    const batch = buildPartialBatch(questions, drafts)
+    gbLog('survey.finish_here ▶', { answers_batch: batch })
+    onFinishHere?.(batch)
+  }
 
   return (
     <div className="survey-panel">
@@ -55,6 +69,16 @@ export default function SurveyPanel({ questions, reply, loading = false, onSubmi
         >
           {loading ? '提交中…' : '提交全部回答'}
         </button>
+        {onFinishHere && (
+          <button
+            type="button"
+            className="ghost-btn finish-here-btn"
+            disabled={loading}
+            onClick={handleFinishHere}
+          >
+            就这样
+          </button>
+        )}
         <button type="button" className="ghost-btn" onClick={onReset} disabled={loading}>
           重新开始
         </button>

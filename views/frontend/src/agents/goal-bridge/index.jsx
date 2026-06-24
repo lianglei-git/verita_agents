@@ -8,6 +8,7 @@ import {
   STEP_LABELS,
   UI_MODES,
   buildAnswer,
+  buildPartialBatch,
   getStepState,
   isAnswerValid,
   normalizeQuestion,
@@ -223,14 +224,13 @@ export default function GoalBridgeView({
 
   const userProfile = runResult?.user_profile || session?.user_profile
   const llmCalls = runResult?.llm_calls || []
-  const hasUnansweredPending =
-    pendingQuestions.length > 0 &&
-    pendingQuestions.some((q) => q.required !== false && answers[q.id] == null)
-  const canConfirmStep =
+  const canFinishHere =
     !stepComplete &&
-    !hasUnansweredPending &&
-    ((step === 1 && !showIntro && (userProfile?.summary || session?.turns?.length > 1)) ||
-      (step === 2 && (userProfile?.summary || session?.step2?.answers)))
+    !showIntro &&
+    (step === 1 || step === 2) &&
+    (pendingQuestions.length > 0 ||
+      userProfile?.summary ||
+      (session?.turns?.length || 0) > 0)
   const step2PlanKey = `${session?.step2?.goal_text || ''}|${session?.turns?.length || 0}`
   const step2BootstrapRef = useRef(null)
   const rejudgeAttemptRef = useRef(null)
@@ -286,8 +286,17 @@ export default function GoalBridgeView({
   const submitRejudge = () => {
     commit({ session: session || payload.session })
   }
-  const submitConfirmStep = () => {
-    commit({ confirm_step: true, session: session || payload.session })
+  const submitFinishHere = (answersBatch) => {
+    const next = { confirm_step: true, session: session || payload.session }
+    if (answersBatch?.length) next.answers_batch = answersBatch
+    commit(next)
+  }
+  const submitFinishHereSequential = () => {
+    const batch = []
+    if (activeQuestion && isAnswerValid(buildAnswer(activeQuestion, draftValue))) {
+      batch.push(buildAnswer(activeQuestion, draftValue))
+    }
+    submitFinishHere(batch.length ? batch : undefined)
   }
 
   useEffect(() => {
@@ -406,6 +415,16 @@ export default function GoalBridgeView({
               >
                 {loading ? '处理中…' : '下一题'}
               </button>
+              {canFinishHere && (
+                <button
+                  type="button"
+                  className="ghost-btn finish-here-btn"
+                  onClick={submitFinishHereSequential}
+                  disabled={loading}
+                >
+                  就这样
+                </button>
+              )}
               <button type="button" className="ghost-btn" onClick={startFresh} disabled={loading}>
                 重新开始
               </button>
@@ -432,6 +451,16 @@ export default function GoalBridgeView({
             >
               {loading ? '评估中…' : '提交评估'}
             </button>
+            {canFinishHere && (
+              <button
+                type="button"
+                className="ghost-btn finish-here-btn"
+                onClick={() => submitFinishHere()}
+                disabled={loading}
+              >
+                就这样
+              </button>
+            )}
             <button type="button" className="ghost-btn" onClick={startFresh} disabled={loading}>
               重新开始
             </button>
@@ -447,6 +476,7 @@ export default function GoalBridgeView({
             reply={runResult?.reply}
             loading={loading}
             onSubmitBatch={submitBatch}
+            onFinishHere={canFinishHere ? submitFinishHere : undefined}
             onReset={startFresh}
           />
         )}
@@ -473,19 +503,6 @@ export default function GoalBridgeView({
               重新开始
             </button>
           </div>
-        </div>
-      )}
-
-      {canConfirmStep && (
-        <div className="actions confirm-step-actions">
-          <button
-            type="button"
-            className="ghost-btn"
-            onClick={submitConfirmStep}
-            disabled={loading}
-          >
-            {step === 1 ? '目标已够清楚，进入下一步' : '信息已够，进入下一步'}
-          </button>
         </div>
       )}
 

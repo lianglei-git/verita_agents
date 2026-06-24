@@ -198,6 +198,22 @@ def _llm_evaluate(session: dict) -> tuple[dict, str | None, str]:
     return session, None, user_line
 
 
+def _store_answers_batch(session: dict, answers_batch: list[dict] | None) -> dict:
+    if not answers_batch:
+        return session
+    for item in answers_batch:
+        if isinstance(item, dict) and item.get("question_id"):
+            session = step2_store_answer(session, item)
+    return session
+
+
+def _merge_answered_to_profile(session: dict) -> dict:
+    items = _qa_items(session)
+    if items:
+        session = merge_round_before_ai(session, step=STEP, items=items)
+    return session
+
+
 def _confirm_step(session: dict) -> dict[str, Any]:
     session = ensure_step2_goal(session)
     profile = get_user_profile(session)
@@ -270,6 +286,8 @@ def run(
     session = ensure_step2_goal(session)
 
     if confirm_step and not step2_complete(session):
+        session = _store_answers_batch(session, answers_batch)
+        session = _merge_answered_to_profile(session)
         return _confirm_step(session)
 
     if step2_complete(session):

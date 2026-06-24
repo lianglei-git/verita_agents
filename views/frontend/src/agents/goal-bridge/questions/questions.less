@@ -46,3 +46,22 @@
     margin-top: 0.2rem;
   }
 }
+
+.gb-custom-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+
+  .gb-custom-label {
+    font-size: 0.82rem;
+    color: var(--text-muted, #718096);
+  }
+
+  input[type='text'] {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    font: inherit;
+  }
+}

@@ -74,6 +74,18 @@ export const UI_MODES = { SEQUENTIAL: 'sequential', SURVEY: 'survey' }
 
 export const QUESTION_TYPES = { OPEN: 'open', SINGLE: 'single', MULTI: 'multi' }
 
+/** @param {import('./types').AgentQuestion['options']} options */
+export function optionIdSet(options) {
+  return new Set((options || []).map((o) => o.id))
+}
+
+/** @param {import('./types').AgentQuestion} question @param {string|string[]} draft */
+export function buildPartialBatch(questions, drafts) {
+  return questions
+    .map((q) => buildAnswer(q, drafts[q.id] ?? (q.type === 'multi' ? [] : '')))
+    .filter(isAnswerValid)
+}
+
 /** @param {unknown[]} raw @returns {AgentQuestion[]} */
 export function normalizeQuestions(raw) {
   const used = new Set()
@@ -131,8 +143,12 @@ export function isAnswerValid(answer) {
   if (!answer?.question_id) return false
   const { type, value } = answer
   if (type === 'open') return typeof value === 'string' && value.trim().length > 0
-  if (type === 'single') return typeof value === 'string' && value.length > 0
-  if (type === 'multi') return Array.isArray(value) && value.length > 0
+  if (type === 'single') {
+    return typeof value === 'string' && value.trim().length > 0
+  }
+  if (type === 'multi') {
+    return Array.isArray(value) && value.some((v) => String(v).trim().length > 0)
+  }
   return false
 }
 
