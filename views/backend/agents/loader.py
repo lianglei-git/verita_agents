@@ -33,6 +33,13 @@ def _import_agent_module(agent_dir: Path) -> ModuleType:
 
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
+
+    # 保留 agents/ 与各 agent 目录在 sys.path，供运行时 import（如 llm_extract、_lib）
+    for path in (AGENTS_ROOT.resolve(), agent_dir.resolve()):
+        path_str = str(path)
+        if path_str not in sys.path:
+            sys.path.insert(0, path_str)
+
     spec.loader.exec_module(module)
     return module
 

@@ -1,0 +1,190 @@
+@import '../../styles/global.less';
+
+.route-planner-view {
+  .intro {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: @ash;
+    line-height: 1.5;
+  }
+
+  .goal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+
+    span {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    input {
+      background: @chassis;
+      border: 1px solid @rail;
+      border-radius: @radius-md;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: @ink;
+    }
+  }
+
+  .route-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .route-card {
+    text-align: left;
+    background: @void;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    padding: 12px 14px;
+    color: @ink;
+    transition: border-color 0.18s @ease-out, box-shadow 0.18s @ease-out;
+
+    &:hover {
+      border-color: @rail-light;
+    }
+
+    &.selected {
+      border-color: @signal;
+      background: @signal-dim;
+      box-shadow: 0 2px 10px fade(@signal, 12%);
+    }
+
+    &.auto {
+      border-style: dashed;
+    }
+
+    .route-name {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .route-tagline {
+      display: block;
+      font-size: 12px;
+      color: @ash;
+      line-height: 1.4;
+    }
+  }
+
+  .result-section {
+    padding-top: 16px;
+    border-top: 1px solid @rail;
+
+    h3 {
+      margin: 0 0 12px;
+      font-family: @font-display;
+      font-size: 15px;
+      font-weight: 700;
+      color: @flow;
+    }
+  }
+
+  .plan-card {
+    background: @void;
+    border: 1px solid fade(@flow, 25%);
+    border-radius: @radius-md;
+    padding: 16px 18px;
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+
+      h4 {
+        margin: 0;
+        font-family: @font-display;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .track {
+        font-family: @font-mono;
+        font-size: 10px;
+        color: @flow;
+        text-transform: uppercase;
+      }
+    }
+
+    .tagline {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: @ash;
+    }
+
+    .rationale {
+      margin: 0 0 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .stages {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 8px 0;
+        border-top: 1px solid @rail;
+
+        .stage-num {
+          flex-shrink: 0;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          background: @flow-dim;
+          color: @flow;
+          font-family: @font-mono;
+          font-size: 11px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        strong {
+          display: block;
+          font-size: 13px;
+        }
+
+        span {
+          font-size: 12px;
+          color: @ash;
+        }
+      }
+    }
+  }
+
+  .alternatives {
+    margin-top: 12px;
+    font-size: 12px;
+    color: @ash;
+
+    .alt-label {
+      font-family: @font-mono;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    ul {
+      margin: 6px 0 0;
+      padding-left: 18px;
+    }
+  }
+}

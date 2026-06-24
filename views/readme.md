@@ -108,3 +108,4 @@ cd views && python run.py --prod
 - **注册**：`shared/agents.manifest.json`
 - **流水线**：`shared/workflows/*.json` 的 `execution_order`
 - **自定义 UI**（可选）：`frontend/src/agents/{id}/` + `config.json` 中 `"view": {"type": "custom"}`
+- **LLM**：使用 `agents/_lib/llm`，见 [agents/README.md](../agents/README.md)

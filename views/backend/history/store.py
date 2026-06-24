@@ -91,5 +91,18 @@ class RunStore:
             run["status"] = "completed"
             run["updated_at"] = _now()
 
+    def update_source_input(self, run_id: str, source_input: str) -> dict[str, Any] | None:
+        run = self._runs.get(run_id)
+        if not run:
+            return None
+        run["source_input"] = source_input
+        run["updated_at"] = _now()
+        input_step = run["steps"].get("input")
+        if input_step:
+            input_step["params"] = {"input": source_input}
+            input_step["result"] = {"output": source_input}
+            input_step["ran_at"] = _now()
+        return deepcopy(run)
+
 
 run_store = RunStore()

@@ -1,0 +1,13 @@
+{
+  "version": "1",
+  "name": "goal-bridge-pipeline",
+  "description": "GoalBridge 闭环：基线 → 目标 → 现状 → 代价诊断",
+  "nodes": [
+    { "id": "input", "type": "source", "label": "用户输入" },
+    { "id": "goal-bridge", "type": "agent", "agent_id": "goal-bridge", "label": "GoalBridge" }
+  ],
+  "edges": [
+    { "from": "input", "to": "goal-bridge" }
+  ],
+  "execution_order": ["input", "goal-bridge"]
+}

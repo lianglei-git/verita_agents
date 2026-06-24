@@ -5,6 +5,7 @@
   border: 1px solid @rail;
   border-radius: @radius-lg;
   padding: 18px 20px;
+  box-shadow: 0 1px 3px fade(@ink, 4%);
   animation: panel-in 0.45s @ease-out both;
 }
 
@@ -68,8 +69,8 @@
   background: linear-gradient(
     90deg,
     transparent,
-    fade(@signal, 25%) 15%,
-    fade(@signal, 25%) 85%,
+    fade(@signal, 18%) 15%,
+    fade(@signal, 18%) 85%,
     transparent
   );
   border-radius: 1px;
@@ -98,7 +99,7 @@
 
   &.lit {
     background: @flow;
-    box-shadow: 0 0 8px fade(@flow, 50%);
+    box-shadow: 0 0 6px fade(@flow, 35%);
   }
 }
 
@@ -154,15 +155,15 @@
 
   &.agent:not(:disabled):hover {
     border-color: @rail-light;
-    background: lighten(@chassis, 2%);
+    background: @void;
   }
 
   &.agent.active {
     border-color: @signal;
     background: @signal-dim;
     box-shadow:
-      0 0 0 1px fade(@signal, 30%),
-      0 0 20px fade(@signal, 12%);
+      0 0 0 1px fade(@signal, 20%),
+      0 2px 12px fade(@signal, 10%);
 
     .step-index {
       border-color: fade(@signal, 50%);
@@ -172,9 +173,34 @@
   }
 
   &.source {
-    opacity: 0.75;
-    cursor: default;
+    cursor: pointer;
     border-style: dashed;
+
+    &:not(:disabled):hover {
+      border-color: @rail-light;
+      background: @void;
+    }
+
+    &.active {
+      border-color: @signal;
+      border-style: solid;
+      background: @signal-dim;
+      opacity: 1;
+      box-shadow:
+        0 0 0 1px fade(@signal, 20%),
+        0 2px 12px fade(@signal, 10%);
+
+      .step-index {
+        border-color: fade(@signal, 50%);
+        color: @signal;
+        background: fade(@signal, 10%);
+      }
+    }
+  }
+
+  &.unavailable {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   &.status-success:not(.active) {
@@ -187,7 +213,7 @@
     height: 7px;
     border-radius: 50%;
     background: @flow;
-    box-shadow: 0 0 6px fade(@flow, 60%);
+    box-shadow: 0 0 4px fade(@flow, 40%);
     margin-left: 4px;
   }
 

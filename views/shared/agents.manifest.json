@@ -3,7 +3,8 @@
   "default_workflow": "demo-pipeline",
   "workflows": {
     "demo-pipeline": "workflows/demo-pipeline.json",
-    "mvp-pipeline": "workflows/mvp-pipeline.json"
+    "mvp-pipeline": "workflows/mvp-pipeline.json",
+    "goal-bridge-pipeline": "workflows/goal-bridge-pipeline.json"
   },
   "agents": [
     {
@@ -14,6 +15,16 @@
     {
       "id": "user-profile",
       "dir": "user-profile",
+      "enabled": true
+    },
+    {
+      "id": "route-planner",
+      "dir": "route-planner",
+      "enabled": true
+    },
+    {
+      "id": "goal-bridge",
+      "dir": "GoalBridge",
       "enabled": true
     },
     {

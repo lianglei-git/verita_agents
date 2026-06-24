@@ -1,11 +1,11 @@
 {
   "version": "1",
   "name": "mvp-pipeline",
-  "description": "prd-pending MVP 闭环（节点先占位，agent 逐步接入）",
+  "description": "MVP 闭环：用户画像 → 路线规划 → …（其余节点占位）",
   "nodes": [
     { "id": "input", "type": "source", "label": "用户目标与画像输入" },
-    { "id": "user-profile", "type": "agent", "agent_id": "user-profile", "label": "用户画像", "status": "planned" },
-    { "id": "route-planner", "type": "agent", "agent_id": "route-planner", "label": "路线规划", "status": "planned" },
+    { "id": "user-profile", "type": "agent", "agent_id": "user-profile", "label": "用户画像" },
+    { "id": "route-planner", "type": "agent", "agent_id": "route-planner", "label": "路线规划" },
     { "id": "story-scenario", "type": "agent", "agent_id": "story-scenario", "label": "故事场景", "status": "planned" },
     { "id": "knowledge-mapping", "type": "agent", "agent_id": "knowledge-mapping", "label": "知识点映射", "status": "planned" },
     { "id": "course-compiler", "type": "agent", "agent_id": "course-compiler", "label": "课程编译", "status": "planned" },

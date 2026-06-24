@@ -5,6 +5,7 @@
   border: 1px solid @rail;
   border-radius: @radius-lg;
   padding: 22px 24px;
+  box-shadow: 0 1px 3px fade(@ink, 4%);
   animation: panel-in 0.5s @ease-out 0.06s both;
 
   &.empty {
@@ -150,7 +151,7 @@
 
   textarea {
     width: 100%;
-    background: @void;
+    background: @chassis;
     border: 1px solid @rail;
     border-radius: @radius-md;
     color: @ink;
@@ -168,7 +169,7 @@
 .run-btn {
   background: @signal;
   border: none;
-  color: @void;
+  color: @on-accent;
   padding: 11px 22px;
   border-radius: @radius-md;
   font-weight: 600;
@@ -176,8 +177,8 @@
   letter-spacing: 0.01em;
 
   &:hover:not(:disabled) {
-    background: lighten(@signal, 6%);
-    box-shadow: 0 4px 20px fade(@signal, 25%);
+    background: darken(@signal, 4%);
+    box-shadow: 0 4px 14px fade(@signal, 22%);
   }
 
   &:disabled {

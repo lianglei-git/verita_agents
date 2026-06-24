@@ -29,17 +29,31 @@ export function runAgent(id, input, options = {}, runId = null) {
   })
 }
 
-export function fetchWorkflow() {
-  return request('/workflow')
+export function fetchWorkflow(name) {
+  const qs = name ? `?name=${encodeURIComponent(name)}` : ''
+  return request(`/workflow${qs}`)
+}
+
+export function fetchWorkflows() {
+  return request('/workflows')
 }
 
 export function fetchSpec() {
   return request('/spec')
 }
 
-export function createRun(sourceInput) {
+export function createRun(sourceInput, workflow) {
+  const body = { source_input: sourceInput }
+  if (workflow) body.workflow = workflow
   return request('/runs', {
     method: 'POST',
+    body: JSON.stringify(body),
+  })
+}
+
+export function updateRunInput(runId, sourceInput) {
+  return request(`/runs/${runId}/input`, {
+    method: 'PATCH',
     body: JSON.stringify({ source_input: sourceInput }),
   })
 }

@@ -1,0 +1,11 @@
+{
+  "id": "route-planner",
+  "name": "路线规划 Agent",
+  "description": "根据用户画像与目标，推荐成长路线与阶段里程碑",
+  "version": "0.1.0",
+  "phase": "mvp",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

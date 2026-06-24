@@ -1,17 +1,32 @@
 {
   "input": {
-    "career": { "type": "string", "description": "职业 / 现状" },
-    "level": { "type": "string", "description": "英语水平" },
-    "goal": { "type": "string", "description": "学习目标" },
-    "preference": { "type": "string", "description": "学习偏好" },
-    "fear": { "type": "string", "description": "最害怕的场景" }
+    "story": { "type": "string", "description": "个人故事（可选，首轮推断锚点）" },
+    "answers": {
+      "type": "object",
+      "description": "单题回答；含 target 与以 target 为键的文本"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["answer", "skip"],
+      "description": "本轮交互动作"
+    },
+    "universal": { "type": "object", "description": "PRD v2 Universal 固定 schema" },
+    "collection": { "type": "object", "description": "v2 采集状态（journey_meta、route_sketch、release）" }
   },
   "output": {
     "output": { "type": "string", "description": "画像摘要" },
-    "profile": {
-      "type": "object",
-      "description": "结构化用户画像",
-      "fields": ["persona_title", "summary", "gaps"]
+    "universal": { "type": "object", "description": "Universal 状态" },
+    "twin": { "type": "object", "description": "展示用 legacy twin（由 universal 派生）" },
+    "collection": { "type": "object", "description": "采集进度与放行状态" },
+    "handoff": { "type": "object", "description": "放行后交给下游的包" },
+    "next_questions": {
+      "type": "array",
+      "maxItems": 1,
+      "description": "下一道追问（含 target 字段）"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["p0_collecting", "p0_sufficient", "p0_conditional"]
     }
   }
 }

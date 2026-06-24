@@ -34,6 +34,8 @@ def run(user_input: str, **kwargs) -> dict:
 python agents/user-profile/agent.py "职业：前端，目标：海外面试"
 ```
 
+需要 LLM 抽取时，配置 `OPENAI_API_KEY` 等环境变量，见 [agents/README.md](../../agents/README.md)。
+
 ## 2. 注册到 manifest
 
 在 `views/shared/agents.manifest.json` 增加一条：

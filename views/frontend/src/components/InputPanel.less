@@ -1,0 +1,67 @@
+@import './AgentPanel.less';
+
+.input-panel {
+  background: @bay;
+  border: 1px solid @rail;
+  border-radius: @radius-lg;
+  padding: 22px 24px;
+  box-shadow: 0 1px 3px fade(@ink, 4%);
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid @rail;
+
+    h2 {
+      margin: 0 0 4px;
+      font-family: @font-display;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      color: @ash;
+      max-width: 48ch;
+    }
+  }
+
+  .io-grid.single {
+    display: block;
+    margin-bottom: 18px;
+  }
+
+  .input-editor {
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 14px;
+
+      span {
+        font-family: @font-mono;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: @ash;
+      }
+
+      textarea {
+        width: 100%;
+        background: @void;
+        border: 1px solid @rail;
+        border-radius: @radius-md;
+        color: @ink;
+        padding: 14px;
+        font-size: 14px;
+        line-height: 1.55;
+        resize: vertical;
+      }
+    }
+  }
+}

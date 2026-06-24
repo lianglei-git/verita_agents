@@ -1,8 +1,8 @@
 {
   "id": "user-profile",
   "name": "用户画像 Agent",
-  "description": "回答：这个用户是谁？他想去哪？当前能力缺口是什么？",
-  "version": "0.1.0",
+  "description": "Digital Twin v2：Goal + Current 锚点驱动，动态 journey_meta，AI 判定放行",
+  "version": "2.1.0",
   "phase": "mvp",
   "view": {
     "type": "custom"

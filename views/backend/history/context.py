@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 
@@ -28,6 +29,23 @@ def resolve_agent_upstream_input(
     idx = execution_order.index(agent_node_id)
     for node_id in reversed(execution_order[:idx]):
         step = run.get("steps", {}).get(node_id)
+        if not step:
+            continue
+        result = step.get("result")
+        if isinstance(result, dict):
+            if result.get("twin") or result.get("universal"):
+                payload: dict[str, Any] = {}
+                if result.get("universal"):
+                    payload["universal"] = result["universal"]
+                if result.get("collection"):
+                    payload["collection"] = result["collection"]
+                if result.get("twin"):
+                    payload["twin"] = result["twin"]
+                if result.get("handoff"):
+                    payload["handoff"] = result["handoff"]
+                return json.dumps(payload, ensure_ascii=False)
+            if result.get("plan"):
+                return json.dumps({"plan": result["plan"]}, ensure_ascii=False)
         output = _step_output(step)
         if output is not None:
             return str(output)

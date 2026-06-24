@@ -4,6 +4,8 @@
  */
 const views = {
   'user-profile': () => import('./user-profile'),
+  'route-planner': () => import('./route-planner'),
+  'goal-bridge': () => import('./goal-bridge'),
 }
 
 export function resolveAgentView(agentId) {

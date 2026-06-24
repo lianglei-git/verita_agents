@@ -12,8 +12,11 @@ export default function AgentViewResolver({
   mode = 'embedded',
   userInput,
   onInputChange,
+  onRun,
+  loading = false,
   result,
   reviewMode = false,
+  sessionKey,
 }) {
   const viewType = agent?.view?.type || 'default'
   const [CustomView, setCustomView] = useState(null)
@@ -48,10 +51,13 @@ export default function AgentViewResolver({
     <div className={`agent-view-resolver mode-${mode}`}>
       <Suspense fallback={<ViewFallback />}>
         <ViewComponent
+          key={sessionKey ?? 'default'}
           agent={agent}
           mode={mode}
           userInput={userInput}
           onInputChange={onInputChange}
+          onRun={onRun}
+          loading={loading}
           result={result}
           reviewMode={reviewMode}
           schema={agent.schema}

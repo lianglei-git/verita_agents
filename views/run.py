@@ -22,6 +22,9 @@ DEFAULT_VITE_PORT = 5173
 def _env() -> dict[str, str]:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(VIEWS_ROOT)
+    env["OPENAI_API_KEY"] = "sk-4f2fb90acf024650a675d9476afd4daa"
+    env["OPENAI_BASE_URL"] = "https://api.deepseek.com/v1"
+    env["LLM_MODEL"] = "deepseek-chat"
     return env
 
 

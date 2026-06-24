@@ -1,6 +1,12 @@
 import './Timeline.less'
 
-export default function Timeline({ workflow, activeAgentId, stepStatus = {}, onAgentSelect }) {
+export default function Timeline({
+  workflow,
+  activeNodeId,
+  stepStatus = {},
+  registeredAgentIds = [],
+  onNodeSelect,
+}) {
   if (!workflow) return null
 
   const { execution_order: path = [], nodes = [] } = workflow
@@ -13,7 +19,7 @@ export default function Timeline({ workflow, activeAgentId, stepStatus = {}, onA
           <span className="label">Pipeline</span>
           <span className="title">执行顺序</span>
         </div>
-        <span className="hint">选择节点查看 I/O · 琥珀标记为当前焦点 · 青绿为已完成</span>
+        <span className="hint">从步骤 1 输入开始 · 点击节点查看 I/O · 青绿为已完成</span>
       </div>
 
       <div className="timeline-conduit">
@@ -23,7 +29,14 @@ export default function Timeline({ workflow, activeAgentId, stepStatus = {}, onA
             const node = nodeMap[nodeId]
             if (!node) return null
             const isAgent = node.type === 'agent'
-            const isActive = isAgent && node.agent_id === activeAgentId
+            const isSource = node.type === 'source'
+            const isPlanned = node.status === 'planned'
+            const isAvailable =
+              isSource ||
+              (isAgent &&
+                !isPlanned &&
+                (registeredAgentIds.length === 0 || registeredAgentIds.includes(node.agent_id)))
+            const isActive = nodeId === activeNodeId
             const status = stepStatus[nodeId] || 'pending'
             const done = status === 'success'
             return (
@@ -33,14 +46,15 @@ export default function Timeline({ workflow, activeAgentId, stepStatus = {}, onA
                 )}
                 <button
                   type="button"
-                  className={`node ${node.type} ${isActive ? 'active' : ''} status-${status}`}
-                  disabled={!isAgent}
-                  onClick={() => isAgent && onAgentSelect(node.agent_id)}
+                  className={`node ${node.type} ${isActive ? 'active' : ''} status-${status} ${!isAvailable ? 'unavailable' : ''}`}
+                  disabled={!isAvailable}
+                  onClick={() => isAvailable && onNodeSelect(nodeId)}
                 >
                   <span className="step-index">{index + 1}</span>
                   <span className="node-text">
                     <span className="node-label">{node.label}</span>
                     {isAgent && <span className="node-id">{node.agent_id}</span>}
+                    {isSource && <span className="node-id">source</span>}
                   </span>
                   {done && <span className="flow-dot" title="已完成" />}
                 </button>

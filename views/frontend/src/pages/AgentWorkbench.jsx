@@ -2,11 +2,12 @@ import { Link, useParams } from 'react-router-dom'
 import { useCallback, useEffect, useState } from 'react'
 import {
   createRun,
-  executeInRun,
   fetchAgent,
   fetchRun,
   fetchRuns,
+  runAgent,
 } from '../api/client'
+import { freshInputForAgent } from '../agents/freshInput'
 import AgentViewResolver from '../agents/AgentViewResolver'
 import AppShell from '../components/AppShell'
 import '../components/AppShell.less'
@@ -15,7 +16,7 @@ import '../components/ExecutionHistory.less'
 import './AgentWorkbench.less'
 
 export default function AgentWorkbench() {
-  const { id } = useParams()
+  const { id: agentId } = useParams()
   const [agent, setAgent] = useState(null)
   const [userInput, setUserInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -36,18 +37,18 @@ export default function AgentWorkbench() {
     setUserInput('')
     setLastResult(null)
     setError('')
-    fetchAgent(id)
+    fetchAgent(agentId)
       .then(setAgent)
       .catch((err) => setError(err.message))
     refreshRuns()
-  }, [id, refreshRuns])
+  }, [agentId, refreshRuns])
 
   const ensureLiveRun = async () => {
     if (liveRunId) {
       const data = await fetchRun(liveRunId)
       return data.run
     }
-    const data = await createRun(userInput)
+    const data = await createRun(userInput, undefined)
     setLiveRunId(data.run.id)
     setActiveRunId(data.run.id)
     setReviewMode(false)
@@ -55,14 +56,15 @@ export default function AgentWorkbench() {
     return data.run
   }
 
-  const handleRun = async () => {
+  const handleRun = async (inputOverride) => {
     if (!agent) return
     setLoading(true)
     setError('')
     try {
       const run = await ensureLiveRun()
-      const inputToSend = userInput.trim() ? userInput : undefined
-      const data = await executeInRun(run.id, agent.id, inputToSend)
+      const raw = typeof inputOverride === 'string' ? inputOverride : userInput
+      const inputToSend = raw?.trim() ? raw : undefined
+      const data = await runAgent(agentId, inputToSend, {}, run.id)
       setLastResult(data)
       setActiveRunId(run.id)
       await refreshRuns()
@@ -79,8 +81,10 @@ export default function AgentWorkbench() {
     setActiveRunId(null)
     setLastResult(null)
     setError('')
+    const freshInput = freshInputForAgent(agentId)
+    setUserInput(freshInput)
     try {
-      const data = await createRun(userInput)
+      const data = await createRun(freshInput, undefined)
       setLiveRunId(data.run.id)
       setActiveRunId(data.run.id)
       await refreshRuns()
@@ -97,7 +101,7 @@ export default function AgentWorkbench() {
       const data = await fetchRun(runId)
       const step = data.run?.steps
       const agentStep = step
-        ? Object.values(step).find((s) => s.agent_id === agent.id)
+        ? Object.values(step).find((s) => s.agent_id === agentId)
         : null
       if (agentStep?.result) {
         setLastResult({ result: agentStep.result, input: agentStep.params?.input })
@@ -127,7 +131,7 @@ export default function AgentWorkbench() {
   if (!agent) {
     return (
       <AppShell eyebrow="Verita · Workbench" title="未找到 Agent">
-        <div className="error-banner">{error || `Agent "${id}" 不存在`}</div>
+        <div className="error-banner">{error || `Agent "${agentId}" 不存在`}</div>
         <Link to="/agents" className="back-link">返回列表</Link>
       </AppShell>
     )
@@ -144,6 +148,7 @@ export default function AgentWorkbench() {
 
       <div className="workbench-layout">
         <ExecutionHistory
+          mode="standalone"
           runs={runs}
           activeRunId={activeRunId}
           reviewMode={reviewMode}
@@ -154,21 +159,24 @@ export default function AgentWorkbench() {
 
         <section className="workbench-main">
           <header className="workbench-header">
-            <span className="agent-badge">{agent.id}</span>
+            <span className="agent-badge">{agentId}</span>
             {agent.source && <span className="source">{agent.source}</span>}
           </header>
 
           <AgentViewResolver
             agent={agent}
             mode="standalone"
+            sessionKey={activeRunId ?? 'new'}
             userInput={userInput}
             onInputChange={setUserInput}
+            onRun={handleRun}
+            loading={loading}
             result={lastResult}
             reviewMode={reviewMode}
           />
 
-          {!reviewMode && (
-            <button type="button" className="run-btn" onClick={handleRun} disabled={loading}>
+          {!reviewMode && agent.id !== 'user-profile' && agent.id !== 'goal-bridge' && (
+            <button type="button" className="run-btn" onClick={() => handleRun()} disabled={loading}>
               {loading ? '运行中…' : '运行'}
             </button>
           )}

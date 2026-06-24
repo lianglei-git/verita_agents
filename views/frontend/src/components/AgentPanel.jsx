@@ -23,6 +23,7 @@ export default function AgentPanel({
   }
 
   const { upstream = [], downstream = [], current = null } = context || {}
+  const selfManagedRun = agent?.id === 'user-profile' || agent?.id === 'goal-bridge'
 
   return (
     <section className="agent-panel">
@@ -93,13 +94,16 @@ export default function AgentPanel({
         <AgentViewResolver
           agent={agent}
           mode="embedded"
+          sessionKey={activeRunId}
           userInput={userInput}
           onInputChange={onInputChange}
+          onRun={onRun}
+          loading={loading}
           result={viewResult}
           reviewMode={reviewMode}
         />
 
-        {!reviewMode && (
+        {!reviewMode && !selfManagedRun && (
           <button type="button" className="run-btn" onClick={onRun} disabled={loading}>
             {loading ? '运行中…' : '运行'}
           </button>

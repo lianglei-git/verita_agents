@@ -1,0 +1,11 @@
+{
+  "id": "goal-bridge",
+  "name": "GoalBridge Agent",
+  "description": "三步访谈：①目标是否明确 ②信息收集 ③差距评估（当前实现步骤1-2）",
+  "version": "1.2.0-step2",
+  "phase": "mvp",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

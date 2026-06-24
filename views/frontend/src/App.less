@@ -7,7 +7,7 @@
   padding: 28px 28px 48px;
   min-height: 100vh;
 
-  // Instrument grid — faint oscilloscope mesh
+  // Light instrument grid
   &::before {
     content: '';
     position: fixed;
@@ -15,9 +15,9 @@
     pointer-events: none;
     z-index: 0;
     background:
-      linear-gradient(fade(@rail, 35%) 1px, transparent 1px) 0 0 / 48px 48px,
-      linear-gradient(90deg, fade(@rail, 35%) 1px, transparent 1px) 0 0 / 48px 48px,
-      radial-gradient(ellipse 80% 60% at 50% -10%, fade(@signal, 6%), transparent 55%),
+      linear-gradient(fade(@rail, 55%) 1px, transparent 1px) 0 0 / 48px 48px,
+      linear-gradient(90deg, fade(@rail, 55%) 1px, transparent 1px) 0 0 / 48px 48px,
+      radial-gradient(ellipse 80% 50% at 50% -8%, fade(@signal, 5%), transparent 55%),
       @void;
   }
 
@@ -84,9 +84,9 @@
 
 .error-banner {
   background: @fault-dim;
-  border: 1px solid fade(@fault, 35%);
+  border: 1px solid fade(@fault, 25%);
   border-left: 3px solid @fault;
-  color: lighten(@fault, 18%);
+  color: darken(@fault, 8%);
   padding: 12px 16px;
   border-radius: @radius-md;
   margin-bottom: 18px;
@@ -107,6 +107,7 @@
   border: 1px solid @rail;
   border-radius: @radius-lg;
   padding: 18px 20px;
+  box-shadow: 0 1px 3px fade(@ink, 4%);
 
   h3 {
     margin: 0 0 14px;
@@ -130,7 +131,7 @@
     padding: 14px;
     overflow: auto;
     max-height: 320px;
-    color: fade(@ink, 88%);
+    color: fade(@ink, 92%);
   }
 }
 

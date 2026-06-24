@@ -1,0 +1,12 @@
+{
+  "input": {
+    "twin": { "type": "object", "description": "上游用户画像 Digital Twin（可选）" },
+    "goal": { "type": "string", "description": "学习目标（无上游时手动填写）" },
+    "route_id": { "type": "string", "description": "手动指定路线 id（可选）" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "路线摘要" },
+    "plan": { "type": "object", "description": "推荐路线与阶段" },
+    "alternatives": { "type": "array", "description": "其他可选路线" }
+  }
+}

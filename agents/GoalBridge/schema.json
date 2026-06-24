@@ -1,0 +1,23 @@
+{
+  "input": {
+    "message": { "type": "string" },
+    "answer": { "type": "object", "description": "sequential 模式单题" },
+    "answers_batch": { "type": "array", "description": "survey 模式整卷提交" },
+    "session": { "type": "object" },
+    "reset": { "type": "boolean" }
+  },
+  "output": {
+    "reply": { "type": "string" },
+    "session": { "type": "object" },
+    "current_step": { "type": "integer" },
+    "step_complete": { "type": "boolean" },
+    "next_questions": { "type": "array", "description": "AI 下发的全部题目" },
+    "active_question": { "type": "object", "description": "sequential 模式当前题" },
+    "next_question": { "type": "object", "description": "同 active_question" },
+    "question_progress": {
+      "type": "object",
+      "properties": { "answered": { "type": "integer" }, "total": { "type": "integer" } }
+    },
+    "ui_mode": { "enum": ["sequential", "survey"] }
+  }
+}

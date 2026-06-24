@@ -18,13 +18,14 @@
     border-radius: @radius-lg;
     text-decoration: none;
     color: inherit;
+    box-shadow: 0 1px 3px fade(@ink, 4%);
     transition:
       border-color 0.18s @ease-out,
       box-shadow 0.18s @ease-out;
 
     &:hover {
       border-color: @signal;
-      box-shadow: 0 0 24px fade(@signal, 8%);
+      box-shadow: 0 4px 16px fade(@ink, 6%);
     }
 
     .card-top {

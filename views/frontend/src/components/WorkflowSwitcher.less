@@ -1,0 +1,49 @@
+@import '../styles/global.less';
+
+.workflow-switcher {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  background: @bay;
+  border: 1px solid @rail;
+  border-radius: @radius-md;
+  box-shadow: 0 1px 3px fade(@ink, 4%);
+
+  label {
+    font-family: @font-mono;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: @ash;
+    white-space: nowrap;
+  }
+
+  select {
+    flex: 1;
+    max-width: 360px;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-sm;
+    padding: 7px 10px;
+    font-size: 13px;
+    color: @ink;
+  }
+
+  .workflow-desc {
+    font-size: 12px;
+    color: @ash;
+    margin: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .workflow-switcher {
+    flex-wrap: wrap;
+
+    .workflow-desc {
+      width: 100%;
+    }
+  }
+}
