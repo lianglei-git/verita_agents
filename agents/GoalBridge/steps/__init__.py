@@ -4,14 +4,15 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from contract import STEP_GOAL, STEP_INFO, STEP_GAP
+from contract import STEP_BASIC, STEP_GAP, STEP_GOAL, STEP_INFO
 from debug_log import gb_log
-from steps import step1_goal, step2_info, step3_gap
+from steps import step1_goal, step2_basic, step2_info, step3_gap
 
 StepRunner = Callable[..., dict[str, Any]]
 
 STEP_HANDLERS: dict[int, StepRunner] = {
     STEP_GOAL: step1_goal.run,
+    STEP_BASIC: step2_basic.run,
     STEP_INFO: step2_info.run,
     STEP_GAP: step3_gap.run,
 }
@@ -31,7 +32,7 @@ def run_current_step(
     step = int(session.get("current_step") or STEP_GOAL)
     handler = get_step_handler(step)
     gb_log("steps.dispatch", step=step, handler=handler.__module__)
-    if step in (STEP_GOAL, STEP_INFO):
+    if step in (STEP_GOAL, STEP_BASIC, STEP_INFO):
         return handler(
             session,
             user_input,

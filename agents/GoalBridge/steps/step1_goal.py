@@ -283,7 +283,7 @@ def run(
         goal = (session.get("step1") or {}).get("goal_text") or ""
         return _log_result(_build_result(
             session,
-            f"目标已明确：{goal}。可进入步骤 2（信息收集，待实现）。",
+            f"目标已明确：{goal}。可进入步骤 2（基础信息）。",
             source="cached",
         ))
 

@@ -3,7 +3,7 @@
  * @module goal-bridge/types
  */
 
-/** @typedef {1|2|3} StepId */
+/** @typedef {1|2|3|4} StepId */
 
 /** @typedef {'open'|'single'|'multi'} QuestionType */
 
@@ -68,11 +68,50 @@
 
 /** @typedef {Object} UserProfile @property {string} summary @property {Record<string, unknown>} structured */
 
-export const STEP_LABELS = { 1: '目标是否明确', 2: '信息收集', 3: '差距评估' }
+import defaultBasicSchema from './basic_profile.schema.json'
+
+export const STEP_LABELS = {
+  1: '目标是否明确',
+  2: '基础信息',
+  3: '信息收集',
+  4: '差距评估',
+}
 
 export const UI_MODES = { SEQUENTIAL: 'sequential', SURVEY: 'survey' }
 
 export const QUESTION_TYPES = { OPEN: 'open', SINGLE: 'single', MULTI: 'multi' }
+
+/** @param {object} schema @returns {AgentQuestion[]} */
+export function schemaToQuestions(schema) {
+  const fields = Array.isArray(schema?.fields) ? schema.fields : []
+  const raw = fields
+    .map((field, i) => {
+      const id = String(field.id || `f${i + 1}`).trim()
+      const label = String(field.label || id).trim()
+      if (!id || !label) return null
+      const type = field.type || 'open'
+      const options = Array.isArray(field.options)
+        ? field.options.map((o, j) => ({ id: `opt_${j}`, label: String(o).trim() })).filter((o) => o.label)
+        : []
+      let qtype = type
+      if ((qtype === 'single' || qtype === 'multi') && options.length === 0) qtype = 'open'
+      return {
+        id,
+        step: 2,
+        type: qtype,
+        text: label,
+        options,
+        required: field.required === true,
+      }
+    })
+    .filter(Boolean)
+  return normalizeQuestions(raw)
+}
+
+/** @param {object|null|undefined} runResult */
+export function resolveBasicSchema(runResult) {
+  return runResult?.meta?.basic_profile_schema || defaultBasicSchema
+}
 
 /** @param {import('./types').AgentQuestion['options']} options */
 export function optionIdSet(options) {
@@ -170,18 +209,38 @@ export function parseInput(value) {
 /** @param {GoalBridgeSession|null} session @param {number} step @param {object|null} runResult */
 export function getStepState(session, step, runResult) {
   const s1 = session?.step1
-  const s2 = session?.step2
+  const goal = s1?.goal_text || ''
+
   if (step === 2) {
-    const rawPending = s2?.pending_questions || runResult?.next_questions || []
+    const schema = resolveBasicSchema(runResult)
+    const pendingQuestions = schemaToQuestions(schema)
+    const stored = session?.step2?.answers || {}
+    const answers = Object.fromEntries(
+      Object.entries(stored).map(([id, v]) => [id, v?.value ?? v]),
+    )
+    return {
+      uiMode: UI_MODES.SURVEY,
+      pendingQuestions,
+      answers,
+      goal,
+      showIntro: false,
+      basicSchema: schema,
+    }
+  }
+
+  if (step === 3) {
+    const s3 = session?.step3
+    const rawPending = s3?.pending_questions || runResult?.next_questions || []
     const pendingQuestions = normalizeQuestions(rawPending)
     return {
-      uiMode: runResult?.ui_mode || s2?.ui_mode || UI_MODES.SURVEY,
+      uiMode: runResult?.ui_mode || s3?.ui_mode || UI_MODES.SURVEY,
       pendingQuestions,
-      answers: s2?.answers || {},
-      goal: s2?.goal_text || s1?.goal_text || '',
+      answers: s3?.answers || {},
+      goal: s3?.goal_text || goal,
       showIntro: false,
     }
   }
+
   const pendingQuestions = normalizeQuestions(
     s1?.pending_questions || runResult?.next_questions || [],
   )
@@ -190,7 +249,7 @@ export function getStepState(session, step, runResult) {
     uiMode: runResult?.ui_mode || s1?.ui_mode || UI_MODES.SEQUENTIAL,
     pendingQuestions,
     answers: s1?.answers || {},
-    goal: s1?.goal_text || '',
+    goal,
     showIntro: !session?.turns?.length && !stepComplete && !pendingQuestions.length,
   }
 }

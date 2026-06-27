@@ -1,0 +1,19 @@
+{
+  "input": {
+    "sentence": { "type": "string", "description": "一句话故事，自动规划连续底图与漫画精灵" },
+    "mode": { "type": "string", "description": "series（默认连续底图+精灵长卷）| single" },
+    "visual_style": { "type": "string", "description": "可选画风覆盖，默认手绘插画" },
+    "template": { "type": "string", "description": "单幕模式动效模板" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "自包含 HTML" },
+    "html": { "type": "string", "description": "完整长卷页面（底图+精灵视差）" },
+    "strip_plan": { "type": "object", "description": "连续底图与 sprites 规划" },
+    "tile_previews": { "type": "array", "description": "各段底图预览" },
+    "sprite_previews": { "type": "array", "description": "各精灵抠图预览与锚点" },
+    "assets_preview": { "type": "object", "description": "strip 长卷与精灵 data URI" },
+    "scene_plan": { "type": "object", "description": "单幕时的规划" },
+    "error": { "type": "string" },
+    "meta": { "type": "object" }
+  }
+}

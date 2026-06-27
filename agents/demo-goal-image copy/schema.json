@@ -1,0 +1,14 @@
+{
+  "input": {
+    "prompt": { "type": "string", "description": "画面描述" },
+    "size": { "type": "string", "description": "输出尺寸，如 1280x1280" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "图片 URL 或 data URL" },
+    "image_url": { "type": "string", "description": "原始临时图片 URL" },
+    "prompt": { "type": "string", "description": "实际使用的 prompt" },
+    "size": { "type": "string", "description": "实际使用的尺寸" },
+    "error": { "type": "string", "description": "错误信息" },
+    "meta": { "type": "object", "description": "调试元信息" }
+  }
+}

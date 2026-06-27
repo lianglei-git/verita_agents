@@ -6,11 +6,13 @@ from typing import Any, Literal
 
 # --- 步骤 ---
 STEP_GOAL = 1
-STEP_INFO = 2
-STEP_GAP = 3
+STEP_BASIC = 2
+STEP_INFO = 3
+STEP_GAP = 4
 
 STEP_LABELS: dict[int, str] = {
     STEP_GOAL: "目标是否明确",
+    STEP_BASIC: "基础信息",
     STEP_INFO: "信息收集",
     STEP_GAP: "差距评估",
 }

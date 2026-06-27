@@ -1,0 +1,11 @@
+{
+  "id": "demo-goal-image",
+  "name": "电影感分层图文",
+  "description": "一句话生成无缝连续底图长卷，叠加漫画精灵视差滚动",
+  "version": "0.5.0",
+  "phase": "mvp",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

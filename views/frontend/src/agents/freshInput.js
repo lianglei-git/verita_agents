@@ -1,6 +1,6 @@
 /** 自管理 Agent 新建运行时的空白输入（避免复制上一份 session） */
 
-const SELF_MANAGED = new Set(['goal-bridge', 'user-profile'])
+const SELF_MANAGED = new Set(['goal-bridge', 'user-profile', 'demo-goal-image'])
 
 export function isSelfManagedAgent(agentId) {
   return SELF_MANAGED.has(agentId)
@@ -18,6 +18,14 @@ export function freshInputForAgent(agentId) {
       action: 'answer',
       universal: null,
       collection: null,
+    })
+  }
+  if (agentId === 'demo-goal-image') {
+    return JSON.stringify({
+      sentence: '',
+      mode: 'series',
+      visual_style: '',
+      template: '',
     })
   }
   return ''

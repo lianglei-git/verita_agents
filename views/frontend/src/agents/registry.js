@@ -6,6 +6,7 @@ const views = {
   'user-profile': () => import('./user-profile'),
   'route-planner': () => import('./route-planner'),
   'goal-bridge': () => import('./goal-bridge'),
+  'demo-goal-image': () => import('./demo-goal-image'),
 }
 
 export function resolveAgentView(agentId) {

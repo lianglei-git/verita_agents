@@ -20,6 +20,7 @@ export default function SurveyPanel({
   onSubmitBatch,
   onFinishHere,
   onReset,
+  submitLabel = '提交全部回答',
 }) {
   const [drafts, setDrafts] = useState({})
 
@@ -67,7 +68,7 @@ export default function SurveyPanel({
             onSubmitBatch(batch)
           }}
         >
-          {loading ? '提交中…' : '提交全部回答'}
+          {loading ? '提交中…' : submitLabel}
         </button>
         {onFinishHere && (
           <button

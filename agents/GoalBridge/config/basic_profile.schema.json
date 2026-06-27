@@ -1,0 +1,58 @@
+{
+  "title": "基础信息",
+  "description": "请填写以下基础画像信息，便于后续规划（均可跳过，点「就这样」提前进入下一步）。",
+  "fields": [
+    {
+      "id": "gender",
+      "label": "性别",
+      "type": "single",
+      "options": ["男", "女", "其他", "不愿透露"],
+      "required": false
+    },
+    {
+      "id": "age_range",
+      "label": "年龄段",
+      "type": "single",
+      "options": ["18岁以下", "18-22", "23-27", "28-35", "36-45", "46岁以上"],
+      "required": false
+    },
+    {
+      "id": "occupation",
+      "label": "职业",
+      "type": "open",
+      "required": false
+    },
+    {
+      "id": "native_language",
+      "label": "母语",
+      "type": "open",
+      "required": false
+    },
+    {
+      "id": "city",
+      "label": "当前所在城市",
+      "type": "open",
+      "required": false
+    },
+    {
+      "id": "target_language",
+      "label": "目标语言",
+      "type": "open",
+      "required": false
+    },
+    {
+      "id": "target_language_level",
+      "label": "目标语言水平",
+      "type": "single",
+      "options": ["零基础", "入门", "中级", "中高级", "接近母语"],
+      "required": false
+    },
+    {
+      "id": "weekly_hours",
+      "label": "每周可投入时间",
+      "type": "single",
+      "options": ["5小时以内", "5-10小时", "10-20小时", "20小时以上"],
+      "required": false
+    }
+  ]
+}

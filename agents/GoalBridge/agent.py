@@ -1,4 +1,4 @@
-"""GoalBridge Agent — 三步架构，当前实现 Step 1–2。"""
+"""GoalBridge Agent — 四步架构：目标 → 基础画像 → AI 信息收集 → 差距评估。"""
 
 from __future__ import annotations
 
@@ -14,9 +14,17 @@ for path in (_AGENTS_ROOT, _AGENT_DIR):
     if path_str not in sys.path:
         sys.path.insert(0, path_str)
 
-from contract import STEP_LABELS  # noqa: E402
+from basic_profile import get_schema_for_client  # noqa: E402
+from contract import STEP_INFO, STEP_LABELS  # noqa: E402
 from debug_log import gb_log  # noqa: E402
-from state import empty_session, goal_text, normalize_session, step1_complete, step2_complete  # noqa: E402
+from state import (  # noqa: E402
+    basic_profile_complete,
+    empty_session,
+    goal_text,
+    normalize_session,
+    step1_complete,
+    step3_info_complete,
+)
 from steps import run_current_step  # noqa: E402
 
 try:
@@ -42,9 +50,8 @@ def _parse_payload(user_input: str, kwargs: dict) -> dict:
 
 
 def _extract_input(payload: dict) -> tuple[str, dict | None, list[dict] | None]:
-    batch = payload.get("answers_batch")
-    if isinstance(batch, list) and batch:
-        return "", None, batch
+    if "answers_batch" in payload and isinstance(payload.get("answers_batch"), list):
+        return "", None, payload["answers_batch"]
     answer = payload.get("answer")
     if isinstance(answer, dict) and answer:
         return "", answer, None
@@ -67,11 +74,15 @@ def _summary(session: dict, step: int, step_complete: bool) -> str:
         clarity = (session.get("step1") or {}).get("clarity") or "pending"
         return f"{label} · {clarity}"
     if step == 2:
-        s2 = session.get("step2") or {}
-        g = str(s2.get("goal_text") or goal_text(session) or "")
         if step_complete:
-            return f"步骤 2 完成 · 已收集基础信息"
-        suff = s2.get("sufficiency") or "pending"
+            return f"步骤 2 完成 · 基础信息已记录"
+        return label
+    if step == 3:
+        s3 = session.get("step3") or {}
+        g = str(s3.get("goal_text") or goal_text(session) or "")
+        if step_complete:
+            return f"步骤 3 完成 · 已收集补充信息"
+        suff = s3.get("sufficiency") or "pending"
         return f"{label} · {suff}" + (f" · {g}" if g else "")
     return label
 
@@ -106,33 +117,37 @@ def run(user_input: str, **kwargs) -> dict:
     step = int(session.get("current_step") or 1)
     llm_calls = list(turn.get("llm_calls") or [])
 
-    # 进入步骤 2 且尚无问卷：自动调用 AI 出题（步骤 1 刚完成时也触发）
-    s2 = session.get("step2") or {}
+    # 进入步骤 3 且尚无问卷：自动调用 AI 出题
+    s3 = session.get("step3") or {}
     need_plan = (
-        step == 2
-        and not s2.get("pending_questions")
-        and s2.get("sufficiency") != "enough"
-        and s2.get("status") != "complete"
+        step == STEP_INFO
+        and basic_profile_complete(session)
+        and not s3.get("pending_questions")
+        and s3.get("sufficiency") != "enough"
+        and s3.get("status") != "complete"
     )
-    if need_plan and not answers_batch:
+    if need_plan and not answers_batch and not confirm_step:
         plan_turn = run_current_step(session, "", None, answers_batch=None)
         if plan_turn.get("source") not in ("error",):
             llm_calls.extend(plan_turn.get("llm_calls") or [])
             turn = plan_turn
             session = turn["session"]
-            step = int(session.get("current_step") or 2)
+            step = int(session.get("current_step") or STEP_INFO)
 
-    # step_complete 表示「当前步骤」是否完成，不能沿用上一步 handler 的返回值
     if step == 1:
         step_complete = step1_complete(session)
     elif step == 2:
-        step_complete = step2_complete(session)
+        step_complete = basic_profile_complete(session)
+    elif step == 3:
+        step_complete = step3_info_complete(session)
     else:
         step_complete = bool(turn.get("step_complete"))
 
     next_questions = list(turn.get("next_questions") or [])
     if not next_questions and turn.get("next_question"):
         next_questions = [turn["next_question"]]
+
+    basic_schema = turn.get("basic_profile_schema") or get_schema_for_client()
 
     result = {
         "output": _summary(session, step, step_complete),
@@ -149,11 +164,12 @@ def run(user_input: str, **kwargs) -> dict:
         "llm_calls": llm_calls,
         "meta": {
             "agent": "goal-bridge",
-            "version": "1.3.0-profile",
+            "version": "1.4.0-basic-profile",
             "turn_source": turn.get("source"),
             "llm_available": is_llm_available(),
             "step_label": STEP_LABELS.get(step, ""),
             "ui_mode": turn.get("ui_mode"),
+            "basic_profile_schema": basic_schema,
         },
     }
     gb_log(
@@ -167,6 +183,7 @@ def run(user_input: str, **kwargs) -> dict:
         next_questions_count=len(next_questions),
         step1=session.get("step1"),
         step2=session.get("step2"),
+        step3=session.get("step3"),
         meta=result["meta"],
     )
     return result

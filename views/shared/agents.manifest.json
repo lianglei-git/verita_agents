@@ -28,6 +28,11 @@
       "enabled": true
     },
     {
+      "id": "demo-goal-image",
+      "dir": "demo-goal-image",
+      "enabled": true
+    },
+    {
       "id": "summarize",
       "dir": null,
       "enabled": true,

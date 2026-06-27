@@ -1,0 +1,831 @@
+@import '../../styles/global.less';
+
+// 暗房显影 — 在全局浅色工作台上嵌一块取景器视窗
+
+@viewport: #0c1018;
+@viewport-rim: #1e293b;
+@develop: #4ecdc4;
+@paper: #f8f6f2;
+@copper: #c67f07;
+
+.demo-goal-image-view {
+  --develop-glow: fade(@develop, 35%);
+
+  .studio-header {
+    margin-bottom: 22px;
+
+    .studio-eyebrow {
+      margin: 0 0 6px;
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: @flow;
+    }
+
+    .studio-title {
+      margin: 0 0 8px;
+      font-family: @font-display;
+      font-size: clamp(1.35rem, 2.5vw, 1.65rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: @ink;
+    }
+
+    .studio-lead {
+      margin: 0;
+      max-width: 52ch;
+      font-size: 14px;
+      line-height: 1.6;
+      color: @ash;
+    }
+
+    .api-hint {
+      margin: 14px 0 0;
+      padding: 10px 14px;
+      background: @fault-dim;
+      border: 1px solid fade(@fault, 25%);
+      border-radius: @radius-md;
+      font-size: 13px;
+      color: @fault;
+    }
+  }
+
+  .studio-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 20px;
+    align-items: start;
+
+    @media (max-width: 860px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .prompt-studio {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 18px 20px;
+    background: @paper;
+    border: 1px solid @rail;
+    border-radius: @radius-lg;
+    box-shadow: 0 1px 0 fade(@ink, 4%);
+  }
+
+  .prompt-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    span {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      background: @chassis;
+      border: 1px solid @rail;
+      border-radius: @radius-md;
+      color: @ink;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      resize: vertical;
+
+      &::placeholder {
+        color: fade(@ash, 75%);
+      }
+    }
+  }
+
+  .example-row {
+    .example-label {
+      display: block;
+      margin-bottom: 8px;
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    .example-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .example-chip {
+      padding: 6px 11px;
+      background: @chassis;
+      border: 1px dashed @rail-light;
+      border-radius: 999px;
+      font-size: 12px;
+      color: @ash;
+      text-align: left;
+
+      &:hover:not(:disabled) {
+        border-color: @flow;
+        color: @ink;
+        background: @flow-dim;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .size-block {
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+  }
+
+  .size-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .size-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 72px;
+    padding: 8px 12px;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    color: @ash;
+
+    .size-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: @ink;
+    }
+
+    .size-hint {
+      font-family: @font-mono;
+      font-size: 10px;
+      color: @ash;
+    }
+
+    &.selected {
+      border-color: @copper;
+      background: fade(@copper, 8%);
+      box-shadow: 0 0 0 1px fade(@copper, 20%);
+
+      .size-label {
+        color: darken(@copper, 8%);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .studio-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .generate-btn {
+    padding: 10px 22px;
+    background: linear-gradient(145deg, darken(@copper, 4%), @copper);
+    border: none;
+    border-radius: @radius-md;
+    color: @on-accent;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px fade(@copper, 28%);
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 4px 14px fade(@copper, 38%);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .ghost-btn {
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    color: @ash;
+    font-size: 13px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .error-banner {
+    margin: 0;
+    padding: 10px 12px;
+    background: @fault-dim;
+    border-radius: @radius-md;
+    font-size: 13px;
+    color: @fault;
+  }
+
+  .url-note {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .preview-studio {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .preview-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    .preview-label {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    .model-tag,
+    .size-tag {
+      padding: 3px 8px;
+      border-radius: @radius-sm;
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .model-tag {
+      background: fade(@develop, 12%);
+      color: darken(@develop, 18%);
+      border: 1px solid fade(@develop, 30%);
+    }
+
+    .size-tag {
+      background: @chassis;
+      color: @ash;
+      border: 1px solid @rail;
+    }
+  }
+
+  // 签名元素：取景器 lightbox
+  .lightbox {
+    position: relative;
+    aspect-ratio: 1;
+    max-height: min(72vh, 560px);
+    background: @viewport;
+    border-radius: @radius-lg;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.is-empty .lightbox-status p {
+      max-width: 22ch;
+      text-align: center;
+    }
+
+    &.is-clickable {
+      .lightbox-image-btn {
+        cursor: zoom-in;
+      }
+
+      &:hover .lightbox-open-hint {
+        opacity: 1;
+      }
+    }
+
+    &.is-loading {
+      .develop-ring {
+        animation: develop-spin 1.2s linear infinite;
+      }
+    }
+  }
+
+  .lightbox-frame {
+    position: absolute;
+    inset: 14px;
+    pointer-events: none;
+    z-index: 2;
+
+    .corner {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-color: fade(@develop, 55%);
+      border-style: solid;
+      opacity: 0.85;
+
+      &.tl {
+        top: 0;
+        left: 0;
+        border-width: 2px 0 0 2px;
+      }
+
+      &.tr {
+        top: 0;
+        right: 0;
+        border-width: 2px 2px 0 0;
+      }
+
+      &.bl {
+        bottom: 0;
+        left: 0;
+        border-width: 0 0 2px 2px;
+      }
+
+      &.br {
+        bottom: 0;
+        right: 0;
+        border-width: 0 2px 2px 0;
+      }
+    }
+  }
+
+  .lightbox-status {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 24px;
+    color: fade(#e2e8f0, 72%);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .develop-ring {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid fade(@develop, 25%);
+    border-top-color: @develop;
+    box-shadow: 0 0 24px var(--develop-glow);
+  }
+
+  .lightbox-image-btn {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    cursor: inherit;
+
+    &:focus-visible {
+      outline: 2px solid @develop;
+      outline-offset: -4px;
+    }
+  }
+
+  .lightbox-open-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: fade(@viewport, 72%);
+    border: 1px solid fade(@develop, 35%);
+    color: fade(#f8fafc, 92%);
+    font-family: @font-mono;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s @ease-out;
+  }
+
+  .lightbox-image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    animation: image-reveal 0.65s @ease-out both;
+    pointer-events: none;
+  }
+
+  .prompt-echo {
+    margin: 0;
+    padding: 12px 14px;
+    background: @chassis;
+    border-left: 3px solid @copper;
+    border-radius: 0 @radius-md @radius-md 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: @ash;
+    font-style: normal;
+  }
+
+  &.review {
+    .review-figure {
+      margin: 0;
+
+      figcaption {
+        margin-top: 10px;
+        font-size: 13px;
+        color: @ash;
+        line-height: 1.5;
+      }
+    }
+
+    .lightbox {
+      max-height: none;
+    }
+  }
+
+  .muted {
+    color: @ash;
+    font-size: 13px;
+  }
+
+  .template-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .template-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 88px;
+    padding: 8px 12px;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    color: @ash;
+
+    .template-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: @ink;
+    }
+
+    .template-hint {
+      font-family: @font-mono;
+      font-size: 10px;
+      color: @ash;
+    }
+
+    &.selected {
+      border-color: @copper;
+      background: fade(@copper, 8%);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .pipeline-hint {
+    margin: 0;
+    font-size: 12px;
+    color: @ash;
+    line-height: 1.5;
+  }
+
+  .plan-panel {
+    font-size: 13px;
+    color: @ash;
+
+    summary {
+      cursor: pointer;
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: @ink;
+    }
+
+    dl {
+      margin: 10px 0 0;
+
+      div {
+        margin-bottom: 10px;
+      }
+
+      dt {
+        font-family: @font-mono;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: @ash;
+        margin-bottom: 4px;
+      }
+
+      dd {
+        margin: 0;
+        line-height: 1.5;
+        color: @ink;
+      }
+    }
+  }
+
+  .stage-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    li {
+      padding: 4px 8px;
+      border-radius: @radius-sm;
+      background: @flow-dim;
+      font-family: @font-mono;
+      font-size: 10px;
+      color: darken(@flow, 12%);
+    }
+  }
+
+  .layer-thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .layer-thumb {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    background: @chassis;
+    cursor: zoom-in;
+
+    img {
+      width: 72px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: @radius-sm;
+      background: @viewport;
+    }
+
+    span {
+      font-family: @font-mono;
+      font-size: 10px;
+      color: @ash;
+    }
+  }
+
+  .parallax-preview-wrap {
+    position: relative;
+    height: min(68vh, 520px);
+    border-radius: @radius-lg;
+    overflow: hidden;
+    border: 1px solid @viewport-rim;
+    background: #000;
+
+    &.is-loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: fade(#000, 35%);
+      pointer-events: none;
+    }
+  }
+
+  .parallax-preview-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    background: #000;
+  }
+
+  .parallax-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    color: fade(#e2e8f0, 65%);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .export-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .style-field input {
+    width: 100%;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    color: @ink;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .plan-style {
+    margin: 8px 0 12px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: @ash;
+  }
+
+  .plan-section-label {
+    margin: 12px 0 6px;
+    font-family: @font-mono;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: @flow;
+  }
+
+  .beat-plan-list {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: @ink;
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .text-meta {
+      font-size: 11px;
+      color: @ash;
+    }
+  }
+
+  .beats-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
+
+  .strip-thumb-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    background: @chassis;
+    cursor: zoom-in;
+    text-align: left;
+
+    .strip-thumb {
+      width: 100%;
+      max-height: 120px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      border-radius: @radius-sm;
+    }
+
+    span {
+      display: block;
+      margin-top: 6px;
+      font-family: @font-mono;
+      font-size: 10px;
+      color: @ash;
+    }
+  }
+
+  .beat-card {
+    padding: 10px 12px;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+
+    &.sprite-card .beat-thumbs button {
+      background: repeating-conic-gradient(@void 0% 25%, @chassis 0% 50%) 50% / 12px 12px;
+    }
+
+    header {
+      margin-bottom: 8px;
+    }
+
+    .beat-id {
+      font-family: @font-mono;
+      font-size: 10px;
+      text-transform: uppercase;
+      color: @flow;
+    }
+
+    .beat-narration {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: @ash;
+      line-height: 1.4;
+    }
+
+    .beat-thumbs {
+      display: flex;
+      gap: 8px;
+
+      button {
+        padding: 4px;
+        border: 1px solid @rail;
+        border-radius: @radius-sm;
+        background: @void;
+        cursor: zoom-in;
+
+        img {
+          width: 56px;
+          height: 40px;
+          object-fit: cover;
+          display: block;
+          border-radius: 2px;
+        }
+
+        span {
+          display: block;
+          margin-top: 2px;
+          font-family: @font-mono;
+          font-size: 9px;
+          color: @ash;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@keyframes develop-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes image-reveal {
+  from {
+    opacity: 0;
+    filter: brightness(1.8) blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-goal-image-view {
+    .lightbox-image {
+      animation: none;
+    }
+
+    .develop-ring {
+      animation: none;
+      opacity: 0.7;
+    }
+  }
+}

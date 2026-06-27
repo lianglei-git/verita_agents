@@ -1,0 +1,11 @@
+{
+  "id": "demo-goal-image",
+  "name": "目标意象图",
+  "description": "用文字描述生成一张目标相关的意象图（GLM-Image 演示）",
+  "version": "0.1.0",
+  "phase": "demo",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

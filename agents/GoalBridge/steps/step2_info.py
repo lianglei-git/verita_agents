@@ -22,16 +22,17 @@ from user_profile import (
     merge_round_before_ai,
 )
 from state import (
-    ensure_step2_goal,
+    basic_profile_complete,
+    ensure_step3_goal,
     normalize_session,
     record_turn,
-    set_step2,
+    set_step3_info,
     step1_complete,
-    step2_all_answered,
-    step2_answers_map,
-    step2_complete,
-    step2_pending_questions,
-    step2_store_answer,
+    step3_all_answered,
+    step3_answers_map,
+    step3_info_complete,
+    step3_pending_questions,
+    step3_store_answer,
 )
 
 logger = logging.getLogger(__name__)
@@ -52,8 +53,8 @@ def _answer_display(q: dict, stored: dict) -> str:
 
 def _format_answer_bundle(session: dict) -> str:
     lines: list[str] = []
-    for q in step2_pending_questions(session):
-        stored = step2_answers_map(session).get(q["id"])
+    for q in step3_pending_questions(session):
+        stored = step3_answers_map(session).get(q["id"])
         if not stored:
             continue
         lines.append(f"- [{q['id']}] {q['text']} → {_answer_display(q, stored)}")
@@ -62,8 +63,8 @@ def _format_answer_bundle(session: dict) -> str:
 
 def _qa_items(session: dict) -> list[dict[str, str]]:
     items: list[dict[str, str]] = []
-    for q in step2_pending_questions(session):
-        stored = step2_answers_map(session).get(q["id"])
+    for q in step3_pending_questions(session):
+        stored = step3_answers_map(session).get(q["id"])
         if not stored:
             continue
         items.append({"question": q["text"], "answer": _answer_display(q, stored)})
@@ -86,7 +87,7 @@ def _fallback_reply(data: dict) -> str:
     if reply:
         return reply
     if data.get("info_sufficiency") == "enough":
-        return "基础信息已收集完整，可进入步骤 3（差距评估，待实现）。"
+        return "基础信息已收集完整，可进入步骤 4（差距评估，待实现）。"
     questions = normalize_questions(data.get("next_questions"))
     if questions:
         return "请补充以下信息，以便更准确评估。"
@@ -110,9 +111,9 @@ def _apply_llm(session: dict, data: dict) -> dict:
     for q in questions:
         q["step"] = STEP
 
-    session = ensure_step2_goal(session)
+    session = ensure_step3_goal(session)
     if suff == "enough":
-        session = set_step2(
+        session = set_step3_info(
             session,
             sufficiency="enough",
             status="complete",
@@ -121,7 +122,7 @@ def _apply_llm(session: dict, data: dict) -> dict:
             data=collected,
         )
     else:
-        session = set_step2(
+        session = set_step3_info(
             session,
             sufficiency="need_more",
             status="collecting",
@@ -147,17 +148,17 @@ def _process_llm_turn(session: dict, data: dict | None) -> tuple[dict, str] | No
 
 
 def _build_result(session: dict, reply: str, *, source: str) -> dict[str, Any]:
-    complete = step2_complete(session)
+    complete = step3_info_complete(session)
     if complete:
         session = dict(session)
-        session["current_step"] = 3
+        session["current_step"] = 4
 
-    pending = step2_pending_questions(session)
+    pending = step3_pending_questions(session)
     progress = {
-        "answered": sum(1 for q in pending if q["id"] in step2_answers_map(session)),
+        "answered": sum(1 for q in pending if q["id"] in step3_answers_map(session)),
         "total": len(pending),
     }
-    ui_mode = (session.get("step2") or {}).get("ui_mode") or "survey"
+    ui_mode = (session.get("step3") or {}).get("ui_mode") or "survey"
 
     return {
         "session": session,
@@ -203,7 +204,7 @@ def _store_answers_batch(session: dict, answers_batch: list[dict] | None) -> dic
         return session
     for item in answers_batch:
         if isinstance(item, dict) and item.get("question_id"):
-            session = step2_store_answer(session, item)
+            session = step3_store_answer(session, item)
     return session
 
 
@@ -215,10 +216,10 @@ def _merge_answered_to_profile(session: dict) -> dict:
 
 
 def _confirm_step(session: dict) -> dict[str, Any]:
-    session = ensure_step2_goal(session)
+    session = ensure_step3_goal(session)
     profile = get_user_profile(session)
     collected = dict(profile.get("structured") or {})
-    session = set_step2(
+    session = set_step3_info(
         session,
         sufficiency="enough",
         status="complete",
@@ -227,9 +228,9 @@ def _confirm_step(session: dict) -> dict[str, Any]:
         data=collected,
     )
     session = dict(session)
-    session["current_step"] = 3
+    session["current_step"] = 4
     reply = "已按您的确认完成信息收集，进入差距评估。"
-    session = record_turn(session, "（我认为基础信息已经够了）", reply)
+    session = record_turn(session, "（就这样）", reply)
     return _log_result(_build_result(session, reply, source="confirm"))
 
 
@@ -275,7 +276,7 @@ def run(
         answer=answer,
         answers_batch=answers_batch,
         confirm_step=confirm_step,
-        step2_in=session.get("step2"),
+        step3_in=session.get("step3"),
     )
 
     if not step1_complete(session):
@@ -283,19 +284,24 @@ def run(
             _build_result(session, "请先完成步骤 1（明确目标）。", source="error"),
         )
 
-    session = ensure_step2_goal(session)
+    if not basic_profile_complete(session):
+        return _log_result(
+            _build_result(session, "请先完成步骤 2（基础信息）。", source="error"),
+        )
 
-    if confirm_step and not step2_complete(session):
+    session = ensure_step3_goal(session)
+
+    if confirm_step and not step3_info_complete(session):
         session = _store_answers_batch(session, answers_batch)
         session = _merge_answered_to_profile(session)
         return _confirm_step(session)
 
-    if step2_complete(session):
-        goal = (session.get("step2") or {}).get("goal_text") or ""
+    if step3_info_complete(session):
+        goal = (session.get("step3") or {}).get("goal_text") or ""
         return _log_result(
             _build_result(
                 session,
-                f"信息已收集完毕（目标：{goal}）。可进入步骤 3。",
+                f"信息已收集完毕（目标：{goal}）。可进入步骤 4。",
                 source="cached",
             ),
         )
@@ -303,29 +309,29 @@ def run(
     if answers_batch:
         for item in answers_batch:
             if isinstance(item, dict):
-                session = step2_store_answer(session, item)
-        if step2_pending_questions(session) and step2_all_answered(session):
+                session = step3_store_answer(session, item)
+        if step3_pending_questions(session) and step3_all_answered(session):
             return _try_evaluate(session)
         return _log_result(
             _build_result(session, "请完成所有题目后再提交。", source="error"),
         )
 
-    if answer and step2_pending_questions(session):
-        session = step2_store_answer(session, answer)
-        if step2_all_answered(session):
+    if answer and step3_pending_questions(session):
+        session = step3_store_answer(session, answer)
+        if step3_all_answered(session):
             return _try_evaluate(session)
         return _log_result(
             _build_result(session, "请通过问卷一次性提交全部回答。", source="error"),
         )
 
-    if step2_pending_questions(session) and step2_all_answered(session):
+    if step3_pending_questions(session) and step3_all_answered(session):
         return _try_evaluate(session)
 
-    s2 = session.get("step2") or {}
+    s3 = session.get("step3") or {}
     needs_plan = (
-        not step2_pending_questions(session)
-        and s2.get("status") in ("pending", "collecting", None)
-        and s2.get("sufficiency") != "enough"
+        not step3_pending_questions(session)
+        and s3.get("status") in ("pending", "collecting", None)
+        and s3.get("sufficiency") != "enough"
     )
     if needs_plan:
         from _lib.llm import is_llm_available  # noqa: WPS433
@@ -336,12 +342,12 @@ def run(
         session, reply = planned
         if reply is None:
             return _log_result(_build_result(session, "处理失败，请重试。", source="error"))
-        if not step2_pending_questions(session):
-            if step2_complete(session):
+        if not step3_pending_questions(session):
+            if step3_info_complete(session):
                 return _log_result(
                     _build_result(
                         session,
-                        "步骤 2 不应在首次出题时直接结束；请重试生成问卷。",
+                        "步骤 3 不应在首次出题时直接结束；请重试生成问卷。",
                         source="error",
                     ),
                 )
@@ -352,8 +358,8 @@ def run(
                     source="error",
                 ),
             )
-        goal = (session.get("step2") or {}).get("goal_text") or ""
-        session = record_turn(session, f"开始收集基础信息（目标：{goal}）", reply)
+        goal = (session.get("step3") or {}).get("goal_text") or ""
+        session = record_turn(session, f"开始收集补充信息（目标：{goal}）", reply)
         return _log_result(_build_result(session, reply, source="plan"))
 
     return _log_result(
@@ -367,4 +373,5 @@ def bootstrap() -> dict[str, Any]:
     s = empty_session()
     s["current_step"] = STEP
     s["step1"] = {**s["step1"], "clarity": "clear", "goal_text": "示例目标"}
+    s["step2"] = {**s["step2"], "status": "complete"}
     return run(s, "", None)

@@ -59,11 +59,19 @@ function StepDoneCard({ step, session }) {
     )
   }
   if (step === 2) {
-    const data = session?.step2?.data
-    const goal = session?.step2?.goal_text || session?.step1?.goal_text
     return (
       <div className="step-done-card">
         <h4>步骤 2 完成</h4>
+        <p>基础画像已记录。</p>
+      </div>
+    )
+  }
+  if (step === 3) {
+    const data = session?.step3?.data
+    const goal = session?.step3?.goal_text || session?.step1?.goal_text
+    return (
+      <div className="step-done-card">
+        <h4>步骤 3 完成</h4>
         <p>目标：<strong>{goal}</strong></p>
         {data && Object.keys(data).length > 0 && (
           <dl className="collected-info">
@@ -75,7 +83,7 @@ function StepDoneCard({ step, session }) {
             ))}
           </dl>
         )}
-        <p className="muted">步骤 3「差距评估」尚未实现。</p>
+        <p className="muted">步骤 4「差距评估」尚未实现。</p>
       </div>
     )
   }
@@ -216,23 +224,24 @@ export default function GoalBridgeView({
     pendingQuestions.length > 0 &&
     allQuestionsAnswered &&
     !activeQuestion
-  const step2NeedsPlan =
-    step === 2 &&
+  const step3NeedsPlan =
+    step === 3 &&
     !stepComplete &&
     !pendingQuestions.length &&
-    session?.step2?.sufficiency !== 'enough'
+    session?.step3?.sufficiency !== 'enough'
 
   const userProfile = runResult?.user_profile || session?.user_profile
   const llmCalls = runResult?.llm_calls || []
   const canFinishHere =
     !stepComplete &&
     !showIntro &&
-    (step === 1 || step === 2) &&
+    (step === 1 || step === 2 || step === 3) &&
     (pendingQuestions.length > 0 ||
       userProfile?.summary ||
       (session?.turns?.length || 0) > 0)
-  const step2PlanKey = `${session?.step2?.goal_text || ''}|${session?.turns?.length || 0}`
-  const step2BootstrapRef = useRef(null)
+  const step3PlanKey = `${session?.step3?.goal_text || ''}|${session?.turns?.length || 0}`
+  const step3BootstrapRef = useRef(null)
+  const step2BasicBootstrapRef = useRef(false)
   const rejudgeAttemptRef = useRef(null)
 
   useEffect(() => {
@@ -267,7 +276,8 @@ export default function GoalBridgeView({
 
   const startFresh = () => {
     rejudgeAttemptRef.current = null
-    step2BootstrapRef.current = null
+    step3BootstrapRef.current = null
+    step2BasicBootstrapRef.current = false
     commit({ reset: true })
   }
   const submitIntro = () => {
@@ -310,22 +320,33 @@ export default function GoalBridgeView({
     commit({ session: session || payload.session })
   }, [awaitingRejudge, loading, onRun, pendingQuestions, answers, session, payload.session])
 
-  useEffect(() => {
-    if (!step2NeedsPlan || loading || !onRun) return
-    if (step2BootstrapRef.current === step2PlanKey) return
-    step2BootstrapRef.current = step2PlanKey
-    commit({ session: session || payload.session })
-  }, [step2NeedsPlan, loading, onRun, session, payload.session, step2PlanKey])
+  const submitBasicBatch = (answersBatch) => {
+    commit({ answers_batch: answersBatch, session: session || payload.session })
+  }
 
-  const step2PlanFailed =
-    step === 2 &&
-    step2NeedsPlan &&
+  useEffect(() => {
+    if (step !== 2 || stepComplete || loading || !onRun || step2BasicBootstrapRef.current) return
+    if (session?.step2?.status === 'complete') return
+    step2BasicBootstrapRef.current = true
+    commit({ session: session || payload.session })
+  }, [step, stepComplete, loading, onRun, session, payload.session])
+
+  useEffect(() => {
+    if (!step3NeedsPlan || loading || !onRun) return
+    if (step3BootstrapRef.current === step3PlanKey) return
+    step3BootstrapRef.current = step3PlanKey
+    commit({ session: session || payload.session })
+  }, [step3NeedsPlan, loading, onRun, session, payload.session, step3PlanKey])
+
+  const step3PlanFailed =
+    step === 3 &&
+    step3NeedsPlan &&
     !loading &&
     (runResult?.meta?.turn_source === 'error' ||
       (runResult?.meta?.turn_source === 'plan' && !pendingQuestions.length))
 
-  const retryStep2Plan = () => {
-    step2BootstrapRef.current = null
+  const retryStep3Plan = () => {
+    step3BootstrapRef.current = null
     commit({ session: session || payload.session })
   }
 
@@ -336,7 +357,7 @@ export default function GoalBridgeView({
     return (
       <div className={`goal-bridge-view mode-${mode} review`}>
         {session?.step1?.clarity === 'clear' && <StepDoneCard step={1} session={session} />}
-        {session?.step2?.sufficiency === 'enough' && <StepDoneCard step={2} session={session} />}
+        {session?.step3?.sufficiency === 'enough' && <StepDoneCard step={3} session={session} />}
         <TurnLog turns={session?.turns} />
       </div>
     )
@@ -359,7 +380,7 @@ export default function GoalBridgeView({
       <UserProfilePanel profile={userProfile} />
       <LlmDebugPanel calls={llmCalls} />
 
-      {errorReply && !awaitingRejudge && !step2NeedsPlan && (
+      {errorReply && !awaitingRejudge && !step3NeedsPlan && (
         <p className="error-hint" role="alert">{errorReply}</p>
       )}
 
@@ -468,8 +489,10 @@ export default function GoalBridgeView({
         </div>
       )}
 
-      {((step === 1 && !showIntro && !stepComplete && uiMode === UI_MODES.SURVEY) ||
-        (step === 2 && !stepComplete)) &&
+      {step === 1 &&
+        !showIntro &&
+        !stepComplete &&
+        uiMode === UI_MODES.SURVEY &&
         pendingQuestions.length > 0 && (
           <SurveyPanel
             questions={pendingQuestions}
@@ -481,11 +504,34 @@ export default function GoalBridgeView({
           />
         )}
 
-      {step === 2 && step2NeedsPlan && loading && (
-        <p className="question-hint">正在根据您的目标生成问卷…</p>
+      {step === 2 && !stepComplete && pendingQuestions.length > 0 && (
+        <SurveyPanel
+          questions={pendingQuestions}
+          reply={runResult?.reply}
+          loading={loading}
+          onSubmitBatch={submitBasicBatch}
+          onFinishHere={submitFinishHere}
+          onReset={startFresh}
+          submitLabel="保存并继续"
+        />
       )}
 
-      {step2PlanFailed && (
+      {step === 3 && !stepComplete && pendingQuestions.length > 0 && (
+        <SurveyPanel
+          questions={pendingQuestions}
+          reply={runResult?.reply}
+          loading={loading}
+          onSubmitBatch={submitBatch}
+          onFinishHere={submitFinishHere}
+          onReset={startFresh}
+        />
+      )}
+
+      {step === 3 && step3NeedsPlan && loading && (
+        <p className="question-hint">正在根据您的目标生成补充问卷…</p>
+      )}
+
+      {step3PlanFailed && (
         <div className="question-block rejudge-block">
           <p className="error-hint" role="alert">
             {errorReply || '问卷生成失败，AI 未返回有效题目。'}
@@ -494,7 +540,7 @@ export default function GoalBridgeView({
             <button
               type="button"
               className="primary-btn"
-              onClick={retryStep2Plan}
+              onClick={retryStep3Plan}
               disabled={loading}
             >
               {loading ? '生成中…' : '重新生成问卷'}
