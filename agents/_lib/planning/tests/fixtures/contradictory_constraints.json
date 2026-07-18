@@ -1,0 +1,73 @@
+{
+  "case_id": "contradictory_constraints",
+  "description": "矛盾约束：高目标与低风险/低投入要求冲突",
+  "heuristic_only": true,
+  "profile": {
+    "schema_version": "1.0",
+    "profile_id": "profile_contradictory",
+    "anchors": {
+      "goal": "一年内实现财务自由并退休",
+      "current": "月薪约 8000 的上班族，无投资经验",
+      "goal_clarity": "medium",
+      "current_clarity": "medium"
+    },
+    "goals": [{
+      "id": "goal_primary",
+      "description": "一年内实现财务自由并退休",
+      "priority": "primary",
+      "time_horizon": "1 年"
+    }],
+    "current_state": {
+      "constraints": [
+        {
+          "id": "c_no_risk",
+          "text": "不能承担任何投资风险",
+          "kind": "fact",
+          "source": "user_stated",
+          "confidence": 0.9,
+          "evidence_refs": [],
+          "requires_confirmation": false
+        },
+        {
+          "id": "c_low_time",
+          "text": "每周最多只能投入 2 小时",
+          "kind": "fact",
+          "source": "user_stated",
+          "confidence": 0.9,
+          "evidence_refs": [],
+          "requires_confirmation": false
+        },
+        {
+          "id": "c_hard_deadline",
+          "text": "必须在一年内达成目标",
+          "kind": "fact",
+          "source": "user_stated",
+          "confidence": 0.9,
+          "evidence_refs": [],
+          "requires_confirmation": false
+        }
+      ]
+    },
+    "assumptions": [{
+      "id": "asm_conflict",
+      "text": "目标与约束之间存在张力，需通过情景比较暴露取舍",
+      "kind": "assumption",
+      "source": "model_assumed",
+      "confidence": 0.6,
+      "requires_confirmation": true
+    }],
+    "readiness": {
+      "status": "conditional",
+      "confidence": 0.5,
+      "allow_proceed_with_assumptions": true
+    },
+    "provenance": { "source_agent": "fixture" }
+  },
+  "selected_scenario_id": "scenario_balanced",
+  "expect": {
+    "gap_blocked": false,
+    "min_gaps": 1,
+    "min_scenarios": 3,
+    "min_roadmap_phases": 1
+  }
+}

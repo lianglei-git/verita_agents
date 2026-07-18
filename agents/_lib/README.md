@@ -15,7 +15,32 @@ if is_llm_available():
     data = client.chat_json("...")
 ```
 
-## 导入前提
+## JSON
+
+```python
+from _lib.json_utils import extract_json
+```
+
+## Planning（规划流水线契约）
+
+统一画像、差距诊断、情景推演、自适应路线图与叙事创作的共享契约与安全约束：
+
+```python
+from _lib.planning import (
+    empty_planning_profile,
+    planning_profile_from_handoff,
+    normalize_gap_diagnosis,
+    build_safety_system_prompt,
+    load_schema,
+    validate_contract,
+)
+
+profile = planning_profile_from_handoff(handoff)
+system = build_safety_system_prompt("scenario")
+schema = load_schema("planning_profile")
+```
+
+JSON Schema 位于 `agents/_lib/planning/schemas/`。
 
 - Views 加载 agent 时会自动把 `agents/` 加入 `sys.path`
 - 独立运行某 agent 时，需在 `agent.py` 顶部 bootstrap `agents/` 路径（见 `user-profile/agent.py`）

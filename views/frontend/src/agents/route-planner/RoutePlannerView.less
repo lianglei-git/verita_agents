@@ -5,186 +5,255 @@
     margin: 0 0 14px;
     font-size: 13px;
     color: @ash;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
-  .goal-field {
+  .scenario-context {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    background: @flow-dim;
+    border: 1px solid fade(@flow, 25%);
+    border-radius: @radius-md;
 
-    span {
+    .context-label {
       font-family: @font-mono;
       font-size: 10px;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: @ash;
-    }
-
-    input {
-      background: @chassis;
-      border: 1px solid @rail;
-      border-radius: @radius-md;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: @ink;
-    }
-  }
-
-  .route-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-
-  .route-card {
-    text-align: left;
-    background: @void;
-    border: 1px solid @rail;
-    border-radius: @radius-md;
-    padding: 12px 14px;
-    color: @ink;
-    transition: border-color 0.18s @ease-out, box-shadow 0.18s @ease-out;
-
-    &:hover {
-      border-color: @rail-light;
-    }
-
-    &.selected {
-      border-color: @signal;
-      background: @signal-dim;
-      box-shadow: 0 2px 10px fade(@signal, 12%);
-    }
-
-    &.auto {
-      border-style: dashed;
-    }
-
-    .route-name {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-    .route-tagline {
-      display: block;
-      font-size: 12px;
-      color: @ash;
-      line-height: 1.4;
-    }
-  }
-
-  .result-section {
-    padding-top: 16px;
-    border-top: 1px solid @rail;
-
-    h3 {
-      margin: 0 0 12px;
-      font-family: @font-display;
-      font-size: 15px;
-      font-weight: 700;
       color: @flow;
     }
+
+    strong {
+      font-size: 14px;
+    }
+
+    .context-tagline {
+      font-size: 12px;
+      color: @ash;
+    }
   }
 
-  .plan-card {
-    background: @void;
-    border: 1px solid fade(@flow, 25%);
+  .blocked-hint {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    background: @fault-dim;
+    border: 1px solid fade(@fault, 25%);
     border-radius: @radius-md;
-    padding: 16px 18px;
+    font-size: 13px;
+    color: @fault;
+    line-height: 1.5;
+  }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
+  .state-badge {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
 
-      h4 {
-        margin: 0;
+    .state-label {
+      font-family: @font-mono;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: @flow;
+      background: @flow-dim;
+      padding: 4px 8px;
+      border-radius: @radius-sm;
+    }
+
+    .source-hint {
+      font-size: 11px;
+      color: @ash;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin: 14px 0;
+  }
+
+  .primary-btn,
+  .ghost-btn {
+    border-radius: @radius-md;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .primary-btn {
+    background: @signal;
+    color: @on-accent;
+    border-color: @signal;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .ghost-btn {
+    background: transparent;
+    color: @ash;
+    border-color: @rail;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .roadmap-panel {
+    .roadmap-header {
+      margin-bottom: 14px;
+
+      h3 {
+        margin: 0 0 6px;
         font-family: @font-display;
         font-size: 18px;
         font-weight: 700;
       }
 
-      .track {
+      .roadmap-summary {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.55;
+        color: @ink;
+      }
+
+      .version-tag {
         font-family: @font-mono;
         font-size: 10px;
-        color: @flow;
-        text-transform: uppercase;
-      }
-    }
-
-    .tagline {
-      margin: 0 0 8px;
-      font-size: 13px;
-      color: @ash;
-    }
-
-    .rationale {
-      margin: 0 0 14px;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .stages {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-
-      li {
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-        padding: 8px 0;
-        border-top: 1px solid @rail;
-
-        .stage-num {
-          flex-shrink: 0;
-          width: 22px;
-          height: 22px;
-          border-radius: 50%;
-          background: @flow-dim;
-          color: @flow;
-          font-family: @font-mono;
-          font-size: 11px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        strong {
-          display: block;
-          font-size: 13px;
-        }
-
-        span {
-          font-size: 12px;
-          color: @ash;
-        }
+        color: @ash;
       }
     }
   }
 
-  .alternatives {
-    margin-top: 12px;
-    font-size: 12px;
-    color: @ash;
+  .phases {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
 
-    .alt-label {
-      font-family: @font-mono;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+  .phase-card {
+    background: @void;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    padding: 14px 16px;
+
+    header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+
+      .phase-num {
+        flex-shrink: 0;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: @flow-dim;
+        color: @flow;
+        font-family: @font-mono;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h4 {
+        margin: 0 0 4px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .phase-goal {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .time-window {
+        display: inline-block;
+        margin-top: 4px;
+        font-family: @font-mono;
+        font-size: 10px;
+        color: @ash;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
     }
 
-    ul {
-      margin: 6px 0 0;
-      padding-left: 18px;
+    section {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid @rail;
+
+      h5 {
+        margin: 0 0 6px;
+        font-family: @font-mono;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: @ash;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        font-size: 13px;
+        line-height: 1.45;
+
+        li + li {
+          margin-top: 4px;
+        }
+      }
+
+      .due,
+      .review-when {
+        color: @ash;
+        font-size: 12px;
+      }
+    }
+
+    .action-list li {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+
+      .effort {
+        font-family: @font-mono;
+        font-size: 10px;
+        color: @signal;
+        text-transform: uppercase;
+      }
+    }
+
+    .risk-section ul {
+      color: @fault;
+    }
+
+    .adjust-section .adjust-desc {
+      margin: 0 0 6px;
+      font-size: 12px;
+      color: @ash;
+    }
+
+    .review-section {
+      background: fade(@flow, 5%);
+      margin-left: -16px;
+      margin-right: -16px;
+      margin-bottom: -14px;
+      padding: 10px 16px 14px;
+      border-radius: 0 0 @radius-md @radius-md;
+      border-top-color: fade(@flow, 20%);
     }
   }
 }

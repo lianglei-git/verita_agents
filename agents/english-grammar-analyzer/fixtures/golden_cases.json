@@ -1,0 +1,242 @@
+[
+  {
+    "original": "Do not speak of your happiness to one less fortunate than yourself.",
+    "type": "imperative (negative)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": null,
+        "predicate": {
+          "verb": "speak",
+          "auxiliary": "do not",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "of",
+              "object": "your happiness",
+              "function": "content (what to speak about)"
+            },
+            {
+              "type": "prepositional_phrase",
+              "preposition": "to",
+              "object": {
+                "head": "one",
+                "modifier": {
+                  "type": "adjective_phrase",
+                  "text": "less fortunate than yourself",
+                  "comparison": "than yourself"
+                }
+              },
+              "function": "recipient (to whom)"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      }
+    ],
+    "relations": "Predicate 'speak' governs two prepositional phrases as adverbial modifiers; 'to one' has a post‑modifying adjective phrase."
+  },
+  {
+    "original": "When it comes to education, the majority of people believe that it is a lifetime study.",
+    "type": "complex (adverbial clause + main clause + object clause)",
+    "clauses": [
+      {
+        "clause_type": "adverbial subordinate",
+        "subordinator": "When",
+        "subject": { "text": "it", "type": "dummy pronoun" },
+        "predicate": {
+          "verb": "comes",
+          "modifier": { "type": "prepositional_phrase", "preposition": "to", "object": "education" }
+        },
+        "object": null,
+        "complement": null,
+        "adverbials": null
+      },
+      {
+        "clause_type": "main",
+        "subject": {
+          "text": "the majority of people",
+          "head": "majority",
+          "modifier": { "type": "prepositional_phrase", "preposition": "of", "object": "people" }
+        },
+        "predicate": { "verb": "believe" },
+        "object": {
+          "type": "noun_clause (object)",
+          "subordinator": "that",
+          "subject": { "text": "it" },
+          "predicate": { "verb": "is" },
+          "complement": {
+            "text": "a lifetime study",
+            "modifier": { "type": "attributive", "text": "lifetime", "modified": "study" }
+          }
+        },
+        "complement": null,
+        "adverbials": null
+      }
+    ],
+    "relations": "Main clause 'believe' takes a 'that'‑clause as object; adverbial clause of time modifies 'believe'."
+  },
+  {
+    "original": "I'm so sorry that he should be so careless.",
+    "type": "complex (cause/reason clause)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": { "text": "I" },
+        "predicate": { "verb": "am" },
+        "complement": {
+          "text": "sorry",
+          "modifier": { "type": "adverb", "text": "so", "function": "degree" }
+        },
+        "object": null,
+        "adverbials": null
+      },
+      {
+        "clause_type": "subordinate (adverbial of reason / complement of 'sorry')",
+        "subordinator": "that",
+        "subject": { "text": "he" },
+        "predicate": { "verb": "should be" },
+        "complement": {
+          "text": "careless",
+          "modifier": { "type": "adverb", "text": "so", "function": "degree" }
+        },
+        "object": null,
+        "adverbials": null
+      }
+    ],
+    "relations": "The 'that'‑clause specifies the reason for the speaker's feeling, functioning as an adverbial or complement of the adjective 'sorry'."
+  },
+  {
+    "original": "Later they may give performances in pubs or clubs, for which they are paid in cash.",
+    "type": "complex (main + non‑restrictive relative clause)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": { "text": "they" },
+        "predicate": { "verb": "may give" },
+        "object": { "text": "performances" },
+        "adverbials": [
+          { "type": "adverb", "text": "Later", "function": "time" },
+          { "type": "prepositional_phrase", "preposition": "in", "object": "pubs or clubs", "function": "place" }
+        ],
+        "complement": null
+      },
+      {
+        "clause_type": "non‑restrictive relative",
+        "relative_pronoun": "which",
+        "preposition": "for",
+        "subject": { "text": "they" },
+        "predicate": { "verb": "are paid" },
+        "adverbials": [
+          { "type": "prepositional_phrase", "preposition": "in", "object": "cash", "function": "manner" }
+        ],
+        "object": null,
+        "complement": null,
+        "antecedent": "performances (or the whole previous clause)"
+      }
+    ],
+    "relations": "The relative clause (with 'for which') provides additional information about the payment, and 'for which' acts as an adverbial modifier to 'paid'."
+  },
+  {
+    "original": "It is easy to open a shop but hard to keep it always open.",
+    "type": "simple (with formal subject and compound complement)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": { "text": "It", "type": "formal subject" },
+        "predicate": { "verb": "is" },
+        "complement": [
+          {
+            "text": "easy",
+            "conjunction": null
+          },
+          {
+            "text": "hard",
+            "conjunction": "but"
+          }
+        ],
+        "true_subject": [
+          {
+            "type": "infinitive_phrase",
+            "text": "to open a shop",
+            "verb": "open",
+            "object": "a shop"
+          },
+          {
+            "type": "infinitive_phrase",
+            "text": "to keep it always open",
+            "verb": "keep",
+            "object": "it",
+            "object_complement": {
+              "text": "open",
+              "modifier": { "type": "adverb", "text": "always" }
+            }
+          }
+        ],
+        "object": null,
+        "adverbials": null
+      }
+    ],
+    "relations": "Formal subject 'It' stands for two parallel infinitive phrases; 'easy' and 'hard' are coordinated as complements; the second infinitive has an object complement 'open'."
+  },
+  {
+    "original": "Nothing is more important than to receive education.",
+    "type": "simple (comparative)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": { "text": "Nothing" },
+        "predicate": { "verb": "is" },
+        "complement": {
+          "text": "more important",
+          "comparison_marker": "than",
+          "comparison_object": {
+            "type": "infinitive_phrase",
+            "text": "to receive education",
+            "verb": "receive",
+            "object": "education"
+          }
+        },
+        "object": null,
+        "adverbials": null
+      }
+    ],
+    "relations": "Comparative structure: 'more important than' compares the subject with the infinitive phrase, which serves as the standard of comparison."
+  },
+  {
+    "original": "People began to concentrate less on religious themes and adopt a more humanistic attitude to life.",
+    "type": "simple (with compound infinitive object)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": { "text": "People" },
+        "predicate": { "verb": "began" },
+        "object": [
+          {
+            "type": "infinitive_phrase",
+            "text": "to concentrate less on religious themes",
+            "verb": "concentrate",
+            "adverbials": [
+              { "type": "adverb", "text": "less", "function": "degree" },
+              { "type": "prepositional_phrase", "preposition": "on", "object": "religious themes", "function": "topic" }
+            ]
+          },
+          {
+            "type": "infinitive_phrase",
+            "text": "adopt a more humanistic attitude to life",
+            "verb": "adopt",
+            "object": {
+              "text": "a more humanistic attitude",
+              "modifier": { "type": "adjective_phrase", "text": "more humanistic" },
+              "post_modifier": { "type": "prepositional_phrase", "preposition": "to", "object": "life" }
+            }
+          }
+        ],
+        "complement": null,
+        "adverbials": null
+      }
+    ],
+    "relations": "The verb 'began' takes two coordinated infinitive phrases as its direct object; each infinitive has its own adverbials or object with attributive modifiers."
+  }
+]

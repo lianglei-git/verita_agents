@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { isSelfManagedAgent } from '../agents/freshInput'
 import StepDataBlock from './StepDataBlock'
 import AgentViewResolver from '../agents/AgentViewResolver'
 import './AgentPanel.less'
@@ -23,7 +24,7 @@ export default function AgentPanel({
   }
 
   const { upstream = [], downstream = [], current = null } = context || {}
-  const selfManagedRun = agent?.id === 'user-profile' || agent?.id === 'goal-bridge'
+  const selfManagedRun = isSelfManagedAgent(agent?.id)
 
   return (
     <section className="agent-panel">

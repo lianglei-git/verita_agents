@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "planning/story_bible.schema.json",
+  "title": "StoryBible",
+  "type": "object",
+  "required": ["schema_version", "adaptation_mode", "fact_boundary"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "bible_id": { "type": "string" },
+    "profile_id": { "type": "string" },
+    "scenario_id": { "type": "string" },
+    "adaptation_mode": {
+      "type": "string",
+      "enum": ["faithful", "deidentified", "fictionalized"]
+    },
+    "creative_intent": { "type": "object" },
+    "fact_boundary": {
+      "type": "object",
+      "properties": {
+        "confirmed_facts": {
+          "type": "array",
+          "items": { "$ref": "attributed_claim.schema.json" }
+        },
+        "fictionalized_elements": { "type": "array", "items": { "type": "string" } },
+        "do_not_identify": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "characters": { "type": "array" },
+    "relationships": { "type": "array" },
+    "core_conflict": { "type": "string" },
+    "themes": { "type": "array", "items": { "type": "string" } },
+    "world_rules": { "type": "array", "items": { "type": "string" } },
+    "timeline": { "type": "array" },
+    "key_events": { "type": "array", "items": { "type": "string" } },
+    "foreshadowing": { "type": "array" },
+    "chapter_summaries": { "type": "array" },
+    "style_constraints": { "type": "object" },
+    "unresolved_threads": { "type": "array", "items": { "type": "string" } },
+    "continuity_notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

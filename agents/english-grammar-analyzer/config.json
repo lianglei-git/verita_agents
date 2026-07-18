@@ -1,0 +1,11 @@
+{
+  "id": "english-grammar-analyzer",
+  "name": "English Grammar Analyzer",
+  "version": "0.1.0",
+  "description": "Hybrid linguistic analysis with spaCy + LLM pedagogical structure mapping. Provides token-level analysis, dependency parsing, clause segmentation, and pedagogical grammar trees.",
+  "phase": "experimental",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

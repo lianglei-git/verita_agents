@@ -1,0 +1,247 @@
+@import '../../styles/global.less';
+
+.story-scenario-view {
+  .intro {
+    margin: 0 0 14px;
+    font-size: 13px;
+    color: @ash;
+    line-height: 1.55;
+  }
+
+  .disclaimer {
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    background: @signal-dim;
+    border: 1px solid fade(@signal, 25%);
+    border-radius: @radius-md;
+    font-size: 12px;
+    color: @ink;
+    line-height: 1.5;
+  }
+
+  .state-badge {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+
+    .state-label {
+      font-family: @font-mono;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: @flow;
+      background: @flow-dim;
+      padding: 4px 8px;
+      border-radius: @radius-sm;
+    }
+
+    .source-hint {
+      font-size: 11px;
+      color: @ash;
+    }
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .scenario-card {
+    text-align: left;
+    background: @void;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    padding: 14px 16px;
+    color: @ink;
+    cursor: pointer;
+    transition: border-color 0.18s @ease-out, box-shadow 0.18s @ease-out;
+
+    &:hover {
+      border-color: @rail-light;
+    }
+
+    &.selected {
+      border-color: @signal;
+      background: @signal-dim;
+      box-shadow: 0 2px 12px fade(@signal, 14%);
+    }
+
+    &.conservative .archetype-tag {
+      color: #0369a1;
+      background: fade(#0369a1, 10%);
+    }
+
+    &.balanced .archetype-tag {
+      color: @flow;
+      background: @flow-dim;
+    }
+
+    &.aggressive .archetype-tag {
+      color: #b45309;
+      background: fade(#b45309, 10%);
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .archetype-tag {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 6px;
+      border-radius: @radius-sm;
+      flex-shrink: 0;
+    }
+
+    h4 {
+      margin: 0;
+      font-family: @font-display;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .tagline {
+      margin: 0 0 10px;
+      font-size: 12px;
+      color: @ash;
+      line-height: 1.45;
+    }
+
+    .section-label {
+      display: block;
+      font-family: @font-mono;
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: @ash;
+      margin: 8px 0 4px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 16px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: @ink;
+
+      li + li {
+        margin-top: 3px;
+      }
+    }
+
+    .confidence {
+      margin: 10px 0 0;
+      font-size: 11px;
+      color: @ash;
+      font-style: italic;
+    }
+  }
+
+  .rationale-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+
+    span {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    textarea {
+      background: @chassis;
+      border: 1px solid @rail;
+      border-radius: @radius-md;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: @ink;
+      resize: vertical;
+      min-height: 64px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .primary-btn,
+  .ghost-btn {
+    border-radius: @radius-md;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .primary-btn {
+    background: @signal;
+    color: @on-accent;
+    border-color: @signal;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .ghost-btn {
+    background: transparent;
+    color: @ash;
+    border-color: @rail;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .confirmed-banner {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: @flow-dim;
+    border: 1px solid fade(@flow, 30%);
+    border-radius: @radius-md;
+
+    strong {
+      display: block;
+      margin-bottom: 4px;
+      color: @flow;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+  }
+
+  .empty-hint {
+    font-size: 13px;
+    color: @ash;
+    margin: 0 0 12px;
+  }
+
+  &.review {
+    .comparison-grid {
+      pointer-events: none;
+    }
+  }
+}

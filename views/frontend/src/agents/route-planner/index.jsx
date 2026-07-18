@@ -1,63 +1,162 @@
 import './RoutePlannerView.less'
 
 import { useEffect, useState } from 'react'
+import { buildRunPayload, mergeRunResult, parseInput, TIME_LABELS } from './types'
 
-const ROUTE_OPTIONS = [
-  {
-    id: 'global-career-interview',
-    name: '海外面试线',
-    tagline: '前端 → 海外面试 → 项目表达 → 远程协作',
-  },
-  {
-    id: 'remote-work',
-    name: '远程工作线',
-    tagline: '沟通 → 异步协作 → 跨时区会议',
-  },
-  {
-    id: 'study-abroad',
-    name: '留学考试线',
-    tagline: '学术英语 → 考试技巧 → 申请沟通',
-  },
-]
+function PhaseCard({ phase, index }) {
+  const tw = phase.time_window || {}
+  const timeLabel = TIME_LABELS[tw.label] || tw.label || '阶段'
 
-function parseInput(value) {
-  if (!value?.trim()) return { goal: '', route_id: '' }
-  try {
-    return { goal: '', route_id: '', ...JSON.parse(value) }
-  } catch {
-    return { goal: value, route_id: '' }
-  }
+  return (
+    <article className="phase-card">
+      <header>
+        <span className="phase-num">{index + 1}</span>
+        <div>
+          <h4>{phase.title}</h4>
+          <p className="phase-goal">{phase.goal}</p>
+          {(tw.end || tw.start) && (
+            <span className="time-window">
+              {timeLabel}
+              {tw.end ? ` · ${tw.end}` : ''}
+            </span>
+          )}
+        </div>
+      </header>
+
+      {(phase.actions?.length ?? 0) > 0 && (
+        <section>
+          <h5>行动</h5>
+          <ul className="action-list">
+            {phase.actions.map((a) => (
+              <li key={a.id || a.description}>
+                <strong>{a.description}</strong>
+                {a.effort && <span className="effort">{a.effort}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(phase.milestones?.length ?? 0) > 0 && (
+        <section>
+          <h5>里程碑</h5>
+          <ul>
+            {phase.milestones.map((m) => (
+              <li key={m.id || m.description}>
+                {m.description}
+                {m.due && <span className="due"> · {m.due}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(phase.risk_signals?.length ?? 0) > 0 && (
+        <section className="risk-section">
+          <h5>风险信号</h5>
+          <ul>
+            {phase.risk_signals.map((r) => (
+              <li key={r}>{r}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {phase.if_not_met?.adjustments?.length > 0 && (
+        <section className="adjust-section">
+          <h5>若未达标</h5>
+          {phase.if_not_met.description && (
+            <p className="adjust-desc">{phase.if_not_met.description}</p>
+          )}
+          <ul>
+            {phase.if_not_met.adjustments.map((a) => (
+              <li key={a}>{a}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {phase.review_checkpoint?.questions?.length > 0 && (
+        <section className="review-section">
+          <h5>
+            复盘
+            {phase.review_checkpoint.when && (
+              <span className="review-when"> · {phase.review_checkpoint.when}</span>
+            )}
+          </h5>
+          <ul>
+            {phase.review_checkpoint.questions.map((q) => (
+              <li key={q}>{q}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+  )
+}
+
+function RoadmapPanel({ roadmap }) {
+  if (!roadmap) return null
+  return (
+    <div className="roadmap-panel">
+      <header className="roadmap-header">
+        <h3>{roadmap.title || '自适应路线图'}</h3>
+        {roadmap.summary && <p className="roadmap-summary">{roadmap.summary}</p>}
+        {roadmap.version > 1 && (
+          <span className="version-tag">v{roadmap.version}</span>
+        )}
+      </header>
+      <div className="phases">
+        {(roadmap.phases || []).map((phase, i) => (
+          <PhaseCard key={phase.id || i} phase={phase} index={i} />
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function RoutePlannerView({
   mode,
   userInput,
   onInputChange,
+  onRun,
+  loading = false,
   result,
   reviewMode,
 }) {
-  const [form, setForm] = useState(() => parseInput(userInput))
+  const [payload, setPayload] = useState(() => parseInput(userInput))
 
   useEffect(() => {
-    setForm(parseInput(userInput))
+    setPayload(parseInput(userInput))
   }, [userInput])
 
-  const plan = result?.result?.plan
-  const alternatives = result?.result?.alternatives || []
+  useEffect(() => {
+    if (!result?.result) return
+    const next = mergeRunResult(payload, result)
+    setPayload(next)
+    onInputChange(JSON.stringify(buildRunPayload(next)))
+  }, [result])
 
-  const sync = (next) => {
-    setForm(next)
-    onInputChange(JSON.stringify(next))
+  const runResult = result?.result || null
+  const roadmap = runResult?.roadmap || payload.roadmap
+  const blocked = runResult?.blocked
+  const selectedScenario = runResult?.selected_scenario
+  const scenarioSet = runResult?.scenario_set || payload.scenario_set
+  const hasSelection = Boolean(
+    scenarioSet?.selected_scenario_id || selectedScenario?.id,
+  )
+  const source = runResult?.meta?.source
+
+  const generateRoadmap = () => {
+    if (loading || !onRun) return
+    const json = JSON.stringify(buildRunPayload(payload))
+    onRun(json)
   }
 
-  const selectRoute = (routeId) => {
-    sync({ ...form, route_id: routeId })
-  }
-
-  if (reviewMode && plan) {
+  if (reviewMode && roadmap) {
     return (
       <div className={`route-planner-view mode-${mode} review`}>
-        <PlanCard plan={plan} />
+        <RoadmapPanel roadmap={roadmap} />
       </div>
     )
   }
@@ -65,81 +164,63 @@ export default function RoutePlannerView({
   return (
     <div className={`route-planner-view mode-${mode}`}>
       <p className="intro">
-        选择一条成长路线，或留空由系统根据上游画像 / 目标自动推荐。
+        基于已确认的情景主线与差距诊断，生成可执行的自适应路线图。每个阶段包含行动、里程碑、风险信号与复盘节点。
       </p>
 
-      <label className="goal-field">
-        <span>学习目标（无上游画像时填写）</span>
-        <input
-          value={form.goal || ''}
-          placeholder="例：海外技术面试、远程工作"
-          onChange={(e) => sync({ ...form, goal: e.target.value })}
-        />
-      </label>
-
-      <div className="route-cards">
-        {ROUTE_OPTIONS.map((route) => (
-          <button
-            key={route.id}
-            type="button"
-            className={`route-card ${form.route_id === route.id ? 'selected' : ''}`}
-            onClick={() => selectRoute(route.id)}
-          >
-            <span className="route-name">{route.name}</span>
-            <span className="route-tagline">{route.tagline}</span>
-          </button>
-        ))}
-        <button
-          type="button"
-          className={`route-card auto ${!form.route_id ? 'selected' : ''}`}
-          onClick={() => selectRoute('')}
-        >
-          <span className="route-name">自动推荐</span>
-          <span className="route-tagline">根据目标关键词匹配最佳路线</span>
-        </button>
-      </div>
-
-      {plan && (
-        <div className="result-section">
-          <h3>推荐结果</h3>
-          <PlanCard plan={plan} />
-          {alternatives.length > 0 && (
-            <div className="alternatives">
-              <span className="alt-label">其他路线</span>
-              <ul>
-                {alternatives.map((alt) => (
-                  <li key={alt.id}>{alt.name} — {alt.tagline}</li>
-                ))}
-              </ul>
-            </div>
+      {selectedScenario && (
+        <div className="scenario-context">
+          <span className="context-label">情景主线</span>
+          <strong>{selectedScenario.title}</strong>
+          {selectedScenario.tagline && (
+            <span className="context-tagline">{selectedScenario.tagline}</span>
           )}
         </div>
       )}
-    </div>
-  )
-}
 
-function PlanCard({ plan }) {
-  if (!plan) return null
-  return (
-    <div className="plan-card">
-      <header>
-        <h4>{plan.route_name}</h4>
-        <span className="track">{plan.primary_track}</span>
-      </header>
-      <p className="tagline">{plan.tagline}</p>
-      <p className="rationale">{plan.rationale}</p>
-      <ol className="stages">
-        {plan.stages?.map((stage, i) => (
-          <li key={stage.id}>
-            <span className="stage-num">{i + 1}</span>
-            <div>
-              <strong>{stage.title}</strong>
-              <span>{stage.focus}</span>
+      {!hasSelection && !roadmap && (
+        <p className="blocked-hint">
+          请先在「情景推演」节点确认主线（selected_scenario_id），再生成路线图。
+        </p>
+      )}
+
+      {blocked && runResult?.output && (
+        <p className="blocked-hint" role="alert">{runResult.output}</p>
+      )}
+
+      {!roadmap && hasSelection && (
+        <div className="actions">
+          <button
+            type="button"
+            className="primary-btn"
+            onClick={generateRoadmap}
+            disabled={loading}
+          >
+            {loading ? '生成中…' : '生成路线图'}
+          </button>
+        </div>
+      )}
+
+      {roadmap && (
+        <>
+          {source && (
+            <div className="state-badge">
+              <span className="state-label">路线图已生成</span>
+              <span className="source-hint">来源：{source}</span>
             </div>
-          </li>
-        ))}
-      </ol>
+          )}
+          <RoadmapPanel roadmap={roadmap} />
+          <div className="actions">
+            <button
+              type="button"
+              className="ghost-btn"
+              onClick={generateRoadmap}
+              disabled={loading}
+            >
+              {loading ? '重新生成中…' : '重新生成'}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

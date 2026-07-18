@@ -1,0 +1,17 @@
+{
+  "input": {
+    "profile": { "type": "object", "description": "PlanningProfile" },
+    "handoff": { "type": "object", "description": "user-profile handoff" },
+    "gap_diagnosis": { "type": "object", "description": "上游 GapDiagnosis" },
+    "selected_scenario_id": { "type": "string", "description": "用户已选情景 id（可选）" },
+    "selection_rationale": { "type": "string", "description": "选线理由（可选）" },
+    "heuristic_only": { "type": "boolean", "description": "跳过 LLM" }
+  },
+  "output": {
+    "output": { "type": "string", "description": "三情景摘要" },
+    "scenario_set": { "type": "object", "description": "ScenarioSet 契约" },
+    "profile": { "type": "object", "description": "PlanningProfile" },
+    "gap_diagnosis": { "type": "object", "description": "传入或引用的差距诊断" },
+    "validation_issues": { "type": "array", "description": "校验问题" }
+  }
+}

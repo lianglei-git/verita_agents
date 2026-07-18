@@ -1,0 +1,52 @@
+{
+  "input": {
+    "message": { "type": "string", "description": "自由文本或批注" },
+    "session": { "type": "object", "description": "多轮会话状态" },
+    "reset": { "type": "boolean" },
+    "handoff": {
+      "type": "object",
+      "description": "上游交接：planning_profile、scenario_set、gap_diagnosis"
+    },
+    "planning_profile": { "type": "object" },
+    "scenario_set": { "type": "object" },
+    "answer": { "type": "object", "description": "创作意图问卷单题答案" },
+    "setup_patch": { "type": "object" },
+    "skip_setup_questions": { "type": "boolean" },
+    "creative_intent": { "type": "object" },
+    "adaptation_mode": {
+      "type": "string",
+      "enum": ["faithful", "deidentified", "fictionalized"],
+      "description": "默认 deidentified"
+    },
+    "confirm_bible": { "type": "boolean" },
+    "story_bible_patch": { "type": "object" },
+    "confirm_outline": { "type": "boolean" },
+    "approve_plan": { "type": "boolean" },
+    "reject_plan": { "type": "boolean" },
+    "request_revision": { "type": "boolean" },
+    "accept_draft": { "type": "boolean" },
+    "confirm_mid_review": { "type": "boolean" },
+    "notes": { "type": "string" }
+  },
+  "output": {
+    "reply": { "type": "string" },
+    "session": { "type": "object" },
+    "current_phase": {
+      "type": "string",
+      "enum": ["setup", "bible", "outline", "chapter", "mid_review", "complete"]
+    },
+    "phase_label": { "type": "string" },
+    "chapter_subphase": {
+      "type": "string",
+      "enum": ["plan", "draft", "continuity", "update"]
+    },
+    "current_chapter": { "type": "integer" },
+    "story_bible": { "$ref": "../_lib/planning/schemas/story_bible.schema.json" },
+    "outline": { "type": "object" },
+    "chapter_plan": { "$ref": "../_lib/planning/schemas/chapter_plan.schema.json" },
+    "chapter_draft": { "$ref": "../_lib/planning/schemas/chapter_draft.schema.json" },
+    "continuity_report": { "type": "object" },
+    "active_question": { "type": "object" },
+    "llm_calls": { "type": "array" }
+  }
+}

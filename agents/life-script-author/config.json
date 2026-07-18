@@ -1,0 +1,11 @@
+{
+  "id": "life-script-author",
+  "name": "Life Script Author",
+  "description": "基于用户确认情景的分章人生剧本创作：故事圣经 → 章节大纲 → 逐章计划审阅 → 草稿 → 连续性校验 → 圣经回写",
+  "version": "0.1.0",
+  "phase": "mvp",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

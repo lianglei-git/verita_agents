@@ -1,0 +1,102 @@
+Running agent on golden cases with LLM...
+Running agent on 7 golden cases...
+(This requires spaCy and LLM to be available)
+
+[1/7] Analyzing: Do not speak of your happiness to one less fortunate than yo...
+  ✓ Success
+[2/7] Analyzing: When it comes to education, the majority of people believe t...
+  ✓ Success
+[3/7] Analyzing: I'm so sorry that he should be so careless....
+  ✓ Success
+[4/7] Analyzing: Later they may give performances in pubs or clubs, for which...
+  ✓ Success
+[5/7] Analyzing: It is easy to open a shop but hard to keep it always open....
+  ✓ Success
+[6/7] Analyzing: Nothing is more important than to receive education....
+  ✓ Success
+[7/7] Analyzing: People began to concentrate less on religious themes and ado...
+  ✓ Success
+
+============================================================
+Outputs saved to: /home/yizhun/桌面/zayne/verita_agents/agents/english-grammar-analyzer/test_outputs.json
+
+Run scoring with:
+  python ega_score.py /home/yizhun/桌面/zayne/verita_agents/agents/english-grammar-analyzer/test_outputs.json
+============================================================
+
+Running acceptance scoring...
+=== English Grammar Analyzer Acceptance Test ===
+
+Loaded 7 golden test cases.
+
+To run full test, provide agent outputs JSON file:
+  python ega_score.py outputs.json
+
+Expected format: List of pedagogical outputs matching golden cases order
+
+=== Test Report ===
+Overall: FAIL
+Average Score: 0.831 (threshold: 0.88)
+Hard Fields Avg: 0.723 (threshold: 0.92)
+
+✓ Sentence 1: 0.998
+  1 field differences
+✗ Sentence 2: 0.818
+  5 field differences
+✗ Sentence 3: 0.761
+  5 field differences
+✗ Sentence 4: 0.818
+  5 field differences
+✗ Sentence 5: 0.831
+  5 field differences
+✗ Sentence 6: 0.798
+  5 field differences
+✗ Sentence 7: 0.793
+  5 field differences
+
+=== Failed Fields ===
+
+Sentence 2: When it comes to education, the majority of people believe t...
+  - type: similarity=0.8360655737704918
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.0
+
+Sentence 3: I'm so sorry that he should be so careless....
+  - type: similarity=0.0
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.2857142857142857
+
+Sentence 4: Later they may give performances in pubs or clubs, for which...
+  - type: similarity=0.7857142857142857
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.2801556420233463
+
+Sentence 5: It is easy to open a shop but hard to keep it always open....
+  - type: similarity=0.2142857142857143
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.29145728643216084
+
+Sentence 6: Nothing is more important than to receive education....
+  - type: similarity=0.0
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.0
+
+Sentence 7: People began to concentrate less on religious themes and ado...
+  - type: similarity=0.2678571428571429
+  - clauses[].clause_type: similarity=N/A
+  - clauses[].subordinator: similarity=N/A
+  - clauses[].relative_pronoun: similarity=N/A
+  - relations: similarity=0.27491408934707906
+
+==================================================
+FINAL: FAIL

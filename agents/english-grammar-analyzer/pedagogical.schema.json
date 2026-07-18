@@ -1,0 +1,270 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PedagogicalAnalysis",
+  "type": "object",
+  "required": ["original", "type", "clauses", "relations"],
+  "properties": {
+    "original": {
+      "type": "string",
+      "description": "Original input sentence (exact match)"
+    },
+    "type": {
+      "type": "string",
+      "description": "Sentence type classification (e.g., 'imperative (negative)', 'complex (adverbial clause + main clause)')"
+    },
+    "clauses": {
+      "type": "array",
+      "description": "Array of clause objects representing sentence structure",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/Clause"
+      }
+    },
+    "relations": {
+      "type": "string",
+      "description": "Natural language explanation of inter-clause relationships"
+    }
+  },
+  "definitions": {
+    "Clause": {
+      "type": "object",
+      "required": ["clause_type"],
+      "properties": {
+        "clause_type": {
+          "type": "string",
+          "description": "Type of clause (e.g., 'main', 'adverbial subordinate', 'non-restrictive relative')"
+        },
+        "subordinator": {
+          "type": ["string", "null"],
+          "description": "Subordinating conjunction if applicable (e.g., 'When', 'that')"
+        },
+        "relative_pronoun": {
+          "type": ["string", "null"],
+          "description": "Relative pronoun if applicable (e.g., 'which', 'who')"
+        },
+        "preposition": {
+          "type": ["string", "null"],
+          "description": "Preposition in fronted relative clauses (e.g., 'for' in 'for which')"
+        },
+        "subject": {
+          "description": "Subject of the clause (may be null for imperative, or object with type info)",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/NounPhrase"}
+          ]
+        },
+        "predicate": {
+          "$ref": "#/definitions/Predicate",
+          "description": "Verb phrase including main verb and modifiers"
+        },
+        "object": {
+          "description": "Direct object (may be null, noun phrase, clause, or array for compound)",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/NounPhrase"},
+            {"$ref": "#/definitions/Clause"},
+            {"type": "array", "items": {"$ref": "#/definitions/Phrase"}}
+          ]
+        },
+        "complement": {
+          "description": "Subject or object complement",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"},
+            {"type": "array", "items": {"$ref": "#/definitions/Phrase"}}
+          ]
+        },
+        "adverbials": {
+          "type": ["array", "null"],
+          "items": {"$ref": "#/definitions/Adverbial"}
+        },
+        "antecedent": {
+          "type": ["string", "null"],
+          "description": "Antecedent for relative clauses"
+        },
+        "true_subject": {
+          "description": "True subject for formal subject constructions",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"},
+            {"type": "array", "items": {"$ref": "#/definitions/Phrase"}}
+          ]
+        }
+      }
+    },
+    "NounPhrase": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Full text of the noun phrase"
+        },
+        "type": {
+          "type": "string",
+          "description": "Special type if applicable (e.g., 'dummy pronoun', 'formal subject')"
+        },
+        "head": {
+          "type": "string",
+          "description": "Head noun"
+        },
+        "modifier": {
+          "description": "Pre-modifier or post-modifier",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        },
+        "post_modifier": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        }
+      }
+    },
+    "Predicate": {
+      "type": "object",
+      "required": ["verb"],
+      "properties": {
+        "verb": {
+          "type": "string",
+          "description": "Main verb"
+        },
+        "auxiliary": {
+          "type": ["string", "null"],
+          "description": "Auxiliary verb(s) (e.g., 'do not', 'may', 'should be')"
+        },
+        "modifiers": {
+          "type": ["array", "null"],
+          "items": {"$ref": "#/definitions/Phrase"}
+        },
+        "modifier": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        }
+      }
+    },
+    "Phrase": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Phrase type (e.g., 'prepositional_phrase', 'infinitive_phrase', 'adjective_phrase')"
+        },
+        "text": {
+          "type": "string",
+          "description": "Full text of the phrase"
+        },
+        "preposition": {
+          "type": "string",
+          "description": "Preposition for prepositional phrases"
+        },
+        "object": {
+          "description": "Object of preposition or infinitive",
+          "oneOf": [
+            {"type": "string"},
+            {"$ref": "#/definitions/NounPhrase"}
+          ]
+        },
+        "function": {
+          "type": "string",
+          "description": "Semantic function (e.g., 'time', 'place', 'manner', 'content')"
+        },
+        "verb": {
+          "type": "string",
+          "description": "Verb for infinitive phrases"
+        },
+        "adverbials": {
+          "type": "array",
+          "items": {"$ref": "#/definitions/Adverbial"}
+        },
+        "modifier": {
+          "description": "Modifier within phrase",
+          "oneOf": [
+            {"type": "string"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        },
+        "modified": {
+          "type": "string",
+          "description": "What is being modified"
+        },
+        "comparison": {
+          "type": "string",
+          "description": "Comparison marker and object"
+        },
+        "comparison_marker": {
+          "type": "string"
+        },
+        "comparison_object": {
+          "$ref": "#/definitions/Phrase"
+        },
+        "conjunction": {
+          "type": ["string", "null"],
+          "description": "Conjunction linking compound items"
+        },
+        "object_complement": {
+          "description": "Object complement for complex transitive",
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        },
+        "post_modifier": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        },
+        "subordinator": {
+          "type": "string"
+        },
+        "subject": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/NounPhrase"}
+          ]
+        },
+        "predicate": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Predicate"}
+          ]
+        },
+        "complement": {
+          "oneOf": [
+            {"type": "null"},
+            {"$ref": "#/definitions/Phrase"}
+          ]
+        }
+      }
+    },
+    "Adverbial": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Adverbial type (e.g., 'adverb', 'prepositional_phrase')"
+        },
+        "text": {
+          "type": "string",
+          "description": "Adverbial text"
+        },
+        "function": {
+          "type": "string",
+          "description": "Semantic function (e.g., 'time', 'place', 'manner', 'degree')"
+        },
+        "preposition": {
+          "type": "string",
+          "description": "Preposition for PP adverbials"
+        },
+        "object": {
+          "type": "string",
+          "description": "Object for PP adverbials"
+        }
+      }
+    }
+  }
+}

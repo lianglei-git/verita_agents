@@ -1,0 +1,56 @@
+{
+  "case_id": "clear_career_goal",
+  "description": "明确职业目标：6 个月内拿到海外前端面试机会",
+  "heuristic_only": true,
+  "profile": {
+    "schema_version": "1.0",
+    "profile_id": "profile_clear_career",
+    "anchors": {
+      "goal": "6 个月内拿到海外前端面试机会",
+      "current": "国内 3 年前端，口语一般，无英文项目叙述经验",
+      "goal_clarity": "high",
+      "current_clarity": "medium"
+    },
+    "goals": [{
+      "id": "goal_primary",
+      "description": "6 个月内拿到海外前端面试机会",
+      "acceptance_criteria": ["完成 2 次模拟技术面试", "能英文介绍一个完整项目"],
+      "priority": "primary",
+      "time_horizon": "6 个月"
+    }],
+    "stated_facts": [{
+      "id": "fact_current",
+      "text": "国内 3 年前端，口语一般，无英文项目叙述经验",
+      "kind": "fact",
+      "source": "user_stated",
+      "confidence": 0.9,
+      "evidence_refs": [],
+      "requires_confirmation": false
+    }],
+    "current_state": {
+      "capabilities": [{
+        "id": "cap_fe",
+        "text": "3 年前端开发经验",
+        "kind": "fact",
+        "source": "user_stated",
+        "confidence": 0.85,
+        "evidence_refs": [],
+        "requires_confirmation": false
+      }],
+      "identity": { "occupation": "前端工程师", "age_range": "25-30" }
+    },
+    "readiness": {
+      "status": "ready",
+      "confidence": 0.82,
+      "allow_proceed_with_assumptions": false
+    },
+    "provenance": { "source_agent": "fixture" }
+  },
+  "selected_scenario_id": "scenario_balanced",
+  "expect": {
+    "gap_blocked": false,
+    "min_gaps": 1,
+    "min_scenarios": 3,
+    "min_roadmap_phases": 1
+  }
+}

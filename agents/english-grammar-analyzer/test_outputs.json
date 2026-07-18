@@ -1,0 +1,344 @@
+[
+  {
+    "original": "Do not speak of your happiness to one less fortunate than yourself.",
+    "type": "imperative (negative)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": null,
+        "predicate": {
+          "verb": "speak",
+          "auxiliary": "do not",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "of",
+              "object": "your happiness",
+              "function": "content (what to speak about)"
+            },
+            {
+              "type": "prepositional_phrase",
+              "preposition": "to",
+              "object": {
+                "head": "one",
+                "modifier": {
+                  "type": "adjective_phrase",
+                  "text": "less fortunate than yourself"
+                }
+              },
+              "function": "recipient (to whom)"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      }
+    ],
+    "relations": "The predicate'speak' governs two prepositional phrases as adverbial modifiers: one indicating what to speak about ('of your happiness') and another specifying the recipient ('to one less fortunate than yourself').",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "When it comes to education, the majority of people believe that it is a lifetime study.",
+    "type": "complex (adverbial clause + main clause + object clause)",
+    "clauses": [
+      {
+        "clause_type": "adverbial subordinate",
+        "subordinator": "When",
+        "subject": {
+          "text": "it",
+          "type": "dummy pronoun"
+        },
+        "predicate": {
+          "verb": "comes",
+          "modifier": {
+            "type": "prepositional_phrase",
+            "preposition": "to",
+            "object": "education"
+          }
+        },
+        "object": null
+      },
+      {
+        "clause_type": "main",
+        "subject": {
+          "text": "the majority of people",
+          "head": "majority",
+          "modifier": {
+            "type": "prepositional_phrase",
+            "preposition": "of",
+            "object": "people"
+          }
+        },
+        "predicate": {
+          "verb": "believe"
+        },
+        "object": {
+          "type": "noun_clause (object)",
+          "subordinator": "that",
+          "subject": {
+            "text": "it"
+          },
+          "predicate": {
+            "verb": "is"
+          },
+          "complement": {
+            "text": "a lifetime study",
+            "modifier": {
+              "type": "attributive",
+              "text": "lifetime",
+              "modified": "study"
+            }
+          }
+        }
+      }
+    ],
+    "relations": "The predicate 'believes' governs the noun clause 'that it is a lifetime study', which serves as the object of the main clause. The adverbial subordinate clause 'when it comes to education' modifies the main clause.",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "I'm so sorry that he should be so careless.",
+    "type": "compound (adverbial subordinate + main + object clause)",
+    "clauses": [
+      {
+        "clause_type": "adverbial subordinate",
+        "subordinator": "that",
+        "subject": null,
+        "predicate": {
+          "verb": "be",
+          "auxiliary": "should",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "so",
+              "object": "careless",
+              "function": "degree"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      },
+      {
+        "clause_type": "main",
+        "subject": null,
+        "predicate": {
+          "verb": "be",
+          "auxiliary": "am",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "so",
+              "object": "sorry",
+              "function": "degree"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      }
+    ],
+    "relations": "The predicate 'be' of the adverbial subordinate clause modifies the subject of the main clause, expressing a degree of carelessness. The predicate 'be' of the main clause expresses a degree of sorrow.",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "Later they may give performances in pubs or clubs, for which they are paid in cash.",
+    "type": "compound (main clause + non-restrictive relative clause)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": {
+          "text": "they",
+          "type": "pronoun"
+        },
+        "predicate": {
+          "verb": "give",
+          "auxiliary": "may",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "in",
+              "object": "pubs or clubs",
+              "function": "location"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      },
+      {
+        "clause_type": "non-restrictive relative",
+        "subordinator": "for which",
+        "subject": {
+          "text": "they",
+          "type": "pronoun"
+        },
+        "predicate": {
+          "verb": "are",
+          "auxiliary": "paid",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "in",
+              "object": "cash",
+              "function": "payment medium"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      }
+    ],
+    "relations": "The predicate 'give' governs the location phrase 'in pubs or clubs', while the predicate 'are paid' governs the payment medium 'in cash'. The non-restrictive relative clause provides additional information about who is paid.",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "It is easy to open a shop but hard to keep it always open.",
+    "type": "complex (adverbial subordinate + main clause + object clause)",
+    "clauses": [
+      {
+        "clause_type": "adverbial subordinate",
+        "subordinator": "but",
+        "subject": {
+          "text": "it",
+          "type": "dummy pronoun"
+        },
+        "predicate": {
+          "verb": "keep",
+          "auxiliary": "to"
+        },
+        "object": {
+          "type": "noun_clause (object)",
+          "subordinator": "always",
+          "subject": {
+            "text": "it",
+            "type": "dummy pronoun"
+          },
+          "predicate": {
+            "verb": "be",
+            "complement": {
+              "text": "open",
+              "modifier": {
+                "type": "adjective_phrase",
+                "text": "always"
+              }
+            }
+          }
+        }
+      },
+      {
+        "clause_type": "main",
+        "subject": {
+          "text": "it",
+          "type": "dummy pronoun"
+        },
+        "predicate": {
+          "verb": "open",
+          "auxiliary": "to"
+        },
+        "object": {
+          "type": "noun_clause (object)",
+          "subordinator": "a",
+          "subject": {
+            "text": "shop",
+            "head": "shop",
+            "modifier": {
+              "type": "determiner",
+              "text": "a"
+            }
+          },
+          "predicate": {
+            "verb": "be"
+          }
+        }
+      }
+    ],
+    "relations": "The first clause describes difficulty in keeping something 'open', while the second clause explains ease in opening a shop. The conjunction 'but' connects these contrasting ideas.",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "Nothing is more important than to receive education.",
+    "type": "simple (with formal subject and compound complement)",
+    "clauses": [
+      {
+        "clause_type": "main",
+        "subject": {
+          "text": "Nothing",
+          "type": "formal subject"
+        },
+        "predicate": {
+          "verb": "is",
+          "auxiliary": "is"
+        },
+        "complement": {
+          "type": "compound",
+          "items": [
+            {
+              "text": "more important",
+              "function": "comparable (more important than...)"
+            },
+            {
+              "text": "than to receive education",
+              "function": "comparable (more important than...)"
+            }
+          ]
+        }
+      }
+    ],
+    "relations": "The predicate 'is' governs both parts of the compound complement, where'more important' serves as the comparison marker and 'than to receive education' specifies what is being compared to.",
+    "status": "success",
+    "validation_errors": []
+  },
+  {
+    "original": "People began to concentrate less on religious themes and adopt a more humanistic attitude to life.",
+    "type": "compound (two independent clauses joined by conjunction)",
+    "clauses": [
+      {
+        "clause_type": "independent",
+        "subject": null,
+        "predicate": {
+          "verb": "began",
+          "auxiliary": "did not",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "on",
+              "object": "religious themes"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      },
+      {
+        "clause_type": "independent",
+        "subject": null,
+        "predicate": {
+          "verb": "adopt",
+          "auxiliary": "did not",
+          "modifiers": [
+            {
+              "type": "prepositional_phrase",
+              "preposition": "a",
+              "object": "more humanistic attitude"
+            },
+            {
+              "type": "prepositional_phrase",
+              "preposition": "to",
+              "object": "life"
+            }
+          ]
+        },
+        "object": null,
+        "complement": null
+      }
+    ],
+    "relations": "Two independent clauses are connected by the coordinating conjunction 'and'. The first clause describes an action ('beginning') while the second clause describes another action ('adopting'). There are no subordinating clauses or complex structures within these simple clauses.",
+    "status": "success",
+    "validation_errors": []
+  }
+]

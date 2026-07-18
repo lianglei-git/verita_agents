@@ -1,0 +1,363 @@
+.english-grammar-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sentence-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.input-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.input-controls select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.analyze-btn, .download-btn {
+  padding: 10px 24px;
+  background: #1890ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.analyze-btn:hover:not(:disabled), .download-btn:hover {
+  background: #40a9ff;
+}
+
+.analyze-btn:disabled {
+  background: #d9d9d9;
+  cursor: not-allowed;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  color: #595959;
+}
+
+.tabs button.active {
+  color: #1890ff;
+  border-bottom-color: #1890ff;
+}
+
+.tab-content {
+  min-height: 300px;
+  padding: 20px 0;
+}
+
+.pedagogical-view, .linguistic-view, .warnings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sentence-type {
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.clauses-section h4, .relations-section h4, .noun-chunks-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #262626;
+}
+
+.constituent-hint {
+  margin: -4px 0 14px;
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.clause-item {
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 16px;
+  background: #fafafa;
+  margin-bottom: 12px;
+}
+
+.clause-header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.clause-type {
+  font-weight: 600;
+  color: #1890ff;
+  font-size: 14px;
+}
+
+.clause-index {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.clause-body.constituents {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.constituent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.constituent-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.role-tag {
+  flex: 0 0 auto;
+  min-width: 4.5em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: #f0f5ff;
+  color: #1d39c4;
+}
+
+.role-tag.role-subject { background: #e6f7ff; color: #096dd9; }
+.role-tag.role-predicate { background: #f6ffed; color: #389e0d; }
+.role-tag.role-object { background: #fff7e6; color: #d46b08; }
+.role-tag.role-complement { background: #fff1f0; color: #cf1322; }
+.role-tag.role-adverbial,
+.role-tag.role-adverbials { background: #f9f0ff; color: #722ed1; }
+.role-tag.role-true_subject { background: #e6fffb; color: #08979c; }
+.role-tag.role-modifier,
+.role-tag.role-modifiers,
+.role-tag.role-post_modifier { background: #f5f5f5; color: #595959; }
+
+.constituent-text {
+  font-size: 13px;
+  color: #262626;
+  word-break: break-word;
+}
+
+.constituent-children {
+  margin-left: 1.2rem;
+  padding-left: 12px;
+  border-left: 2px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.constituent.depth-2 .role-tag {
+  min-width: 4em;
+  font-weight: 500;
+  background: #fafafa;
+  color: #595959;
+}
+
+.relations-section p {
+  margin: 0;
+  line-height: 1.8;
+  color: #595959;
+  font-size: 14px;
+}
+
+.tokens-table-wrapper {
+  overflow-x: auto;
+}
+
+.tokens-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tokens-table th {
+  background: #fafafa;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #e8e8e8;
+  color: #262626;
+}
+
+.tokens-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.token-text {
+  font-weight: 500;
+  color: #262626;
+}
+
+.token-tag, .token-dep {
+  font-family: 'Courier New', monospace;
+  color: #595959;
+  font-size: 12px;
+}
+
+.noun-chunks-section {
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.chunks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chunk-tag {
+  padding: 4px 10px;
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #0050b3;
+}
+
+.dependency-viz {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 6px;
+}
+
+.dep-sentence {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.dep-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.word-text {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.word-tag {
+  font-size: 11px;
+  color: #8c8c8c;
+  font-family: monospace;
+}
+
+.dep-arcs-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.dep-arcs-info li {
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.arc-label {
+  font-weight: 600;
+  color: #1890ff;
+  font-family: monospace;
+}
+
+.warnings-header {
+  padding: 8px 12px;
+  background: #fff7e6;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #8c8c8c;
+}
+
+.warning-item {
+  padding: 12px;
+  background: #fffbe6;
+  border-left: 3px solid #faad14;
+  border-radius: 4px;
+}
+
+.warning-message {
+  font-size: 14px;
+  color: #262626;
+  margin-bottom: 6px;
+}
+
+.warning-suggestions {
+  font-size: 12px;
+  color: #595959;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.status-message {
+  padding: 16px;
+  background: #e6f7ff;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #0050b3;
+}
+
+.status-message.error {
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.export-section {
+  padding: 16px;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: flex-end;
+}

@@ -5,6 +5,9 @@
 const views = {
   'user-profile': () => import('./user-profile'),
   'route-planner': () => import('./route-planner'),
+  'story-scenario': () => import('./story-scenario'),
+  'life-script-author': () => import('./life-script-author'),
+  'english-grammar-analyzer': () => import('./english-grammar-analyzer'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

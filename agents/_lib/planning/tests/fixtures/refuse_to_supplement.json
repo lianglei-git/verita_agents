@@ -1,0 +1,57 @@
+{
+  "case_id": "refuse_to_supplement",
+  "description": "用户拒绝补充：conditional 放行，按假设继续规划",
+  "heuristic_only": true,
+  "profile": {
+    "schema_version": "1.0",
+    "profile_id": "profile_refuse_supplement",
+    "anchors": {
+      "goal": "转行数据科学",
+      "current": "销售背景，无编程经验",
+      "goal_clarity": "medium",
+      "current_clarity": "medium"
+    },
+    "unknowns": [
+      {
+        "id": "unknown_time",
+        "text": "可投入学习的时间（用户拒绝回答）",
+        "kind": "uncertainty",
+        "source": "model_inferred",
+        "confidence": 0.25,
+        "requires_confirmation": true
+      },
+      {
+        "id": "unknown_budget",
+        "text": "可用于课程/备考的预算（用户拒绝回答）",
+        "kind": "uncertainty",
+        "source": "model_inferred",
+        "confidence": 0.25,
+        "requires_confirmation": true
+      }
+    ],
+    "assumptions": [{
+      "id": "asm_proceed",
+      "text": "用户选择按当前假设生成，不补充未知项",
+      "kind": "assumption",
+      "source": "user_inferred",
+      "confidence": 0.55,
+      "requires_confirmation": false
+    }],
+    "readiness": {
+      "status": "conditional",
+      "confidence": 0.58,
+      "allow_proceed_with_assumptions": true,
+      "blocking_gaps": []
+    },
+    "provenance": { "source_agent": "fixture", "user_profile_release": "conditional" }
+  },
+  "user_refused_supplement": true,
+  "selected_scenario_id": "scenario_aggressive",
+  "expect": {
+    "gap_blocked": false,
+    "min_gaps": 2,
+    "min_scenarios": 3,
+    "min_roadmap_phases": 1,
+    "has_assumption_premises": true
+  }
+}

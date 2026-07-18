@@ -1,0 +1,11 @@
+{
+  "id": "story-scenario",
+  "name": "故事情景 Agent",
+  "description": "基于 PlanningProfile 与差距诊断，生成稳健/平衡/进取三情景推演",
+  "version": "0.2.0",
+  "phase": "mvp",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

@@ -7,7 +7,7 @@ import {
   fetchRuns,
   runAgent,
 } from '../api/client'
-import { freshInputForAgent } from '../agents/freshInput'
+import { freshInputForAgent, isSelfManagedAgent } from '../agents/freshInput'
 import AgentViewResolver from '../agents/AgentViewResolver'
 import AppShell from '../components/AppShell'
 import '../components/AppShell.less'
@@ -175,7 +175,7 @@ export default function AgentWorkbench() {
             reviewMode={reviewMode}
           />
 
-          {!reviewMode && agent.id !== 'user-profile' && agent.id !== 'goal-bridge' && (
+          {!reviewMode && !isSelfManagedAgent(agent.id) && (
             <button type="button" className="run-btn" onClick={() => handleRun()} disabled={loading}>
               {loading ? '运行中…' : '运行'}
             </button>

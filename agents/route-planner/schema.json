@@ -1,12 +1,20 @@
 {
   "input": {
-    "twin": { "type": "object", "description": "上游用户画像 Digital Twin（可选）" },
-    "goal": { "type": "string", "description": "学习目标（无上游时手动填写）" },
-    "route_id": { "type": "string", "description": "手动指定路线 id（可选）" }
+    "profile": { "type": "object", "description": "PlanningProfile" },
+    "handoff": { "type": "object", "description": "user-profile handoff" },
+    "gap_diagnosis": { "type": "object", "description": "GapDiagnosis" },
+    "scenario_set": { "type": "object", "description": "ScenarioSet（含 selected_scenario_id）" },
+    "scenario": { "type": "object", "description": "直接传入已确认情景（可选）" },
+    "heuristic_only": { "type": "boolean", "description": "跳过 LLM" }
   },
   "output": {
-    "output": { "type": "string", "description": "路线摘要" },
-    "plan": { "type": "object", "description": "推荐路线与阶段" },
-    "alternatives": { "type": "array", "description": "其他可选路线" }
+    "output": { "type": "string", "description": "路线图摘要" },
+    "roadmap": { "type": "object", "description": "AdaptiveRoadmap 契约" },
+    "profile": { "type": "object", "description": "PlanningProfile" },
+    "gap_diagnosis": { "type": "object", "description": "差距诊断" },
+    "scenario_set": { "type": "object", "description": "情景集（含选线）" },
+    "selected_scenario": { "type": "object", "description": "本次采用的情景" },
+    "validation_issues": { "type": "array", "description": "校验问题" },
+    "blocked": { "type": "boolean", "description": "是否因缺少情景阻断" }
   }
 }

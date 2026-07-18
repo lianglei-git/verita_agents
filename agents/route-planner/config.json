@@ -1,8 +1,8 @@
 {
   "id": "route-planner",
   "name": "路线规划 Agent",
-  "description": "根据用户画像与目标，推荐成长路线与阶段里程碑",
-  "version": "0.1.0",
+  "description": "基于用户确认情景与差距诊断，生成可执行 AdaptiveRoadmap",
+  "version": "0.2.0",
   "phase": "mvp",
   "view": {
     "type": "custom"

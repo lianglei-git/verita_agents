@@ -18,6 +18,16 @@
       "enabled": true
     },
     {
+      "id": "gap-diagnosis",
+      "dir": "gap-diagnosis",
+      "enabled": true
+    },
+    {
+      "id": "story-scenario",
+      "dir": "story-scenario",
+      "enabled": true
+    },
+    {
       "id": "route-planner",
       "dir": "route-planner",
       "enabled": true
@@ -30,6 +40,16 @@
     {
       "id": "demo-goal-image",
       "dir": "demo-goal-image",
+      "enabled": true
+    },
+    {
+      "id": "life-script-author",
+      "dir": "life-script-author",
+      "enabled": true
+    },
+    {
+      "id": "english-grammar-analyzer",
+      "dir": "english-grammar-analyzer",
       "enabled": true
     },
     {

@@ -1,0 +1,25 @@
+{
+  "case_id": "insufficient_info",
+  "description": "信息不足：画像采集中，差距诊断应被阻断",
+  "heuristic_only": true,
+  "profile": {
+    "schema_version": "1.0",
+    "profile_id": "profile_insufficient",
+    "anchors": {
+      "goal": "",
+      "current": "",
+      "goal_clarity": "low",
+      "current_clarity": "low"
+    },
+    "readiness": {
+      "status": "collecting",
+      "confidence": 0.2,
+      "allow_proceed_with_assumptions": false
+    },
+    "provenance": { "source_agent": "fixture" }
+  },
+  "expect": {
+    "gap_blocked": true,
+    "gap_blocked_without_force": true
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "planning/chapter_plan.schema.json",
+  "title": "ChapterPlan",
+  "type": "object",
+  "required": ["schema_version", "chapter_number", "approval"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "plan_id": { "type": "string" },
+    "bible_id": { "type": "string" },
+    "chapter_number": { "type": "integer", "minimum": 1 },
+    "title": { "type": "string" },
+    "objectives": { "type": "array", "items": { "type": "string" } },
+    "conflict": { "type": "string" },
+    "character_state_changes": { "type": "array" },
+    "threads_to_continue": { "type": "array", "items": { "type": "string" } },
+    "threads_to_plant": { "type": "array", "items": { "type": "string" } },
+    "expected_word_count": {
+      "type": "object",
+      "properties": {
+        "min": { "type": "integer", "minimum": 500 },
+        "max": { "type": "integer", "minimum": 500 }
+      }
+    },
+    "beats": { "type": "array", "items": { "type": "string" } },
+    "approval": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["draft", "approved", "rejected"] },
+        "user_notes": { "type": "string" }
+      }
+    }
+  }
+}

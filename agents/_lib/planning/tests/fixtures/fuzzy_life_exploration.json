@@ -1,0 +1,53 @@
+{
+  "case_id": "fuzzy_life_exploration",
+  "description": "模糊人生探索：目标不清晰，希望看多条人生路径",
+  "heuristic_only": true,
+  "profile": {
+    "schema_version": "1.0",
+    "profile_id": "profile_fuzzy_life",
+    "anchors": {
+      "goal": "想探索人生方向，不确定是否继续现在的工作",
+      "current": "工作三年感到迷茫，擅长沟通但缺乏成就感",
+      "goal_clarity": "low",
+      "current_clarity": "medium"
+    },
+    "stated_facts": [{
+      "id": "fact_feel",
+      "text": "工作三年感到迷茫，不确定是否继续",
+      "kind": "fact",
+      "source": "user_stated",
+      "confidence": 0.85,
+      "evidence_refs": [],
+      "requires_confirmation": false
+    }],
+    "values_preferences": [{
+      "id": "val_meaning",
+      "text": "希望工作有意义感",
+      "kind": "fact",
+      "source": "user_stated",
+      "confidence": 0.8,
+      "evidence_refs": [],
+      "requires_confirmation": false
+    }],
+    "unknowns": [{
+      "id": "unknown_direction",
+      "text": "尚未确定想转向的行业或角色",
+      "kind": "uncertainty",
+      "source": "model_inferred",
+      "confidence": 0.35,
+      "requires_confirmation": true
+    }],
+    "readiness": {
+      "status": "conditional",
+      "confidence": 0.55,
+      "allow_proceed_with_assumptions": true
+    },
+    "provenance": { "source_agent": "fixture" }
+  },
+  "selected_scenario_id": "scenario_conservative",
+  "expect": {
+    "gap_blocked": false,
+    "min_scenarios": 3,
+    "min_roadmap_phases": 1
+  }
+}

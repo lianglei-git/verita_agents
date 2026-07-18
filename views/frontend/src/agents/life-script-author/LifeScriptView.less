@@ -1,0 +1,203 @@
+@import '../../styles/global.less';
+
+.life-script-view {
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-family: @font-mono;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: @flow;
+    background: @flow-dim;
+    padding: 5px 10px;
+    border-radius: @radius-sm;
+  }
+
+  .reply-hint {
+    margin: 0 0 14px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: @ink;
+  }
+
+  .fiction-note {
+    margin: 0 0 14px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: @ash;
+    background: @void;
+    border: 1px dashed @rail;
+    border-radius: @radius-md;
+  }
+
+  .panel {
+    background: @void;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+
+    h4 {
+      margin: 0 0 10px;
+      font-family: @font-display;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    dl {
+      margin: 0;
+      display: grid;
+      gap: 6px;
+
+      div {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 8px;
+        font-size: 13px;
+      }
+
+      dt {
+        color: @ash;
+        font-family: @font-mono;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      dd {
+        margin: 0;
+      }
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .outline-item {
+      padding: 6px 0;
+      border-top: 1px solid @rail;
+
+      &:first-child {
+        border-top: none;
+      }
+
+      strong {
+        font-size: 13px;
+      }
+
+      span {
+        display: block;
+        font-size: 12px;
+        color: @ash;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  .chapter-plan,
+  .chapter-draft {
+    .beats {
+      margin-top: 8px;
+    }
+  }
+
+  .draft-content {
+    margin-top: 10px;
+    padding: 12px;
+    background: @chassis;
+    border: 1px solid @rail;
+    border-radius: @radius-md;
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+
+  .continuity-flags {
+    margin-top: 8px;
+
+    li {
+      font-size: 12px;
+      margin-bottom: 4px;
+
+      &.error {
+        color: @fault;
+      }
+
+      &.warning {
+        color: #b45309;
+      }
+    }
+  }
+
+  .question-block {
+    margin-bottom: 14px;
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      background: @chassis;
+      border: 1px solid @rail;
+      border-radius: @radius-md;
+      padding: 10px 12px;
+      font-size: 13px;
+      resize: vertical;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .primary-btn,
+  .ghost-btn {
+    border-radius: @radius-md;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .primary-btn {
+    background: @signal;
+    color: @on-accent;
+    border-color: @signal;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .ghost-btn {
+    background: transparent;
+    color: @ash;
+    border-color: @rail;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .progress-meta {
+    font-size: 12px;
+    color: @ash;
+    margin-bottom: 10px;
+  }
+}
