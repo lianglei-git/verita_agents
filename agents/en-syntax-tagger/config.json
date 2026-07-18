@@ -1,0 +1,11 @@
+{
+  "id": "en-syntax-tagger",
+  "name": "英文句法全量标记",
+  "version": "1.1.0",
+  "description": "LLM 全量语法标记 + spaCy 词元类型；Views 自定义展示。",
+  "phase": "experimental",
+  "view": {
+    "type": "custom"
+  },
+  "schema_ref": "schema.json"
+}

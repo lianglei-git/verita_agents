@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnSyntaxTaggerResult",
+  "type": "object",
+  "properties": {
+    "input": { "type": "string" },
+    "output": { "type": "string" },
+    "error": { "type": "string" },
+    "message": { "type": "string" },
+    "analysis": {
+      "type": "object",
+      "description": "LLM 全量语法标记"
+    },
+    "spacy_tokens": {
+      "type": "array",
+      "description": "spaCy 每个 token 的类型与依存",
+      "items": {
+        "type": "object",
+        "properties": {
+          "index": { "type": "number" },
+          "text": { "type": "string" },
+          "lemma": { "type": "string" },
+          "pos": { "type": "string", "description": "粗粒度词性：NOUN/VERB/ADP/..." },
+          "tag": { "type": "string", "description": "Penn Treebank 细粒度标签" },
+          "dep": { "type": "string", "description": "依存关系" },
+          "head_idx": { "type": "number" },
+          "head_text": { "type": "string" },
+          "char_start": { "type": "number" },
+          "char_end": { "type": "number" },
+          "is_stop": { "type": "boolean" },
+          "is_punct": { "type": "boolean" },
+          "is_alpha": { "type": "boolean" },
+          "morph": { "type": "string" }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "agent": { "type": "string" },
+        "version": { "type": "string" },
+        "spacy_status": { "type": "string" },
+        "llm_status": { "type": "string" }
+      }
+    }
+  }
+}

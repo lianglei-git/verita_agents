@@ -8,6 +8,7 @@ const views = {
   'story-scenario': () => import('./story-scenario'),
   'life-script-author': () => import('./life-script-author'),
   'english-grammar-analyzer': () => import('./english-grammar-analyzer'),
+  'en-syntax-tagger': () => import('./en-syntax-tagger'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

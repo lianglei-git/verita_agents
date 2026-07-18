@@ -53,6 +53,11 @@
       "enabled": true
     },
     {
+      "id": "en-syntax-tagger",
+      "dir": "en-syntax-tagger",
+      "enabled": true
+    },
+    {
       "id": "summarize",
       "dir": null,
       "enabled": true,
