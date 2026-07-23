@@ -1,36 +1,66 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import './EnSyntaxTaggerView.less'
-
-const TABS = [
-  { id: 'overview', label: '概览' },
-  { id: 'chunks', label: '短语块' },
-  { id: 'llm_tokens', label: 'LLM 词元' },
-  { id: 'spacy', label: 'spaCy 词元' },
-  { id: 'grammars', label: '语法点' },
-  { id: 'json', label: '原始 JSON' },
-]
 
 function Empty({ text }) {
   return <div className="empty-state">{text}</div>
 }
 
-function SummaryGrid({ summary }) {
-  if (!summary || typeof summary !== 'object') return null
+function DataTable({ columns, rows }) {
+  if (!rows?.length) return <Empty text="暂无表格数据" />
+  return (
+    <div className="table-wrap">
+      <table className="data-table">
+        <thead>
+          <tr>
+            {columns.map((c) => (
+              <th key={c.key}>{c.label}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              {columns.map((c) => (
+                <td key={c.key} className={c.key === 'text' || c.key === 'span' ? 'word' : ''}>
+                  {row[c.key] == null || row[c.key] === '' ? '—' : String(row[c.key])}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function TrunkBlock({ trunk }) {
+  if (!trunk) return null
+  if (typeof trunk === 'string') {
+    return (
+      <p className="trunk-line">
+        <strong>主干：</strong>
+        {trunk}
+      </p>
+    )
+  }
   const rows = [
-    ['主语', summary.subject],
-    ['谓语', summary.predicate],
-    ['宾语', summary.object],
-    ['补语', summary.complement],
-    ['状语', summary.adverbial],
-    ['定语', summary.attributive],
-  ].filter(([, v]) => v != null && v !== '')
-  if (!rows.length) return null
+    ['S 主语', trunk.subject],
+    ['V 谓语', trunk.predicate],
+    ['O 宾语', trunk.object],
+    ['IO', trunk.indirect_object],
+    ['DO', trunk.direct_object],
+    ['C 补语', trunk.complement],
+  ].filter(([, v]) => v != null)
   return (
     <dl className="summary-grid">
       {rows.map(([k, v]) => (
         <div key={k} className="summary-row">
           <dt>{k}</dt>
-          <dd>{v}</dd>
+          <dd>
+            {typeof v === 'object'
+              ? `${v.text || ''} ${v.phrase_type ? `[${v.phrase_type}]` : ''} ${v.note || v.tense_voice || ''}`.trim()
+              : String(v)}
+          </dd>
         </div>
       ))}
     </dl>
@@ -46,21 +76,68 @@ export default function EnSyntaxTaggerView({
   reviewMode,
 }) {
   const [tab, setTab] = useState('overview')
+  const [apiVersion, setApiVersion] = useState('v1')
+
+  const handleVersionChange = (next) => {
+    setApiVersion(next)
+    setTab('overview')
+  }
 
   const payload = result?.result || result || {}
   const analysis = payload.analysis || {}
   const spacyTokens = payload.spacy_tokens || []
   const meta = payload.meta || {}
   const hasError = Boolean(payload.error)
+  const effectiveVersion = payload.api_version || meta.api_version || apiVersion
+
+  const tabs = useMemo(() => {
+    const base = [{ id: 'overview', label: '概览' }]
+    if (effectiveVersion === 'v1') {
+      base.push(
+        { id: 'table', label: '成分表' },
+        { id: 'tree', label: '结构树' },
+        { id: 'special', label: '特殊结构' },
+      )
+    } else if (effectiveVersion === 'v2') {
+      base.push(
+        { id: 'segments', label: '片段表' },
+        { id: 'tree', label: '结构树' },
+      )
+    } else {
+      base.push(
+        { id: 'chunks', label: '短语块' },
+        { id: 'constituents', label: '成分' },
+        { id: 'llm_tokens', label: 'LLM 词元' },
+        { id: 'grammars', label: '语法点' },
+      )
+    }
+    base.push({ id: 'spacy', label: 'spaCy 词元' }, { id: 'json', label: '原始 JSON' })
+    return base
+  }, [effectiveVersion])
 
   const handleRun = () => {
-    if (typeof onRun === 'function') onRun()
+    if (typeof onRun === 'function') onRun({ version: apiVersion })
   }
+
+  const showResult = analysis.sentence || spacyTokens.length > 0 || hasError
 
   return (
     <div className="en-syntax-tagger-view">
       {!reviewMode && (
         <div className="input-panel">
+          <label>
+            <span>分析版本（Prompt 模板）</span>
+            <select
+              value={apiVersion}
+              onChange={(e) => handleVersionChange(e.target.value)}
+              disabled={loading}
+              className="version-select"
+            >
+              <option value="v1">v1 · 详细学术版（A）</option>
+              <option value="v2">v2 · 对比学习版（B）</option>
+              <option value="v3">v3 · JSON 数据版（C）</option>
+            </select>
+          </label>
           <label>
             <span>英文句子</span>
             <textarea
@@ -89,17 +166,20 @@ export default function EnSyntaxTaggerView({
         </div>
       )}
 
-      {(analysis.sentence || spacyTokens.length > 0 || hasError) && (
+      {showResult && (
         <>
           <div className="status-bar">
+            <span>
+              API: {effectiveVersion}
+              {meta.profile_label ? ` · ${meta.profile_label}` : ''}
+            </span>
             <span>LLM: {meta.llm_status || 'n/a'}</span>
             <span>spaCy: {meta.spacy_status || 'n/a'}</span>
-            {meta.spacy_model && <span>模型: {meta.spacy_model}</span>}
-            <span>spaCy tokens: {spacyTokens.length}</span>
+            <span>tokens: {spacyTokens.length}</span>
           </div>
 
           <div className="tabs">
-            {TABS.map((t) => (
+            {tabs.map((t) => (
               <button
                 key={t.id}
                 type="button"
@@ -115,7 +195,7 @@ export default function EnSyntaxTaggerView({
             {tab === 'overview' && (
               <div className="panel">
                 {!analysis.sentence && !analysis.translation ? (
-                  <Empty text="暂无 LLM 分析结果（可查看 spaCy 词元页）" />
+                  <Empty text="暂无 LLM 分析结果（可查看 spaCy）" />
                 ) : (
                   <>
                     <div className="hero-line">
@@ -125,15 +205,131 @@ export default function EnSyntaxTaggerView({
                       )}
                     </div>
                     <div className="meta-chips">
-                      {analysis.sentence_type && (
-                        <span className="chip">{analysis.sentence_type}</span>
+                      {(analysis.sentence_type || analysis.type) && (
+                        <span className="chip">{analysis.sentence_type || analysis.type}</span>
                       )}
                       {analysis.tense_voice && (
                         <span className="chip">{analysis.tense_voice}</span>
                       )}
                     </div>
-                    <h4>主干摘要</h4>
-                    <SummaryGrid summary={analysis.structure_summary} />
+                    <h4>主干</h4>
+                    <TrunkBlock trunk={analysis.trunk || analysis.structure_summary} />
+                    {analysis.difficulty_notes && (
+                      <>
+                        <h4>难点说明</h4>
+                        <p className="g-notes">{analysis.difficulty_notes}</p>
+                      </>
+                    )}
+                    {Array.isArray(analysis.modifiers) && analysis.modifiers.length > 0 && (
+                      <>
+                        <h4>修饰成分</h4>
+                        <ul className="mod-list">
+                          {analysis.modifiers.map((m, i) => (
+                            <li key={i}>
+                              <code>{m.label || m.kind}</code> {m.text}
+                              {m.modifies ? ` → ${m.modifies}` : ''}
+                              {m.semantic ? `（${m.semantic}）` : ''}
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {tab === 'table' && (
+              <div className="panel">
+                <DataTable
+                  columns={[
+                    { key: 'level', label: '层级' },
+                    { key: 'role', label: '成分' },
+                    { key: 'text', label: '内容' },
+                    { key: 'pos_or_type', label: '类型' },
+                    { key: 'function', label: '功能' },
+                    { key: 'modifies', label: '修饰' },
+                    { key: 'position', label: '位置' },
+                  ]}
+                  rows={analysis.constituent_table || []}
+                />
+              </div>
+            )}
+
+            {tab === 'segments' && (
+              <div className="panel">
+                <DataTable
+                  columns={[
+                    { key: 'span', label: '片段' },
+                    { key: 'role', label: '成分' },
+                    { key: 'pos', label: '词性' },
+                    { key: 'role_in_trunk', label: '主干角色' },
+                    { key: 'note', label: '备注' },
+                  ]}
+                  rows={analysis.segment_table || []}
+                />
+              </div>
+            )}
+
+            {tab === 'tree' && (
+              <div className="panel">
+                <pre className="tree-pre">
+                  {analysis.tree || analysis.structure_tree || '（无树形数据）'}
+                </pre>
+              </div>
+            )}
+
+            {tab === 'special' && (
+              <div className="panel">
+                <h4>从句</h4>
+                {(analysis.special_structures?.clauses || []).length === 0 ? (
+                  <Empty text="无从句" />
+                ) : (
+                  <div className="chunk-list">
+                    {analysis.special_structures.clauses.map((c, i) => (
+                      <div key={i} className="chunk-card">
+                        <div className="chunk-head">
+                          <span className="chunk-type">{c.clause_type}</span>
+                          {c.connector && <span className="chunk-role">{c.connector}</span>}
+                        </div>
+                        <code className="chunk-text">{c.text}</code>
+                        <p className="chunk-mod">{c.function}</p>
+                        {c.internal_brief && <p className="g-notes">{c.internal_brief}</p>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <h4>非谓语</h4>
+                {(analysis.special_structures?.non_finites || []).length === 0 ? (
+                  <Empty text="无非谓语" />
+                ) : (
+                  <div className="chunk-list">
+                    {analysis.special_structures.non_finites.map((n, i) => (
+                      <div key={i} className="chunk-card">
+                        <div className="chunk-head">
+                          <span className="chunk-type">{n.form}</span>
+                        </div>
+                        <code className="chunk-text">{n.text}</code>
+                        <p className="chunk-mod">
+                          {n.function}
+                          {n.logical_subject ? ` · 逻辑主语：${n.logical_subject}` : ''}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {(analysis.semantic_roles || []).length > 0 && (
+                  <>
+                    <h4>语义角色</h4>
+                    <DataTable
+                      columns={[
+                        { key: 'text', label: '片段' },
+                        { key: 'grammatical', label: '语法' },
+                        { key: 'semantic_role', label: '语义角色' },
+                        { key: 'argument_type', label: '论元' },
+                      ]}
+                      rows={analysis.semantic_roles}
+                    />
                   </>
                 )}
               </div>
@@ -163,104 +359,38 @@ export default function EnSyntaxTaggerView({
               </div>
             )}
 
-            {tab === 'llm_tokens' && (
-              <div className="panel table-wrap">
-                {(analysis.tokens || []).length === 0 ? (
-                  <Empty text="暂无 LLM 词元" />
-                ) : (
-                  <table className="data-table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>词</th>
-                        <th>原形</th>
-                        <th>词性</th>
-                        <th>代码</th>
-                        <th>功能</th>
-                        <th>依存</th>
-                        <th>中心词</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {analysis.tokens.map((t) => (
-                        <tr key={t.id ?? `${t.word}-${t.pos_code}`}>
-                          <td>{t.id}</td>
-                          <td className="word">{t.word}</td>
-                          <td>{t.lemma}</td>
-                          <td>{t.pos}</td>
-                          <td>
-                            <code>{t.pos_code}</code>
-                          </td>
-                          <td>{t.syntax_function}</td>
-                          <td>{t.dependency}</td>
-                          <td>{t.head_word ?? '—'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
+            {tab === 'constituents' && (
+              <div className="panel">
+                <DataTable
+                  columns={[
+                    { key: 'id', label: '#' },
+                    { key: 'text', label: '内容' },
+                    { key: 'type', label: '类型' },
+                    { key: 'pos', label: '词性' },
+                    { key: 'function', label: '功能' },
+                    { key: 'start_index', label: 'start' },
+                    { key: 'end_index', label: 'end' },
+                  ]}
+                  rows={analysis.constituents || []}
+                />
               </div>
             )}
 
-            {tab === 'spacy' && (
-              <div className="panel table-wrap">
-                {spacyTokens.length === 0 ? (
-                  <Empty
-                    text={
-                      meta.spacy_message
-                        ? `暂无 spaCy 词元 — ${meta.spacy_message}`
-                        : '暂无 spaCy 词元'
-                    }
-                  />
-                ) : (
-                  <>
-                    <p className="hint">
-                      spaCy 确定性标注：<code>pos</code> 粗粒度类型、
-                      <code>tag</code> Penn 细标签、<code>dep</code> 依存关系
-                    </p>
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>词</th>
-                          <th>lemma</th>
-                          <th>pos</th>
-                          <th>tag</th>
-                          <th>dep</th>
-                          <th>head</th>
-                          <th>chars</th>
-                          <th>morph</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {spacyTokens.map((t) => (
-                          <tr key={t.index}>
-                            <td>{t.index}</td>
-                            <td className="word">{t.text}</td>
-                            <td>{t.lemma}</td>
-                            <td>
-                              <code className="pos-pill">{t.pos}</code>
-                            </td>
-                            <td>
-                              <code>{t.tag}</code>
-                            </td>
-                            <td>
-                              <code>{t.dep}</code>
-                            </td>
-                            <td>
-                              {t.head_text}
-                              <span className="muted"> ({t.head_idx})</span>
-                            </td>
-                            <td className="muted">
-                              {t.char_start}:{t.char_end}
-                            </td>
-                            <td className="muted morph">{t.morph || '—'}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </>
-                )}
+            {tab === 'llm_tokens' && (
+              <div className="panel">
+                <DataTable
+                  columns={[
+                    { key: 'id', label: '#' },
+                    { key: 'word', label: '词' },
+                    { key: 'lemma', label: '原形' },
+                    { key: 'pos', label: '词性' },
+                    { key: 'pos_code', label: '代码' },
+                    { key: 'syntax_function', label: '功能' },
+                    { key: 'dependency', label: '依存' },
+                    { key: 'head_word', label: '中心词' },
+                  ]}
+                  rows={analysis.tokens || []}
+                />
               </div>
             )}
 
@@ -271,7 +401,7 @@ export default function EnSyntaxTaggerView({
                 ) : (
                   <div className="grammar-list">
                     {analysis.grammars.map((g, i) => (
-                      <div key={`${g.grammar_type}-${i}`} className="grammar-card">
+                      <div key={i} className="grammar-card">
                         <div className="grammar-head">
                           <span className="g-type">{g.grammar_type}</span>
                           <code className="g-content">{g.grammar_content}</code>
@@ -279,13 +409,28 @@ export default function EnSyntaxTaggerView({
                         {g.grammar_function && (
                           <p className="g-func">功能：{g.grammar_function}</p>
                         )}
-                        {g.grammar_notes && (
-                          <p className="g-notes">{g.grammar_notes}</p>
-                        )}
+                        {g.grammar_notes && <p className="g-notes">{g.grammar_notes}</p>}
                       </div>
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {tab === 'spacy' && (
+              <div className="panel">
+                <DataTable
+                  columns={[
+                    { key: 'index', label: '#' },
+                    { key: 'text', label: '词' },
+                    { key: 'lemma', label: 'lemma' },
+                    { key: 'pos', label: 'pos' },
+                    { key: 'tag', label: 'tag' },
+                    { key: 'dep', label: 'dep' },
+                    { key: 'head_text', label: 'head' },
+                  ]}
+                  rows={spacyTokens}
+                />
               </div>
             )}
 
@@ -299,7 +444,7 @@ export default function EnSyntaxTaggerView({
       )}
 
       {!result && !loading && !reviewMode && (
-        <Empty text="输入英文句子后点击「开始分析」" />
+        <Empty text="选择版本并输入英文句子后点击「开始分析」" />
       )}
     </div>
   )

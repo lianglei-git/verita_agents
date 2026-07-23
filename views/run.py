@@ -22,9 +22,9 @@ DEFAULT_VITE_PORT = 5173
 def _env() -> dict[str, str]:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(VIEWS_ROOT)
-    # env["OPENAI_API_KEY"] = "sk-4f2fb90acf024650a675d9476afd4daa"
-    # env["OPENAI_BASE_URL"] = "https://api.deepseek.com/v1"
-    # env["LLM_MODEL"] = "deepseek-chat"
+    env["OPENAI_API_KEY"] = "sk-00976b467ea54e4d98f571ef7767853d"
+    env["OPENAI_BASE_URL"] = "https://api.deepseek.com/v1"
+    env["LLM_MODEL"] = "deepseek-chat"
     # env["OPENAI_API_KEY"] = "6b3533994438447faa9ad0e352304262.qKnvd4t9MOMu2DQY"
     # env["OPENAI_BASE_URL"] = "https://open.bigmodel.cn/api/paas/v4"
     # env["LLM_MODEL"] = "glm-4"
@@ -36,9 +36,9 @@ def _env() -> dict[str, str]:
     # for company llm
     
 
-    env["OPENAI_API_KEY"] = "asd"
-    env["OPENAI_BASE_URL"] = "http://10.2.112.180:9998/v1/"
-    env["LLM_MODEL"] = "qwen2.5-3b"
+    # env["OPENAI_API_KEY"] = "asd"
+    # env["OPENAI_BASE_URL"] = "http://10.2.112.180:9998/v1/"
+    # env["LLM_MODEL"] = "qwen2.5-3b"
     return env
 
 

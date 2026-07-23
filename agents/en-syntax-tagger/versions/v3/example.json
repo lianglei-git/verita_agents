@@ -1,0 +1,212 @@
+{
+    "sentence": "Although she was tired, she kept working because she had a deadline.",
+    "translation": "尽管她很累，但她继续工作，因为她有一个截止日期。",
+    "sentence_type": "陈述句",
+    "tense_voice": "一般过去时主动语态（主句），一般过去时被动语态（从句1），一般过去时主动语态（从句2）",
+    "structure_summary": {
+      "subject": "she (主句主语)",
+      "predicate": "kept working (主句谓语)",
+      "object": null,
+      "complement": null,
+      "adverbial": "Although she was tired (让步状语从句), because she had a deadline (原因状语从句)",
+      "attributive": null
+    },
+    "chunks": [
+      {
+        "id": 1,
+        "text": "Although she was tired",
+        "type": "CP",
+        "syntax_role": "状语",
+        "modify_target": "主句 kept working"
+      },
+      {
+        "id": 2,
+        "text": "she",
+        "type": "NP",
+        "syntax_role": "主语",
+        "modify_target": null
+      },
+      {
+        "id": 3,
+        "text": "kept working",
+        "type": "VP",
+        "syntax_role": "谓语",
+        "modify_target": null
+      },
+      {
+        "id": 4,
+        "text": "because she had a deadline",
+        "type": "CP",
+        "syntax_role": "状语",
+        "modify_target": "主句 kept working"
+      }
+    ],
+    "tokens": [
+      {
+        "id": 1,
+        "word": "Although",
+        "lemma": "although",
+        "pos": "从属连词",
+        "pos_code": "IN",
+        "syntax_function": "引导让步状语从句",
+        "dependency": "标记",
+        "head_word": "tired"
+      },
+      {
+        "id": 2,
+        "word": "she",
+        "lemma": "she",
+        "pos": "人称代词主格",
+        "pos_code": "PRP",
+        "syntax_function": "从句主语",
+        "dependency": "名词性主语",
+        "head_word": "tired"
+      },
+      {
+        "id": 3,
+        "word": "was",
+        "lemma": "be",
+        "pos": "动词过去式",
+        "pos_code": "VBD",
+        "syntax_function": "系动词",
+        "dependency": "系动词",
+        "head_word": "tired"
+      },
+      {
+        "id": 4,
+        "word": "tired",
+        "lemma": "tired",
+        "pos": "形容词",
+        "pos_code": "JJ",
+        "syntax_function": "表语",
+        "dependency": "形容词表语",
+        "head_word": "she"
+      },
+      {
+        "id": 5,
+        "word": ",",
+        "lemma": ",",
+        "pos": "标点符号",
+        "pos_code": ",",
+        "syntax_function": "分隔从句",
+        "dependency": "标点",
+        "head_word": "kept"
+      },
+      {
+        "id": 6,
+        "word": "she",
+        "lemma": "she",
+        "pos": "人称代词主格",
+        "pos_code": "PRP",
+        "syntax_function": "主句主语",
+        "dependency": "名词性主语",
+        "head_word": "kept"
+      },
+      {
+        "id": 7,
+        "word": "kept",
+        "lemma": "keep",
+        "pos": "动词过去式",
+        "pos_code": "VBD",
+        "syntax_function": "谓语动词，后接动名词作宾语",
+        "dependency": "根节点",
+        "head_word": null
+      },
+      {
+        "id": 8,
+        "word": "working",
+        "lemma": "work",
+        "pos": "动名词",
+        "pos_code": "VBG",
+        "syntax_function": "作 kept 的宾语",
+        "dependency": "动名词宾语",
+        "head_word": "kept"
+      },
+      {
+        "id": 9,
+        "word": "because",
+        "lemma": "because",
+        "pos": "从属连词",
+        "pos_code": "IN",
+        "syntax_function": "引导原因状语从句",
+        "dependency": "标记",
+        "head_word": "had"
+      },
+      {
+        "id": 10,
+        "word": "she",
+        "lemma": "she",
+        "pos": "人称代词主格",
+        "pos_code": "PRP",
+        "syntax_function": "从句主语",
+        "dependency": "名词性主语",
+        "head_word": "had"
+      },
+      {
+        "id": 11,
+        "word": "had",
+        "lemma": "have",
+        "pos": "动词过去式",
+        "pos_code": "VBD",
+        "syntax_function": "从句谓语动词",
+        "dependency": "谓语",
+        "head_word": "had"
+      },
+      {
+        "id": 12,
+        "word": "a",
+        "lemma": "a",
+        "pos": "限定词",
+        "pos_code": "DT",
+        "syntax_function": "限定名词 deadline",
+        "dependency": "限定词",
+        "head_word": "deadline"
+      },
+      {
+        "id": 13,
+        "word": "deadline",
+        "lemma": "deadline",
+        "pos": "名词单数",
+        "pos_code": "NN",
+        "syntax_function": "作 had 的宾语",
+        "dependency": "直接宾语",
+        "head_word": "had"
+      },
+      {
+        "id": 14,
+        "word": ".",
+        "lemma": ".",
+        "pos": "标点符号",
+        "pos_code": ".",
+        "syntax_function": "表示句子结束",
+        "dependency": "标点",
+        "head_word": "kept"
+      }
+    ],
+    "grammars": [
+      {
+        "grammar_type": "让步状语从句",
+        "grammar_content": "Although she was tired",
+        "grammar_function": "作主句的让步状语，表示尽管…",
+        "grammar_notes": "Although 引导的从句置于句首，主句在前，强调转折关系。从句中 was 为系动词，tired 作表语。"
+      },
+      {
+        "grammar_type": "动名词作宾语",
+        "grammar_content": "kept working",
+        "grammar_function": "keep 后接动名词作宾语，表示持续做某事",
+        "grammar_notes": "动词 keep 后须接 V-ing 形式，表示继续、重复的动作，非谓语动词用法。"
+      },
+      {
+        "grammar_type": "原因状语从句",
+        "grammar_content": "because she had a deadline",
+        "grammar_function": "作主句的原因状语，解释为何继续工作",
+        "grammar_notes": "because 引导的从句表示直接原因，位于主句之后，时态与主句一致。"
+      },
+      {
+        "grammar_type": "复合句",
+        "grammar_content": "主句 + 让步从句 + 原因从句",
+        "grammar_function": "整个句子为复合句，包含一个主句和两个从属分句",
+        "grammar_notes": "句子结构为：让步状语从句 + 主句（主语 + 谓语 + 动名词宾语）+ 原因状语从句，体现从属连接词的使用。"
+      }
+    ]
+  }

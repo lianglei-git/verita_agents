@@ -62,9 +62,15 @@ export default function AgentWorkbench() {
     setError('')
     try {
       const run = await ensureLiveRun()
-      const raw = typeof inputOverride === 'string' ? inputOverride : userInput
+      let options = {}
+      let raw = userInput
+      if (typeof inputOverride === 'string') {
+        raw = inputOverride
+      } else if (inputOverride && typeof inputOverride === 'object') {
+        options = inputOverride
+      }
       const inputToSend = raw?.trim() ? raw : undefined
-      const data = await runAgent(agentId, inputToSend, {}, run.id)
+      const data = await runAgent(agentId, inputToSend, options, run.id)
       setLastResult(data)
       setActiveRunId(run.id)
       await refreshRuns()

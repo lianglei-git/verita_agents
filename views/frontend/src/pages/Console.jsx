@@ -177,9 +177,15 @@ export default function Console() {
         const updated = await updateRunInput(run.id, userInput)
         setActiveRun(updated.run)
       }
-      const raw = typeof inputOverride === 'string' ? inputOverride : userInput
+      let options = {}
+      let raw = userInput
+      if (typeof inputOverride === 'string') {
+        raw = inputOverride
+      } else if (inputOverride && typeof inputOverride === 'object') {
+        options = inputOverride
+      }
       const inputToSend = raw?.trim() ? raw : undefined
-      const data = await executeInRun(run.id, activeAgentId, inputToSend)
+      const data = await executeInRun(run.id, activeAgentId, inputToSend, options)
       setActiveRun(data.run)
       setContext(data.context)
       await refreshRuns()

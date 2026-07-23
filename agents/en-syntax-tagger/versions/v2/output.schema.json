@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnSyntaxTaggerV2Output",
+  "description": "v2 教学版：主干概括 + 片段表 + 结构树 + 难点说明",
+  "type": "object",
+  "required": ["input", "api_version", "analysis", "spacy_tokens", "meta"],
+  "properties": {
+    "input": { "type": "string" },
+    "api_version": { "const": "v2" },
+    "output": { "type": "string" },
+    "error": { "type": ["string", "null"] },
+    "message": { "type": "string" },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "sentence": { "type": "string" },
+        "translation": { "type": "string" },
+        "sentence_type": { "type": "string" },
+        "trunk": { "type": "string" },
+        "segment_table": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "span": { "type": "string" },
+              "role": { "type": "string" },
+              "pos": { "type": "string" },
+              "role_in_trunk": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "structure_tree": { "type": "string" },
+        "difficulty_notes": { "type": "string" }
+      }
+    },
+    "spacy_tokens": { "type": "array" },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "api_version": { "const": "v2" },
+        "profile": { "const": "teaching" }
+      }
+    }
+  }
+}

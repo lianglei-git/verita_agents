@@ -1,4 +1,4 @@
-"""英文句法全量标记 Agent — LLM 全量标记 + spaCy token 类型。"""
+"""英文句法全量标记 — v1学术 / v2教学 / v3 JSON 数据。"""
 
 from __future__ import annotations
 
@@ -14,116 +14,126 @@ for path in (_AGENTS_ROOT, _AGENT_DIR):
     if path_str not in sys.path:
         sys.path.insert(0, path_str)
 
-from spacy_tokens import analyze_spacy  # noqa: E402
-
-try:
-    from _lib.llm import get_client, is_llm_available
-except ImportError:
-
-    def is_llm_available() -> bool:  # type: ignore[misc]
-        return False
-
-    def get_client():  # type: ignore[misc]
-        return None
-
+from versions.registry import (  # noqa: E402
+    DEFAULT_VERSION,
+    SUPPORTED_VERSIONS,
+    get_handler,
+    list_versions,
+    resolve_api_version,
+)
 
 AGENT_ID = "en-syntax-tagger"
-VERSION = "1.1.0"
+PACKAGE_VERSION = "3.0.0"
+
+try:
+    import jsonschema
+except ImportError:
+    jsonschema = None
 
 
-def _load_prompt() -> str:
-    return (_AGENT_DIR / "prompt.txt").read_text(encoding="utf-8").strip()
+def _load_schema(api_version: str, kind: str) -> dict[str, Any] | None:
+    path = _AGENT_DIR / "versions" / api_version / f"{kind}.schema.json"
+    if not path.is_file():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
-def run(user_input: str, **kwargs) -> dict[str, Any]:
-    sentence = (user_input or "").strip()
-    if not sentence:
-        return {
-            "error": "empty_input",
-            "message": "Please provide an English sentence.",
-            "meta": {"agent": AGENT_ID, "version": VERSION},
-        }
+def _validate_input(api_version: str, payload: dict[str, Any]) -> list[str]:
+    if jsonschema is None:
+        return []
+    schema = _load_schema(api_version, "input")
+    if not schema:
+        return []
+    try:
+        jsonschema.validate(instance=payload, schema=schema)
+        return []
+    except jsonschema.ValidationError as e:
+        return [e.message]
 
-    # spaCy first (always attempt; independent of LLM)
-    spacy_result = analyze_spacy(sentence)
-    spacy_tokens = spacy_result.get("tokens") or []
 
-    result: dict[str, Any] = {
-        "input": sentence,
-        "analysis": {},
-        "spacy_tokens": spacy_tokens,
-        "meta": {
-            "agent": AGENT_ID,
-            "version": VERSION,
-            "spacy_status": spacy_result.get("status"),
-            "spacy_model": spacy_result.get("model"),
-            "spacy_message": spacy_result.get("message"),
-        },
+def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
+    """
+    kwargs:
+      - version / api_version: v1 | v2 | v3
+        aliases: a/academic→v1, b/teaching→v2, c/json→v3
+    """
+    requested = kwargs.get("version") or kwargs.get("api_version")
+    api_version = resolve_api_version(
+        None if requested is None else str(requested),
+        **kwargs,
+    )
+    handler_kwargs = {
+        k: v
+        for k, v in kwargs.items()
+        if k not in {"version", "api_version"}
     }
 
-    if not is_llm_available():
-        result["error"] = "llm_unavailable"
-        result["message"] = "LLM unavailable. spaCy tokens (if any) are still returned."
-        result["meta"]["llm_status"] = "unavailable"
-        result["output"] = f"spaCy tokens={len(spacy_tokens)}; LLM unavailable"
-        return result
+    handler = get_handler(api_version)
 
-    client = get_client()
-    if client is None:
-        result["error"] = "llm_unavailable"
-        result["message"] = "Failed to create LLM client."
-        result["meta"]["llm_status"] = "unavailable"
-        result["output"] = f"spaCy tokens={len(spacy_tokens)}; LLM unavailable"
-        return result
+    if hasattr(handler, "normalize_input"):
+        normalized = handler.normalize_input(user_input, **handler_kwargs)
+        verrs = _validate_input(api_version, normalized)
+        if verrs and normalized.get("sentence"):
+            return {
+                "input": normalized.get("sentence") or "",
+                "api_version": api_version,
+                "analysis": {},
+                "spacy_tokens": [],
+                "error": "invalid_input",
+                "message": "; ".join(verrs),
+                "meta": {
+                    "agent": AGENT_ID,
+                    "package_version": PACKAGE_VERSION,
+                    "api_version": api_version,
+                    "validation_errors": verrs,
+                },
+            }
 
-    system = _load_prompt()
-    user_prompt = f"待分析英文句子：\n{sentence}"
+    result = handler.run(user_input, **handler_kwargs)
+    if not isinstance(result, dict):
+        return {
+            "error": "invalid_handler_result",
+            "message": "Handler did not return a dict.",
+            "api_version": api_version,
+            "meta": {
+                "agent": AGENT_ID,
+                "package_version": PACKAGE_VERSION,
+                "api_version": api_version,
+            },
+        }
 
-    try:
-        analysis = client.chat_json(user_prompt, system=system)
-        if not isinstance(analysis, dict):
-            result["error"] = "invalid_llm_response"
-            result["message"] = "LLM did not return a JSON object."
-            result["meta"]["llm_status"] = "invalid"
-            result["output"] = f"spaCy tokens={len(spacy_tokens)}; LLM invalid"
-            return result
+    result.setdefault("api_version", api_version)
+    meta = result.setdefault("meta", {})
+    meta["agent"] = AGENT_ID
+    meta["package_version"] = PACKAGE_VERSION
+    meta["api_version"] = api_version
 
-        if not analysis.get("sentence"):
-            analysis["sentence"] = sentence
+    if requested is not None:
+        raw = str(requested).strip().lower()
+        resolved_from_raw = resolve_api_version(raw)
+        # If caller passed an unknown id, resolver returns default — record fallback
+        known = set(SUPPORTED_VERSIONS) | {
+            "a", "academic", "b", "teaching", "c", "json", "json_data",
+            "1", "2", "3",
+        }
+        if raw not in known and not (raw.startswith("v") and raw in SUPPORTED_VERSIONS):
+            meta["requested_version"] = str(requested)
+            meta["version_fallback"] = resolved_from_raw
 
-        translation = (analysis.get("translation") or "")[:60]
-        summary = " · ".join(
-            p
-            for p in (
-                analysis.get("sentence_type"),
-                analysis.get("tense_voice"),
-                translation,
-            )
-            if p
-        )
-
-        result["analysis"] = analysis
-        result["output"] = summary or sentence
-        result["meta"]["llm_status"] = "success"
-        result["meta"]["llm_stats"] = client.stats()
-        return result
-
-    except Exception as e:  # noqa: BLE001
-        import traceback
-
-        result["error"] = "analysis_failed"
-        result["message"] = str(e)
-        result["traceback"] = traceback.format_exc()
-        result["meta"]["llm_status"] = "error"
-        result["output"] = f"spaCy tokens={len(spacy_tokens)}; LLM error"
-        return result
+    return result
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        print("Usage: python agent.py '<English sentence>'")
+    args = sys.argv[1:]
+    version = DEFAULT_VERSION
+    if args and args[0] in ("--version", "-V") and len(args) >= 2:
+        version = args[1]
+        args = args[2:]
+    if not args:
+        print("Usage: python agent.py [--version v1|v2|v3] '<English sentence>'")
+        print("API versions:", json.dumps(list_versions(), ensure_ascii=False, indent=2))
         sys.exit(1)
-    print(json.dumps(run(sys.argv[1]), ensure_ascii=False, indent=2))
+    print(json.dumps(run(args[0], version=version), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

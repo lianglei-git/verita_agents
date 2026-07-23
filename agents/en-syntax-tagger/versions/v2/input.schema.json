@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnSyntaxTaggerV2Input",
+  "description": "v2 对比学习/教学版输入",
+  "type": "object",
+  "required": ["sentence"],
+  "additionalProperties": true,
+  "properties": {
+    "sentence": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

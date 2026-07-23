@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnSyntaxTaggerV3Output",
+  "description": "v3 JSON 数据版：clauses + constituents(含下标) + chunks + tokens + grammars",
+  "type": "object",
+  "required": ["input", "api_version", "analysis", "spacy_tokens", "meta"],
+  "properties": {
+    "input": { "type": "string" },
+    "api_version": { "const": "v3" },
+    "output": { "type": "string" },
+    "error": { "type": ["string", "null"] },
+    "message": { "type": "string" },
+    "analysis": {
+      "type": "object",
+      "properties": {
+        "sentence": { "type": "string" },
+        "translation": { "type": "string" },
+        "type": { "type": "string" },
+        "sentence_type": { "type": "string" },
+        "tense_voice": { "type": "string" },
+        "structure_summary": { "type": "object" },
+        "clauses": { "type": "array" },
+        "constituents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "number" },
+              "text": { "type": "string" },
+              "type": { "type": "string" },
+              "pos": { "type": "string" },
+              "function": { "type": "string" },
+              "parent": { "type": ["number", "null"] },
+              "children": { "type": "array" },
+              "start_index": { "type": "number" },
+              "end_index": { "type": "number" }
+            }
+          }
+        },
+        "chunks": { "type": "array" },
+        "tokens": { "type": "array" },
+        "grammars": { "type": "array" }
+      }
+    },
+    "spacy_tokens": { "type": "array" },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "api_version": { "const": "v3" },
+        "profile": { "const": "json_data" }
+      }
+    }
+  }
+}

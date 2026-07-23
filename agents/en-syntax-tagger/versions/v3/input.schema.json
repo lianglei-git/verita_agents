@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EnSyntaxTaggerV3Input",
+  "description": "v3 JSON 数据版输入",
+  "type": "object",
+  "required": ["sentence"],
+  "additionalProperties": true,
+  "properties": {
+    "sentence": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

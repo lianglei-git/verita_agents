@@ -1,47 +1,33 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "EnSyntaxTaggerResult",
+  "title": "EnSyntaxTaggerEnvelope",
+  "description": "外壳。analysis 形状见 versions/v{1,2,3}/output.schema.json",
   "type": "object",
   "properties": {
     "input": { "type": "string" },
+    "api_version": { "type": "string", "enum": ["v1", "v2", "v3"] },
     "output": { "type": "string" },
-    "error": { "type": "string" },
+    "error": { "type": ["string", "null"] },
     "message": { "type": "string" },
-    "analysis": {
-      "type": "object",
-      "description": "LLM 全量语法标记"
+    "analysis": { "type": "object" },
+    "spacy_tokens": { "type": "array" },
+    "meta": { "type": "object" }
+  },
+  "version_docs": {
+    "v1": {
+      "profile": "academic",
+      "solves": "详细学术版：标准缩写+成分表+树形+特殊结构",
+      "prompt": "versions/v1/prompt.txt"
     },
-    "spacy_tokens": {
-      "type": "array",
-      "description": "spaCy 每个 token 的类型与依存",
-      "items": {
-        "type": "object",
-        "properties": {
-          "index": { "type": "number" },
-          "text": { "type": "string" },
-          "lemma": { "type": "string" },
-          "pos": { "type": "string", "description": "粗粒度词性：NOUN/VERB/ADP/..." },
-          "tag": { "type": "string", "description": "Penn Treebank 细粒度标签" },
-          "dep": { "type": "string", "description": "依存关系" },
-          "head_idx": { "type": "number" },
-          "head_text": { "type": "string" },
-          "char_start": { "type": "number" },
-          "char_end": { "type": "number" },
-          "is_stop": { "type": "boolean" },
-          "is_punct": { "type": "boolean" },
-          "is_alpha": { "type": "boolean" },
-          "morph": { "type": "string" }
-        }
-      }
+    "v2": {
+      "profile": "teaching",
+      "solves": "对比学习版：片段表+主干概括+难点说明",
+      "prompt": "versions/v2/prompt.txt"
     },
-    "meta": {
-      "type": "object",
-      "properties": {
-        "agent": { "type": "string" },
-        "version": { "type": "string" },
-        "spacy_status": { "type": "string" },
-        "llm_status": { "type": "string" }
-      }
+    "v3": {
+      "profile": "json_data",
+      "solves": "JSON数据版：带字符下标的 constituents/clauses，便于程序处理",
+      "prompt": "versions/v3/prompt.txt"
     }
   }
 }
