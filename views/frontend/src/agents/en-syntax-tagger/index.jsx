@@ -77,6 +77,8 @@ export default function EnSyntaxTaggerView({
 }) {
   const [tab, setTab] = useState('overview')
   const [apiVersion, setApiVersion] = useState('v1')
+  const [nativeLang, setNativeLang] = useState('中文')
+  const [learnLang, setLearnLang] = useState('英语')
 
   const handleVersionChange = (next) => {
     setApiVersion(next)
@@ -116,7 +118,13 @@ export default function EnSyntaxTaggerView({
   }, [effectiveVersion])
 
   const handleRun = () => {
-    if (typeof onRun === 'function') onRun({ version: apiVersion })
+    if (typeof onRun === 'function') {
+      onRun({
+        version: apiVersion,
+        native_lang: nativeLang.trim() || '中文',
+        learn_lang: learnLang.trim() || '英语',
+      })
+    }
   }
 
   const showResult = analysis.sentence || spacyTokens.length > 0 || hasError
@@ -138,8 +146,30 @@ export default function EnSyntaxTaggerView({
               <option value="v3">v3 · JSON 数据版（C）</option>
             </select>
           </label>
+          <div className="lang-row">
+            <label>
+              <span>母语 native_lang</span>
+              <input
+                type="text"
+                value={nativeLang}
+                placeholder="中文"
+                onChange={(e) => setNativeLang(e.target.value)}
+                disabled={loading}
+              />
+            </label>
+            <label>
+              <span>目标语 learn_lang</span>
+              <input
+                type="text"
+                value={learnLang}
+                placeholder="英语"
+                onChange={(e) => setLearnLang(e.target.value)}
+                disabled={loading}
+              />
+            </label>
+          </div>
           <label>
-            <span>英文句子</span>
+            <span>待分析句子（{learnLang || '英语'}）</span>
             <textarea
               rows={3}
               value={userInput}
@@ -172,6 +202,9 @@ export default function EnSyntaxTaggerView({
             <span>
               API: {effectiveVersion}
               {meta.profile_label ? ` · ${meta.profile_label}` : ''}
+            </span>
+            <span>
+              语言: {meta.native_lang || nativeLang} → {meta.learn_lang || learnLang}
             </span>
             <span>LLM: {meta.llm_status || 'n/a'}</span>
             <span>spaCy: {meta.spacy_status || 'n/a'}</span>

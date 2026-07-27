@@ -8,7 +8,18 @@
   "properties": {
     "sentence": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "待分析原句（语言由 learn_lang 指定）"
+    },
+    "native_lang": {
+      "type": "string",
+      "default": "中文",
+      "description": "学习者母语；翻译与讲解用语"
+    },
+    "learn_lang": {
+      "type": "string",
+      "default": "英语",
+      "description": "目标学习语言；被分析句子语言"
     }
   }
 }

@@ -17,6 +17,8 @@ if is_llm_available():
 
 ## JSON
 
+LLM 输出经 `json-repair` 修复后再解析（容忍尾逗号、截断、markdown 围栏等）：
+
 ```python
 from _lib.json_utils import extract_json
 ```

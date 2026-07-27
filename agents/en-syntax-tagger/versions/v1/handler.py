@@ -5,7 +5,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from versions.common import normalize_sentence, run_llm_analysis
+from versions.common import (
+    normalize_sentence,
+    render_prompt,
+    resolve_lang_options,
+    run_llm_analysis,
+)
 
 _DIR = Path(__file__).resolve().parent
 API_VERSION = "v1"
@@ -17,15 +22,28 @@ def load_prompt() -> str:
 
 
 def normalize_input(user_input: str, **kwargs: Any) -> dict[str, Any]:
-    return {"sentence": normalize_sentence(user_input, **kwargs)}
+    native_lang, learn_lang = resolve_lang_options(**kwargs)
+    return {
+        "sentence": normalize_sentence(user_input, **kwargs),
+        "native_lang": native_lang,
+        "learn_lang": learn_lang,
+    }
 
 
 def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
     sentence = normalize_sentence(user_input, **kwargs)
+    native_lang, learn_lang = resolve_lang_options(**kwargs)
+    system_prompt = render_prompt(
+        load_prompt(),
+        native_lang=native_lang,
+        learn_lang=learn_lang,
+    )
     result = run_llm_analysis(
         api_version=API_VERSION,
         sentence=sentence,
-        system_prompt=load_prompt(),
+        system_prompt=system_prompt,
+        native_lang=native_lang,
+        learn_lang=learn_lang,
     )
     result.setdefault("meta", {})["profile"] = PROFILE
     result["meta"]["profile_label"] = "详细学术版"

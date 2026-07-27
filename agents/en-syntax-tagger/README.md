@@ -23,12 +23,26 @@
 ```python
 from agent import run
 
-run("The fox jumps.")                    # 默认 v1
+run("The fox jumps.")                    # 默认 v1；native_lang=中文, learn_lang=英语
 run("The fox jumps.", version="v2")
 run("The fox jumps.", version="v3")
 run("The fox jumps.", version="teaching")  # → v2
+run(
+    "The fox jumps.",
+    version="v1",
+    native_lang="中文",   # 讲解/翻译用语
+    learn_lang="英语",    # 被分析句子语言
+)
 ```
 
+`options` / kwargs：
+
+| 字段 | 默认 | 说明 |
+|------|------|------|
+| `native_lang` | `中文` | 学习者母语；翻译与说明性文字 |
+| `learn_lang` | `英语` | 目标语；被分析句子语言 |
+
+术语标记固定用英文符号（S/V/O、NP/VP…），说明文字跟 `native_lang`。
 ```bash
 python agent.py --version v1 "Although she was tired, she kept working."
 python agent.py --version v2 "..."

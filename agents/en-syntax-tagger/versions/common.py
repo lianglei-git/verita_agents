@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 _AGENT_DIR = Path(__file__).resolve().parents[1]
 if str(_AGENT_DIR) not in sys.path:
@@ -23,11 +23,41 @@ except ImportError:
         return None
 
 
+DEFAULT_NATIVE_LANG = "中文"
+DEFAULT_LEARN_LANG = "英语"
+
+
 def normalize_sentence(user_input: str, **kwargs: Any) -> str:
     sentence = (user_input or "").strip()
     if not sentence and isinstance(kwargs.get("sentence"), str):
         sentence = kwargs["sentence"].strip()
     return sentence
+
+
+def resolve_lang_options(**kwargs: Any) -> tuple[str, str]:
+    """Return (native_lang, learn_lang) with defaults."""
+    native = kwargs.get("native_lang")
+    learn = kwargs.get("learn_lang")
+    native_lang = str(native).strip() if native is not None else ""
+    learn_lang = str(learn).strip() if learn is not None else ""
+    if not native_lang:
+        native_lang = DEFAULT_NATIVE_LANG
+    if not learn_lang:
+        learn_lang = DEFAULT_LEARN_LANG
+    return native_lang, learn_lang
+
+
+def render_prompt(template: str, *, native_lang: str, learn_lang: str) -> str:
+    """Inject language options. Placeholders: {{native_lang}} / {{learn_lang}}."""
+    return (
+        template.replace("{{native_lang}}", native_lang).replace(
+            "{{learn_lang}}", learn_lang
+        )
+    )
+
+
+def build_user_prompt(sentence: str, *, learn_lang: str) -> str:
+    return f"待分析的{learn_lang}句子：\n{sentence}"
 
 
 def build_output_summary(analysis: dict[str, Any], sentence: str) -> str:
@@ -49,12 +79,19 @@ def run_llm_analysis(
     sentence: str,
     system_prompt: str,
     user_prompt: str | None = None,
+    native_lang: str = DEFAULT_NATIVE_LANG,
+    learn_lang: str = DEFAULT_LEARN_LANG,
     ensure_sentence_field: bool = True,
 ) -> dict[str, Any]:
     """
     Always attach spaCy tokens; call LLM with the given system prompt.
     Returns unified envelope with analysis / spacy_tokens / meta.
     """
+    lang_meta = {
+        "native_lang": native_lang,
+        "learn_lang": learn_lang,
+    }
+
     if not sentence:
         return {
             "input": sentence,
@@ -62,8 +99,12 @@ def run_llm_analysis(
             "analysis": {},
             "spacy_tokens": [],
             "error": "empty_input",
-            "message": "Please provide an English sentence.",
-            "meta": {"api_version": api_version, "llm_status": "skipped"},
+            "message": f"Please provide a {learn_lang} sentence.",
+            "meta": {
+                "api_version": api_version,
+                "llm_status": "skipped",
+                **lang_meta,
+            },
         }
 
     spacy_result = analyze_spacy(sentence)
@@ -79,6 +120,7 @@ def run_llm_analysis(
             "spacy_status": spacy_result.get("status"),
             "spacy_model": spacy_result.get("model"),
             "spacy_message": spacy_result.get("message"),
+            **lang_meta,
         },
     }
 
@@ -97,7 +139,7 @@ def run_llm_analysis(
         result["output"] = f"spaCy tokens={len(spacy_tokens)}; LLM unavailable"
         return result
 
-    prompt = user_prompt or f"待分析英文句子：\n{sentence}"
+    prompt = user_prompt or build_user_prompt(sentence, learn_lang=learn_lang)
 
     try:
         analysis = client.chat_json(prompt, system=system_prompt)

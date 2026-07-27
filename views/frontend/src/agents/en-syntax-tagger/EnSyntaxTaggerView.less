@@ -29,6 +29,27 @@
   background: #fafaf9;
 }
 
+.en-syntax-tagger-view .lang-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.en-syntax-tagger-view .lang-row input {
+  width: 100%;
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #fafaf9;
+}
+
+@media (max-width: 640px) {
+  .en-syntax-tagger-view .lang-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .en-syntax-tagger-view textarea {
   width: 100%;
   resize: vertical;

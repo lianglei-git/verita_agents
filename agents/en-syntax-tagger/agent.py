@@ -56,6 +56,8 @@ def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
     kwargs:
       - version / api_version: v1 | v2 | v3
         aliases: a/academic→v1, b/teaching→v2, c/json→v3
+      - native_lang: learner's native language (default 中文)
+      - learn_lang: target language being analyzed (default 英语)
     """
     requested = kwargs.get("version") or kwargs.get("api_version")
     api_version = resolve_api_version(
