@@ -1,0 +1,152 @@
+.text-to-speech-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  color: #1c1917;
+}
+
+.text-to-speech-view .input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.text-to-speech-view .mode-select {
+  max-width: 320px;
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #fafaf9;
+}
+
+.text-to-speech-view .full-panel h4 {
+  margin: 12px 0 8px;
+  font-size: 14px;
+}
+
+.text-to-speech-view .full-audio {
+  width: 100%;
+  max-width: 560px;
+}
+
+.text-to-speech-view .meta-line {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #78716c;
+  word-break: break-all;
+}
+
+.text-to-speech-view label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.text-to-speech-view input,
+.text-to-speech-view textarea {
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font: inherit;
+  background: #fafaf9;
+}
+
+.text-to-speech-view textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.text-to-speech-view .btn-row {
+  display: flex;
+  gap: 8px;
+}
+
+.text-to-speech-view .run-btn,
+.text-to-speech-view .stop-btn,
+.text-to-speech-view .replay-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.text-to-speech-view .run-btn {
+  background: #1c1917;
+  color: #fafaf9;
+}
+
+.text-to-speech-view .run-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.text-to-speech-view .stop-btn {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.text-to-speech-view .error-banner {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.text-to-speech-view .sentence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.text-to-speech-view .sentence-card {
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fafaf9;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.text-to-speech-view .sentence-card.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.text-to-speech-view .sentence-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #78716c;
+  margin-bottom: 6px;
+}
+
+.text-to-speech-view .dur {
+  font-variant-numeric: tabular-nums;
+}
+
+.text-to-speech-view .replay-btn {
+  padding: 2px 8px;
+  font-size: 12px;
+  background: #e7e5e4;
+  color: #1c1917;
+}
+
+.text-to-speech-view .sentence-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.text-to-speech-view .empty-state {
+  padding: 28px 8px;
+  text-align: center;
+  color: #a8a29e;
+  font-size: 14px;
+}

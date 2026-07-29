@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TextToSpeech",
+  "description": "stream 试听 SSE；full 整段单音频+句级字幕",
+  "input": {
+    "type": "object",
+    "properties": {
+      "input": { "type": "string", "description": "待合成文本" },
+      "options": {
+        "type": "object",
+        "properties": {
+          "mode": { "type": "string", "enum": ["stream", "full"], "default": "stream" },
+          "voice": { "type": "string" },
+          "model": { "type": "string" },
+          "provider": { "type": "string" }
+        }
+      }
+    }
+  },
+  "sse_events": {
+    "sentence_start": ["sentence_index", "text"],
+    "audio_delta": ["sentence_index", "audio_b64", "mime", "sample_rate"],
+    "sentence_end": ["sentence_index", "audio_url", "duration_ms"],
+    "error": ["error"],
+    "done": []
+  },
+  "output_full": {
+    "type": "object",
+    "properties": {
+      "mode": { "const": "full" },
+      "audio": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "url": { "type": "string" },
+          "mime": { "type": "string" },
+          "duration_ms": { "type": "integer" }
+        }
+      },
+      "subtitles": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "index": { "type": "integer" },
+            "text": { "type": "string" },
+            "start_ms": { "type": "integer" },
+            "end_ms": { "type": "integer" }
+          }
+        }
+      }
+    }
+  }
+}

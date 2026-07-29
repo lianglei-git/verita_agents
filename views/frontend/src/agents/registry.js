@@ -9,6 +9,7 @@ const views = {
   'life-script-author': () => import('./life-script-author'),
   'english-grammar-analyzer': () => import('./english-grammar-analyzer'),
   'en-syntax-tagger': () => import('./en-syntax-tagger'),
+  'text-to-speech': () => import('./text-to-speech'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

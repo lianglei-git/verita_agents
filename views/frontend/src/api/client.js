@@ -78,3 +78,47 @@ export function executeInRun(runId, agentId, input, options = {}) {
     body: JSON.stringify(body),
   })
 }
+
+/**
+ * Consume SSE from POST /api/agents/{id}/stream.
+ * @param {string} id
+ * @param {string} input
+ * @param {object} options
+ * @param {(event: object) => void} onEvent
+ * @param {AbortSignal} [signal]
+ */
+export async function streamAgent(id, input, options = {}, onEvent, signal) {
+  const res = await fetch(`/api/agents/${id}/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ input, options }),
+    signal,
+  })
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error(data.error || `Stream failed: ${res.status}`)
+  }
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder('utf-8')
+  let buffer = ''
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const parts = buffer.split('\n\n')
+    buffer = parts.pop() || ''
+    for (const part of parts) {
+      for (const line of part.split('\n')) {
+        if (!line.startsWith('data:')) continue
+        const raw = line.slice(5).trim()
+        if (!raw) continue
+        try {
+          onEvent(JSON.parse(raw))
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+  }
+}
+

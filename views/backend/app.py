@@ -5,15 +5,30 @@ from __future__ import annotations
 import argparse
 import os
 
-from flask import Flask, send_from_directory
+from flask import Flask, abort, send_from_directory
 
-from backend.config import DEFAULT_HOST, DEFAULT_PORT, FRONTEND_DIST
+from backend.config import DEFAULT_HOST, DEFAULT_PORT, FRONTEND_DIST, MEDIA_TTS_DIR
 from backend.routes import api_bp
 
 
 def create_app(serve_static: bool = False) -> Flask:
     app = Flask(__name__)
     app.register_blueprint(api_bp)
+
+    os.makedirs(MEDIA_TTS_DIR, exist_ok=True)
+
+    @app.get("/media/tts/<path:relpath>")
+    def media_tts(relpath: str):
+        """Read-only serve of TTS full-mode artifacts (audio.wav, subtitles.json)."""
+        root = os.path.realpath(MEDIA_TTS_DIR)
+        target = os.path.realpath(os.path.join(MEDIA_TTS_DIR, relpath))
+        if not (target == root or target.startswith(root + os.sep)):
+            abort(404)
+        if not os.path.isfile(target):
+            abort(404)
+        directory = os.path.dirname(target)
+        filename = os.path.basename(target)
+        return send_from_directory(directory, filename)
 
     if serve_static and os.path.isdir(FRONTEND_DIST):
 
@@ -48,6 +63,7 @@ def main() -> None:
     print(f"API running at http://{args.host}:{args.port}")
     if args.serve_static:
         print(f"Serving static files from {FRONTEND_DIST}")
+    print(f"TTS media dir: {MEDIA_TTS_DIR}")
     app.run(host=args.host, port=args.port, debug=False)
 
 

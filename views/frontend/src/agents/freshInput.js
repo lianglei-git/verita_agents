@@ -7,6 +7,8 @@ const SELF_MANAGED = new Set([
   'story-scenario',
   'route-planner',
   'life-script-author',
+  'text-to-speech',
+  'en-syntax-tagger',
 ])
 
 export function isSelfManagedAgent(agentId) {

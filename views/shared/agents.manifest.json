@@ -58,6 +58,11 @@
       "enabled": true
     },
     {
+      "id": "text-to-speech",
+      "dir": "text-to-speech",
+      "enabled": true
+    },
+    {
       "id": "summarize",
       "dir": null,
       "enabled": true,

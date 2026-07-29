@@ -23,6 +23,18 @@ LLM 输出经 `json-repair` 修复后再解析（容忍尾逗号、截断、mark
 from _lib.json_utils import extract_json
 ```
 
+## TTS（可插拔流式语音合成）
+
+```python
+from _lib.tts import get_provider, is_tts_available, TtsConfig
+
+provider = get_provider()  # TTS_PROVIDER=aliyun → DashScope Qwen-TTS
+for chunk in provider.synthesize_stream("你好。"):
+    print(chunk.event, chunk.audio_b64 is not None)
+```
+
+厂商实现：`_lib/tts/providers/aliyun_dashscope.py`（腾讯云占位 `tencent.py`）。
+
 ## Planning（规划流水线契约）
 
 统一画像、差距诊断、情景推演、自适应路线图与叙事创作的共享契约与安全约束：

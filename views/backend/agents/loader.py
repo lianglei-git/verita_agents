@@ -111,6 +111,9 @@ def load_external_agents() -> dict[str, dict]:
             "schema": schema,
             "source": str(agent_dir.relative_to(REPO_ROOT)),
             "run": run_fn,
+            "stream": getattr(module, "iter_synthesis_events", None),
+            "strip_audio": getattr(module, "strip_audio_from_result", None),
+            "module": module,
         }
 
     return loaded

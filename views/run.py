@@ -39,6 +39,17 @@ def _env() -> dict[str, str]:
     # env["OPENAI_API_KEY"] = "asd"
     # env["OPENAI_BASE_URL"] = "http://10.2.112.180:9998/v1/"
     # env["LLM_MODEL"] = "qwen2.5-3b"
+
+
+    # text-2-speech
+    env["TTS_PROVIDER"] = "aliyun"
+    env["TTS_MODEL"] = "qwen3-tts-flash"
+    env["TTS_VOICE"] = "Katerina" # Katerina Aiden Ryan Jennifer
+    env["TTS_SAMPLE_RATE"] = "24000"
+    env["TTS_MIME"] = "audio/pcm"
+    # env["TTS_DISABLED"]=0
+    env["DASHSCOPE_BASE_HTTP_API_URL"]="https://ws-kkrlrbsx1emep5u9.cn-beijing.maas.aliyuncs.com/api/v1"
+    env["DASHSCOPE_API_KEY"]="sk-ws-H.EIERDDR.MgTJ.MEUCIHTVfF7FukMNcqsiLY6MbelMb1xRn9hhgRzryMlaB8fnAiEAsnptqhwE03qITDNcETNJxghWKNZEftCY8kg1N_sOx_o"
     return env
 
 

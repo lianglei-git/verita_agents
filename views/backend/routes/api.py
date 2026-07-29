@@ -1,12 +1,13 @@
 import json
 import os
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, Response, jsonify, request, stream_with_context
 
 from backend.agents import get_agent, list_agents, run_agent
 from backend.agents.loader import load_manifest, load_workflow
 from backend.config import SHARED_DIR
 from backend.history.context import build_agent_context, resolve_agent_upstream_input
+from backend.history.ephemeral import strip_ephemeral_audio
 from backend.history.store import run_store
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
@@ -28,6 +29,15 @@ def _workflow_meta(workflow_name: str | None = None) -> tuple[dict, list[str], d
 def _run_workflow_meta(run: dict | None) -> tuple[dict, list[str], dict]:
     name = run.get("workflow_name") if run else None
     return _workflow_meta(name)
+
+
+def _history_result_for_agent(agent_id: str, result: dict) -> dict:
+    spec = get_agent(agent_id)
+    if spec and callable(spec.get("strip_audio")):
+        stripped = spec["strip_audio"](result)
+        return stripped if isinstance(stripped, dict) else result
+    stripped = strip_ephemeral_audio(result)
+    return stripped if isinstance(stripped, dict) else result
 
 
 @api_bp.get("/agents")
@@ -85,7 +95,7 @@ def api_run_agent(agent_id: str):
             node_id=record_node_id,
             agent_id=agent_id,
             params={"input": user_input, "options": options},
-            result=result,
+            result=_history_result_for_agent(agent_id, result),
         )
         if isinstance(user_input, str) and user_input.strip().startswith("{"):
             run_store.update_source_input(run_id, user_input)
@@ -100,6 +110,115 @@ def api_run_agent(agent_id: str):
             )
 
     return jsonify(response)
+
+
+@api_bp.post("/agents/<agent_id>/stream")
+def api_stream_agent(agent_id: str):
+    """SSE stream for agents that expose iter_synthesis_events (e.g. text-to-speech)."""
+    spec = get_agent(agent_id)
+    if not spec:
+        return jsonify({"error": "agent not found"}), 404
+
+    stream_fn = spec.get("stream")
+    if not callable(stream_fn):
+        return jsonify({"error": "agent does not support streaming"}), 400
+
+    payload = request.get_json(silent=True) or {}
+    user_input = payload.get("input", "")
+    options = payload.get("options") or {}
+    run_id = payload.get("run_id")
+
+    def generate():
+        sentences_meta: list[dict] = []
+        error: str | None = None
+        try:
+            for event in stream_fn(user_input, **options):
+                if not isinstance(event, dict):
+                    continue
+                ev = event.get("event")
+                if ev == "sentence_start":
+                    sentences_meta.append(
+                        {
+                            "index": event.get("sentence_index"),
+                            "text": event.get("text") or "",
+                            "duration_ms": None,
+                        }
+                    )
+                elif ev == "sentence_end":
+                    idx = event.get("sentence_index")
+                    for row in sentences_meta:
+                        if row.get("index") == idx:
+                            if event.get("duration_ms") is not None:
+                                row["duration_ms"] = event["duration_ms"]
+                            break
+                elif ev == "error":
+                    error = event.get("error") or "tts_error"
+
+                yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        except Exception as exc:  # noqa: BLE001
+            err_payload = {"event": "error", "error": str(exc)}
+            error = str(exc)
+            yield f"data: {json.dumps(err_payload, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'event': 'done'}, ensure_ascii=False)}\n\n"
+
+        if run_id:
+            total = sum(int(s.get("duration_ms") or 0) for s in sentences_meta)
+            history_result = {
+                "output": (
+                    f"合成 {len(sentences_meta)} 句"
+                    + (f" / 总时长 {total}ms" if total else "")
+                    + (f" · error={error}" if error else "")
+                ),
+                "text": user_input,
+                "sentences": [
+                    {
+                        "index": s.get("index"),
+                        "text": s.get("text"),
+                        "duration_ms": s.get("duration_ms"),
+                    }
+                    for s in sentences_meta
+                ],
+                "meta": {
+                    "agent": agent_id,
+                    "ephemeral_audio": True,
+                    "sentence_count": len(sentences_meta),
+                    "total_duration_ms": total or None,
+                    "streamed": True,
+                },
+            }
+            if error:
+                history_result["error"] = error
+            history_result = strip_ephemeral_audio(history_result) or history_result
+
+            run = run_store.get_run(run_id)
+            _, execution_order, node_map = _run_workflow_meta(run)
+            agent_node_id = next(
+                (
+                    nid
+                    for nid in execution_order
+                    if node_map.get(nid, {}).get("agent_id") == agent_id
+                ),
+                None,
+            )
+            record_node_id = agent_node_id or agent_id
+            run_store.record_agent_step(
+                run_id,
+                node_id=record_node_id,
+                agent_id=agent_id,
+                params={"input": user_input, "options": options},
+                result=history_result,
+            )
+
+    headers = {
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+        "Connection": "keep-alive",
+    }
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers=headers,
+    )
 
 
 @api_bp.get("/workflow")
@@ -211,7 +330,7 @@ def api_execute_in_run(run_id: str, agent_id: str):
         node_id=agent_node_id,
         agent_id=agent_id,
         params={"input": user_input, "options": options},
-        result=result,
+        result=_history_result_for_agent(agent_id, result),
     )
 
     if isinstance(user_input, str) and user_input.strip().startswith("{"):
