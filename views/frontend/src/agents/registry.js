@@ -10,6 +10,7 @@ const views = {
   'english-grammar-analyzer': () => import('./english-grammar-analyzer'),
   'en-syntax-tagger': () => import('./en-syntax-tagger'),
   'text-to-speech': () => import('./text-to-speech'),
+  'speech-to-text': () => import('./speech-to-text'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

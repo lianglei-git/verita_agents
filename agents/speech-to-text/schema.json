@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SpeechToText",
+  "description": "双模型 ASR：compare=qwen3-asr-flash（base64），subtitle=paraformer（用户填写公网 audio_url）",
+  "input": {
+    "type": "object",
+    "properties": {
+      "options": {
+        "type": "object",
+        "properties": {
+          "mode": { "type": "string", "enum": ["compare", "subtitle"] },
+          "reference": { "type": "string" },
+          "audio_base64": { "type": "string" },
+          "audio_mime": { "type": "string" },
+          "audio_url": { "type": "string" },
+          "audio_path": { "type": "string" }
+        }
+      }
+    }
+  }
+}

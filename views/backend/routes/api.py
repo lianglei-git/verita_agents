@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Blueprint, Response, jsonify, request, stream_with_context
+from flask import Blueprint, Response, jsonify, request, send_file, stream_with_context
 
 from backend.agents import get_agent, list_agents, run_agent
 from backend.agents.loader import load_manifest, load_workflow
@@ -9,6 +9,7 @@ from backend.config import SHARED_DIR
 from backend.history.context import build_agent_context, resolve_agent_upstream_input
 from backend.history.ephemeral import strip_ephemeral_audio
 from backend.history.store import run_store
+from backend.media_files import resolve_media_file
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 
@@ -43,6 +44,21 @@ def _history_result_for_agent(agent_id: str, result: dict) -> dict:
 @api_bp.get("/agents")
 def api_list_agents():
     return jsonify({"agents": list_agents()})
+
+
+@api_bp.get("/files")
+def api_get_file():
+    """
+    Fetch a media file by path (absolute under MEDIA_ROOT, or relative like tts/<job>/audio.wav).
+    Query: ?path=...
+    curl -o out.wav "http://127.0.0.1:5000/api/files?path=/.../media/tts/f42f32216720/audio.wav"
+    curl -o out.wav "http://127.0.0.1:5000/api/files?path=tts/f42f32216720/audio.wav"
+    """
+    path = request.args.get("path", "")
+    target = resolve_media_file(path)
+    if target is None:
+        return jsonify({"error": "file not found or path not allowed"}), 404
+    return send_file(target, as_attachment=False, download_name=target.name)
 
 
 @api_bp.get("/agents/<agent_id>")

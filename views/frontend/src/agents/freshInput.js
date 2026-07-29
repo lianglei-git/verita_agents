@@ -8,6 +8,7 @@ const SELF_MANAGED = new Set([
   'route-planner',
   'life-script-author',
   'text-to-speech',
+  'speech-to-text',
   'en-syntax-tagger',
 ])
 

@@ -35,6 +35,15 @@ for chunk in provider.synthesize_stream("你好。"):
 
 厂商实现：`_lib/tts/providers/aliyun_dashscope.py`（腾讯云占位 `tencent.py`）。
 
+## ASR（Paraformer 录音转写）
+
+```python
+from _lib.asr import transcribe_url, diff_tokens, AsrConfig
+
+result = transcribe_url("https://example.com/a.wav")
+diff, stats = diff_tokens("参考文本", result.transcript)
+```
+
 ## Planning（规划流水线契约）
 
 统一画像、差距诊断、情景推演、自适应路线图与叙事创作的共享契约与安全约束：
