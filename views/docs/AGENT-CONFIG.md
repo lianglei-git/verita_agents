@@ -89,3 +89,15 @@ GET /api/workflow?name=mvp-pipeline
 - 不要把 prompt 硬编码在 views 前端
 
 调度与历史记录由 Views 后端 `runs` API 负责。
+
+## 内部 token（P6）
+
+`POST /api/agents/{id|skill}/run` 与 `/stream` 校验 `X-Internal-Token`。
+
+| 变量 | 说明 |
+|------|------|
+| `INTERNAL_TOKEN` | Agent 侧期望的内部 token；未设则看 `AGENT_TOKEN` |
+| `AGENT_TOKEN` | 与 LS 同名回退 |
+| `AGENT_AUTH_DISABLED` | `1` 时不校验（本地工作台） |
+
+未设任何 token 时不校验，避免打断视觉回归。

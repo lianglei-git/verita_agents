@@ -15,6 +15,7 @@ from backend.agents.envelope import (
     parse_run_payload,
 )
 from backend.agents.loader import load_manifest, load_workflow
+from backend.auth import check_internal_token
 from backend.config import SHARED_DIR
 from backend.history.context import build_agent_context, resolve_agent_upstream_input
 from backend.history.ephemeral import strip_ephemeral_audio
@@ -22,6 +23,11 @@ from backend.history.store import run_store
 from backend.media_files import resolve_media_file
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
+
+
+@api_bp.before_request
+def _require_internal_token():
+    return check_internal_token()
 
 
 def _load_json(filename: str) -> dict:

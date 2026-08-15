@@ -17,6 +17,12 @@ ENVELOPE_ERRORS = [
         "message": "业务错误（如缺参、校验失败）。LS 不要重试。",
     },
     {
+        "http": 401,
+        "code": "unauthorized",
+        "retry": False,
+        "message": "缺少或错误的 X-Internal-Token。未设 INTERNAL_TOKEN 时不校验。",
+    },
+    {
         "http": 404,
         "code": "agent_not_found",
         "retry": False,

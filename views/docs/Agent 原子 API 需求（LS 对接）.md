@@ -70,7 +70,7 @@ Studio / 前端不直打 Agent。
 | 变量 | 必填 | 说明 |
 |---|---|---|
 | `AGENT_BASE_URL` | 是（联调/生产） | 例如 `http://127.0.0.1:9100`，不含 path。空则 Gateway 视为 Agent 不可用 |
-| `AGENT_TOKEN` | 建议 | 打 Agent 的内部 token；未设则回退 `INTERNAL_TOKEN` |
+| `AGENT_TOKEN` | 建议 | 打 Agent 的内部 token；未设则回退 `INTERNAL_TOKEN`。Agent 侧验 `X-Internal-Token`，期望值取 `INTERNAL_TOKEN` 或同名回退 |
 | `AGENT_TIMEOUT` | 否 | 默认 LLM 超时，Go duration（如 `15s`） |
 | `AGENT_ASR_TIMEOUT` | 否 | ASR 专用超时，可长于默认 |
 

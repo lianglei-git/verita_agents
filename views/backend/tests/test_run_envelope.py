@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import os
 import unittest
+from unittest.mock import patch
 
 from backend.app import create_app
 
@@ -12,6 +14,13 @@ class RunEnvelopeHttpTest(unittest.TestCase):
     def setUpClass(cls):
         cls.app = create_app()
         cls.client = cls.app.test_client()
+
+    def setUp(self):
+        self._auth = patch.dict(os.environ, {"AGENT_AUTH_DISABLED": "1"})
+        self._auth.start()
+
+    def tearDown(self):
+        self._auth.stop()
 
     def test_summarize_envelope(self):
         res = self.client.post(

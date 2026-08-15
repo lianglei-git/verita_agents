@@ -35,7 +35,7 @@ E10（`learning_path.generate` / `curriculum.analyze`）不进本 roadmap 主线
 
 ---
 
-**进度**：P0–P5 已落地。下一阶段 P6（鉴权中间件）。
+**进度**：P0–P6 已落地。P7 联调收口可对照清单用真数据走一遍。
 
 ## 1. 阶段总览
 

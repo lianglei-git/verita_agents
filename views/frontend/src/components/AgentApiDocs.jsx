@@ -96,7 +96,8 @@ export default function AgentApiDocs({ agent }) {
           </p>
           <p className="docs-note">
             工作台用 <code>{'{ input, options, run_id }'}</code>；LS 用扁平字段 + <code>request_id</code>。
-            鉴权中间件后置（P6），本期不验 token。
+            设了 <code>INTERNAL_TOKEN</code>（或 <code>AGENT_TOKEN</code>）时，LS 需带
+            <code>X-Internal-Token</code>。未设或 <code>AGENT_AUTH_DISABLED=1</code> 时跳过，工作台不用带头。
           </p>
 
           <nav className="docs-tabs">
