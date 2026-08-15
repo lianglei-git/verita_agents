@@ -1,0 +1,37 @@
+{
+  "title": "LS · 日文转写",
+  "description": "language=ja。output 对齐 §4.1。",
+  "request": {
+    "request_id": "01JEXAMPLEASR0000000000002",
+    "audio_url": "https://example.com/ja-clip.mp3",
+    "language": "ja",
+    "enable_word_timestamps": true
+  },
+  "response": {
+    "request_id": "01JEXAMPLEASR0000000000002",
+    "skill": "asr.transcribe",
+    "output": {
+      "text": "こんにちは。",
+      "duration_sec": 2.4,
+      "timestamp_granularity": "word",
+      "words": [
+        { "text": "こんにちは", "start_ms": 120, "end_ms": 900 }
+      ],
+      "cues": [
+        { "text": "こんにちは。", "start_ms": 120, "end_ms": 2400 }
+      ]
+    },
+    "usage": {
+      "provider": "aliyun",
+      "model": "paraformer-v2",
+      "tokens": 0,
+      "usage_sec": 2.4,
+      "cost_micros": null,
+      "latency_ms": 1800
+    },
+    "versions": {
+      "skill_version": "1.2.0",
+      "package_version": "1.2.0"
+    }
+  }
+}

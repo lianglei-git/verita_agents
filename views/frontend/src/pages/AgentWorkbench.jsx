@@ -9,6 +9,7 @@ import {
 } from '../api/client'
 import { freshInputForAgent, isSelfManagedAgent } from '../agents/freshInput'
 import AgentViewResolver from '../agents/AgentViewResolver'
+import AgentApiDocs from '../components/AgentApiDocs'
 import AppShell from '../components/AppShell'
 import '../components/AppShell.less'
 import ExecutionHistory from '../components/ExecutionHistory'
@@ -165,9 +166,12 @@ export default function AgentWorkbench() {
 
         <section className="workbench-main">
           <header className="workbench-header">
-            <span className="agent-badge">{agentId}</span>
+            <span className="agent-badge">{agent.id || agentId}</span>
+            {agent.skill && <span className="skill-badge">{agent.skill}</span>}
             {agent.source && <span className="source">{agent.source}</span>}
           </header>
+
+          <AgentApiDocs agent={agent} />
 
           <AgentViewResolver
             agent={agent}

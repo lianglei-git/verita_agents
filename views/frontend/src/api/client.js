@@ -1,5 +1,12 @@
 const BASE = '/api'
 
+function errorMessage(data, status) {
+  const err = data?.error
+  if (typeof err === 'string' && err) return err
+  if (err && typeof err === 'object' && err.message) return err.message
+  return `Request failed: ${status}`
+}
+
 async function request(path, options = {}) {
   const res = await fetch(`${BASE}${path}`, {
     headers: { 'Content-Type': 'application/json', ...options.headers },
@@ -7,7 +14,7 @@ async function request(path, options = {}) {
   })
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    throw new Error(data.error || `Request failed: ${res.status}`)
+    throw new Error(errorMessage(data, res.status))
   }
   return data
 }
@@ -20,13 +27,21 @@ export function fetchAgent(id) {
   return request(`/agents/${id}`)
 }
 
-export function runAgent(id, input, options = {}, runId = null) {
+export async function runAgent(id, input, options = {}, runId = null) {
   const body = { input, options }
   if (runId) body.run_id = runId
-  return request(`/agents/${id}/run`, {
+  const res = await fetch(`${BASE}/agents/${id}/run`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    // 业务 4xx 仍带 result，工作台继续展示
+    if (data && data.result !== undefined) return data
+    throw new Error(errorMessage(data, res.status))
+  }
+  return data
 }
 
 export function fetchWorkflow(name) {

@@ -1,19 +1,54 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "SpeechToText",
-  "description": "双模型 ASR：compare=qwen3-asr-flash（base64），subtitle=paraformer（用户填写公网 audio_url）",
+  "title": "asr.transcribe",
+  "description": "LS skill asr.transcribe。工作台仍可用 mode=compare 跟读校对。",
   "input": {
     "type": "object",
     "properties": {
+      "request_id": { "type": "string", "description": "ULID，相同 id 幂等" },
+      "audio_url": { "type": "string", "description": "LS 签发的限时下载 URL，音视频均可" },
+      "language": { "type": "string", "enum": ["en", "ja", "zh-CN"], "description": "识别语言 BCP-47" },
+      "enable_word_timestamps": { "type": "boolean", "default": true },
       "options": {
         "type": "object",
+        "description": "Views 工作台额外字段",
         "properties": {
           "mode": { "type": "string", "enum": ["compare", "subtitle"] },
           "reference": { "type": "string" },
           "audio_base64": { "type": "string" },
           "audio_mime": { "type": "string" },
-          "audio_url": { "type": "string" },
-          "audio_path": { "type": "string" }
+          "audio_url": { "type": "string" }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "text": { "type": "string" },
+      "duration_sec": { "type": "number" },
+      "timestamp_granularity": { "type": "string", "enum": ["word", "sentence"] },
+      "words": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] },
+            "confidence": { "type": "number" }
+          }
+        }
+      },
+      "cues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] }
+          }
         }
       }
     }

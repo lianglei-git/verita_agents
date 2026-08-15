@@ -1,0 +1,11 @@
+{
+  "title": "Views · subtitle 模式",
+  "description": "工作台现用 body。options.mode=subtitle 走 Paraformer。",
+  "request": {
+    "input": "",
+    "options": {
+      "mode": "subtitle",
+      "audio_url": "https://example.com/clip.mp3"
+    }
+  }
+}

@@ -42,12 +42,20 @@ def _parse_words(raw_words: Any) -> list[AsrWord]:
         text = str(w.get("text") or "")
         if not text and not w.get("punctuation"):
             continue
+        confidence = w.get("confidence")
+        if confidence is None:
+            confidence = w.get("confidence_score")
+        try:
+            confidence_f = float(confidence) if confidence is not None else None
+        except (TypeError, ValueError):
+            confidence_f = None
         out.append(
             AsrWord(
                 text=text,
                 start_ms=_to_ms(w.get("begin_time")),
                 end_ms=_to_ms(w.get("end_time")),
                 punctuation=str(w.get("punctuation") or ""),
+                confidence=confidence_f,
             )
         )
     return out
@@ -149,8 +157,15 @@ def _extract_transcription_payload(output: Any) -> dict[str, Any]:
     return data
 
 
-def transcribe_url(file_url: str, cfg: AsrConfig | None = None) -> AsrResult:
-    """Submit Paraformer async job for a publicly reachable audio URL."""
+def transcribe_url(
+    file_url: str,
+    cfg: AsrConfig | None = None,
+    *,
+    language: str | None = None,
+) -> AsrResult:
+    """Submit Paraformer async job for a publicly reachable audio/video URL."""
+    from _lib.asr.languages import language_hints_for
+
     cfg = cfg or AsrConfig()
     if not is_asr_available(cfg):
         raise AsrError("asr_unavailable")
@@ -169,13 +184,14 @@ def transcribe_url(file_url: str, cfg: AsrConfig | None = None) -> AsrResult:
 
     dashscope.api_key = cfg.api_key
     dashscope.base_http_api_url = cfg.base_http_api_url
+    hints = language_hints_for(language, cfg.language_hints)
 
     try:
         model = cfg.subtitle_model or cfg.model
         task_response = Transcription.async_call(
             model=model,
             file_urls=[url],
-            language_hints=list(cfg.language_hints),
+            language_hints=hints,
             timestamp_alignment_enabled=True,
         )
     except TypeError:
@@ -184,7 +200,7 @@ def transcribe_url(file_url: str, cfg: AsrConfig | None = None) -> AsrResult:
         task_response = Transcription.async_call(
             model=model,
             file_urls=[url],
-            language_hints=list(cfg.language_hints),
+            language_hints=hints,
         )
     except Exception as exc:  # noqa: BLE001
         logger.exception("Paraformer async_call failed")

@@ -21,14 +21,18 @@ for path in (_AGENTS_ROOT, _AGENT_DIR):
 from _lib.asr import (  # noqa: E402
     AsrConfig,
     AsrError,
+    classify_url,
     diff_tokens,
+    extract_audio_track,
     is_asr_available,
+    to_transcribe_output,
     transcribe_audio,
     transcribe_url,
 )
 
 AGENT_ID = "speech-to-text"
-PACKAGE_VERSION = "1.1.0"
+PACKAGE_VERSION = "1.2.0"
+SKILL = "asr.transcribe"
 
 _REPO_ROOT = _AGENTS_ROOT.parent
 _DEFAULT_MEDIA = _REPO_ROOT / "views" / "backend" / "media" / "asr"
@@ -244,63 +248,108 @@ def run_compare(user_input: str, **kwargs: Any) -> dict[str, Any]:
         }
 
 
+def _truthy(value: Any, default: bool = True) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() not in {"0", "false", "no", "off"}
+
+
 def run_subtitle(user_input: str, **kwargs: Any) -> dict[str, Any]:
     cfg = _build_cfg(**kwargs)
     model = cfg.subtitle_model or cfg.model
+    language = str(kwargs.get("language") or "").strip() or None
+    enable_words = _truthy(kwargs.get("enable_word_timestamps"), True)
+    provider_meta = _meta(cfg, "", provider="aliyun", model=model, skill=SKILL)
     if not is_asr_available(cfg):
         return {
             "mode": "subtitle",
             "error": "asr_unavailable",
-            "meta": _meta(cfg, "", provider="paraformer", model=model),
+            "message": "ASR 未配置或已禁用",
+            "meta": provider_meta,
         }
 
     try:
         file_url = _require_public_audio_url(kwargs, user_input)
         job_id = uuid.uuid4().hex[:12]
-        result = transcribe_url(file_url, cfg)
-        subtitles = result.to_subtitles()
-
+        media_kind = classify_url(file_url)
         job_dir = resolve_media_root(cfg) / job_id
         job_dir.mkdir(parents=True, exist_ok=True)
+        extracted = None
+        if media_kind == "video":
+            extracted = extract_audio_track(file_url, job_dir / "audio.wav")
+
+        result = transcribe_url(file_url, cfg, language=language)
+        output = to_transcribe_output(result, enable_word_timestamps=enable_words)
+        subtitles = result.to_subtitles()
         subs_path = job_dir / "subtitles.json"
         subs_path.write_text(
             json.dumps(subtitles, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
 
+        usage_sec = output["duration_sec"]
         return {
-            "output": f"subtitle · {len(subtitles)} sentences",
+            "output": output,
             "mode": "subtitle",
             "transcript": result.transcript,
             "subtitles": subtitles,
             "audio": {"url": file_url},
             "subtitles_path": str(subs_path),
             "subtitles_url": f"/media/asr/{job_id}/subtitles.json",
+            "usage": {
+                "provider": "aliyun",
+                "model": model,
+                "tokens": 0,
+                "usage_sec": usage_sec,
+            },
             "meta": _meta(
                 cfg,
                 job_id,
-                provider="paraformer",
+                provider="aliyun",
                 model=model,
+                skill=SKILL,
                 file_url=file_url,
+                language=language,
+                media_kind=media_kind,
+                extracted_audio=str(extracted) if extracted else None,
+                usage_sec=usage_sec,
             ),
         }
     except AsrError as exc:
         return {
             "mode": "subtitle",
             "error": str(exc),
-            "meta": _meta(cfg, "", provider="paraformer", model=model),
+            "message": str(exc),
+            "meta": provider_meta,
         }
     except Exception as exc:  # noqa: BLE001
         return {
             "mode": "subtitle",
             "error": str(exc),
-            "meta": _meta(cfg, "", provider="paraformer", model=model),
+            "message": str(exc),
+            "meta": provider_meta,
         }
 
 
+def _is_transcribe_request(mode: str, kwargs: Any) -> bool:
+    if mode in {"subtitle", "subs", "captions", "transcribe", "asr"}:
+        return True
+    if mode in {"compare", "proofread"}:
+        return False
+    if kwargs.get("language"):
+        return True
+    audio_url = kwargs.get("audio_url") or kwargs.get("url")
+    if isinstance(audio_url, str) and audio_url.startswith(("http://", "https://")):
+        if not (kwargs.get("reference") or kwargs.get("reference_text")):
+            return True
+    return False
+
+
 def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
-    mode = str(kwargs.get("mode") or "compare").strip().lower()
-    if mode in {"subtitle", "subs", "captions"}:
+    mode = str(kwargs.get("mode") or "").strip().lower()
+    if _is_transcribe_request(mode, kwargs):
         return run_subtitle(user_input, **kwargs)
     return run_compare(user_input, **kwargs)
 

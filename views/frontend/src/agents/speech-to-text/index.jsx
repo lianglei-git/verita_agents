@@ -68,6 +68,7 @@ export default function SpeechToTextView({
   reviewMode,
 }) {
   const [mode, setMode] = useState('compare')
+  const [language, setLanguage] = useState('en')
   const [reference, setReference] = useState('')
   const [audioUrl, setAudioUrl] = useState('')
   const [error, setError] = useState('')
@@ -166,22 +167,36 @@ export default function SpeechToTextView({
     onRun({
       mode: 'subtitle',
       audio_url: url,
+      language,
+      enable_word_timestamps: true,
     })
   }
 
+  const lsOutput =
+    payload?.output && typeof payload.output === 'object' ? payload.output : null
+  const cues =
+    lsOutput?.cues?.length
+      ? lsOutput.cues
+      : (payload?.subtitles || []).map((s) => ({
+          text: s.text,
+          start_ms: s.start_ms,
+          end_ms: s.end_ms,
+        }))
+  const words = lsOutput?.words || []
+  const transcript = lsOutput?.text || payload?.transcript || ''
+
   const onAudioTimeUpdate = () => {
     const audio = audioRef.current
-    const subs = payload?.subtitles
-    if (!audio || !subs?.length) return
+    if (!audio || !cues.length) return
     const ms = audio.currentTime * 1000
-    const hit = subs.find(
+    const hit = cues.findIndex(
       (s) =>
         s.start_ms != null &&
         s.end_ms != null &&
         ms >= s.start_ms &&
         ms < s.end_ms,
     )
-    if (hit && hit.index !== activeIndex) setActiveIndex(hit.index)
+    if (hit >= 0 && hit !== activeIndex) setActiveIndex(hit)
   }
 
   const playUrl = payload?.audio?.url || audioPreview
@@ -244,20 +259,35 @@ export default function SpeechToTextView({
           )}
 
           {mode === 'subtitle' && (
-            <label>
-              <span>音频公网地址</span>
-              <input
-                type="url"
-                className="url-input"
-                value={audioUrl}
-                onChange={(e) => {
-                  setAudioUrl(e.target.value)
-                  onInputChange(e.target.value)
-                }}
-                disabled={busy}
-                placeholder="https://example.com/audio.wav"
-              />
-            </label>
+            <>
+              <label>
+                <span>识别语言</span>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  disabled={busy}
+                  className="mode-select"
+                >
+                  <option value="en">en</option>
+                  <option value="ja">ja</option>
+                  <option value="zh-CN">zh-CN</option>
+                </select>
+              </label>
+              <label>
+                <span>音视频公网地址</span>
+                <input
+                  type="url"
+                  className="url-input"
+                  value={audioUrl}
+                  onChange={(e) => {
+                    setAudioUrl(e.target.value)
+                    onInputChange(e.target.value)
+                  }}
+                  disabled={busy}
+                  placeholder="https://example.com/audio.wav 或 video.mp4"
+                />
+              </label>
+            </>
           )}
 
           <button
@@ -271,7 +301,7 @@ export default function SpeechToTextView({
           <p className="hint">
             {mode === 'compare'
               ? '跟读校对使用 qwen3-asr-flash，录音/小文件可直接上传，无需公网 URL。'
-              : '字幕模式使用 Paraformer：请填写百炼可拉取的公网音频 URL。'}
+              : 'asr.transcribe / Paraformer：公网音视频 URL。视频抽音轨在 Agent 内完成。'}
           </p>
         </div>
       )}
@@ -304,7 +334,14 @@ export default function SpeechToTextView({
 
       {payload?.mode === 'subtitle' && !payload.error && (
         <div className="result-panel">
-          <h4>字幕同步</h4>
+          <h4>转写</h4>
+          <p className="transcript-meta">
+            {lsOutput?.duration_sec != null ? `${lsOutput.duration_sec}s` : '—'}
+            {' · '}
+            {lsOutput?.timestamp_granularity || 'sentence'}
+            {payload.usage?.usage_sec != null ? ` · usage ${payload.usage.usage_sec}s` : ''}
+          </p>
+          {transcript && <p className="transcript">{transcript}</p>}
           {playUrl && (
             <audio
               ref={audioRef}
@@ -315,13 +352,13 @@ export default function SpeechToTextView({
             />
           )}
           <div className="sentence-list">
-            {(payload.subtitles || []).map((s) => (
+            {cues.map((s, i) => (
               <div
-                key={s.index}
-                className={activeIndex === s.index ? 'sentence-card active' : 'sentence-card'}
+                key={`${s.start_ms}-${i}`}
+                className={activeIndex === i ? 'sentence-card active' : 'sentence-card'}
               >
                 <div className="sentence-meta">
-                  <span>#{s.index + 1}</span>
+                  <span>#{i + 1}</span>
                   <span>
                     {s.start_ms ?? '—'}ms – {s.end_ms ?? '—'}ms
                   </span>
@@ -330,6 +367,12 @@ export default function SpeechToTextView({
               </div>
             ))}
           </div>
+          {words.length > 0 && (
+            <p className="hint">
+              词级时间戳 {words.length} 个
+              {words[0]?.text ? `（首词 ${words[0].text} ${words[0].start_ms ?? '—'}ms）` : ''}
+            </p>
+          )}
         </div>
       )}
     </div>

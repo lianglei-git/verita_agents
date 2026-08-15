@@ -1,0 +1,37 @@
+{
+  "title": "LS · 单句分析",
+  "description": "一次一句。output 对齐 sentence/1.0，无 activity_id。",
+  "request": {
+    "request_id": "01JEXAMPLESENT000000000001",
+    "text": "I am. We're in a competitive industry.",
+    "learning_language": "en",
+    "support_language": "zh-CN",
+    "user_level": "B1",
+    "goal": "商务口语",
+    "profile": "academic"
+  },
+  "response": {
+    "request_id": "01JEXAMPLESENT000000000001",
+    "skill": "sentence.analyze",
+    "output": {
+      "target_lang": "en",
+      "explain_lang": "zh-CN",
+      "profile": "academic",
+      "sentence_type": "复合句",
+      "tree": "[S …]",
+      "translation": "我是。我们在竞争激烈的行业中。"
+    },
+    "usage": {
+      "provider": "",
+      "model": "",
+      "tokens": 0,
+      "usage_sec": 0,
+      "cost_micros": null,
+      "latency_ms": 1200
+    },
+    "versions": {
+      "skill_version": "3.0.0",
+      "package_version": "3.0.0"
+    }
+  }
+}

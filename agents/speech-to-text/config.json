@@ -2,7 +2,8 @@
   "id": "speech-to-text",
   "name": "语音识别 ASR",
   "description": "跟读校对（qwen3-asr-flash / base64）与音频转字幕（Paraformer，用户填公网 URL）",
-  "version": "1.1.0",
+  "version": "1.2.0",
+  "skill": "asr.transcribe",
   "phase": "mvp",
   "view": {
     "type": "custom",

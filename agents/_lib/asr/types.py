@@ -12,6 +12,7 @@ class AsrWord:
     start_ms: int | None = None
     end_ms: int | None = None
     punctuation: str = ""
+    confidence: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {k: v for k, v in asdict(self).items() if v is not None and v != ""}

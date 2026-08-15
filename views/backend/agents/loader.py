@@ -71,6 +71,34 @@ def load_workflow(workflow_name: str | None = None) -> dict:
     return _load_json(path)
 
 
+def _load_examples(agent_dir: Path) -> list[dict[str, Any]]:
+    """读取 agents/{id}/examples/*.json，供工作台 API 文档面板。"""
+    examples_dir = agent_dir / "examples"
+    if examples_dir.is_dir():
+        items: list[dict[str, Any]] = []
+        for path in sorted(examples_dir.glob("*.json")):
+            try:
+                data = _load_json(path)
+            except (OSError, json.JSONDecodeError):
+                continue
+            if isinstance(data, dict):
+                data.setdefault("id", path.stem)
+                items.append(data)
+        return items
+
+    single = agent_dir / "examples.json"
+    if single.is_file():
+        try:
+            data = _load_json(single)
+        except (OSError, json.JSONDecodeError):
+            return []
+        if isinstance(data, list):
+            return [row for row in data if isinstance(row, dict)]
+        if isinstance(data, dict):
+            return [data]
+    return []
+
+
 def load_external_agents() -> dict[str, dict]:
     """加载 agents/ 下已在 manifest 启用的 agent。"""
     manifest = load_manifest()
@@ -101,14 +129,19 @@ def load_external_agents() -> dict[str, dict]:
             if schema_file.is_file():
                 schema = _load_json(schema_file)
 
+        skill = str(config.get("skill") or "").strip() or None
+
         loaded[agent_id] = {
             "id": agent_id,
             "name": config.get("name", agent_id),
             "description": config.get("description", ""),
             "version": config.get("version"),
+            "skill": skill,
+            "skill_version": config.get("skill_version"),
             "phase": config.get("phase"),
             "view": config.get("view", {"type": "default"}),
             "schema": schema,
+            "examples": _load_examples(agent_dir),
             "source": str(agent_dir.relative_to(REPO_ROOT)),
             "run": run_fn,
             "stream": getattr(module, "iter_synthesis_events", None),

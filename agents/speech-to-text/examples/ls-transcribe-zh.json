@@ -1,0 +1,37 @@
+{
+  "title": "LS · 中文转写",
+  "description": "language=zh-CN。output 对齐 §4.1。",
+  "request": {
+    "request_id": "01JEXAMPLEASR0000000000003",
+    "audio_url": "https://example.com/zh-clip.mp3",
+    "language": "zh-CN",
+    "enable_word_timestamps": true
+  },
+  "response": {
+    "request_id": "01JEXAMPLEASR0000000000003",
+    "skill": "asr.transcribe",
+    "output": {
+      "text": "我们在竞争激烈的行业中。",
+      "duration_sec": 3.1,
+      "timestamp_granularity": "word",
+      "words": [
+        { "text": "我们", "start_ms": 200, "end_ms": 480 }
+      ],
+      "cues": [
+        { "text": "我们在竞争激烈的行业中。", "start_ms": 200, "end_ms": 3100 }
+      ]
+    },
+    "usage": {
+      "provider": "aliyun",
+      "model": "paraformer-v2",
+      "tokens": 0,
+      "usage_sec": 3.1,
+      "cost_micros": null,
+      "latency_ms": 2100
+    },
+    "versions": {
+      "skill_version": "1.2.0",
+      "package_version": "1.2.0"
+    }
+  }
+}

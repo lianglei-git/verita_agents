@@ -69,8 +69,11 @@ GET /api/workflow?name=mvp-pipeline
 | `id` | 是 | 全局唯一，与 workflow 节点 `agent_id` 一致 |
 | `name` | 是 | 界面显示名 |
 | `description` | 是 | 一句话职责 |
+| `skill` | 否 | LS skill 原值（如 `asr.transcribe`）。有则同一条 `POST /api/agents/{skill}/run` 也打到此 agent |
 | `view.type` | 否 | `default` 通用面板；`custom` 使用独立 UI（见 DESIGN.md） |
 | `schema_ref` | 否 | 指向 `schema.json`，供表单与文档生成 |
+
+`agents/{id}/examples/*.json`（可选）：`title` / `description` / `request` / `response`，工作台 API 文档面板读取。
 
 ## schema.json
 

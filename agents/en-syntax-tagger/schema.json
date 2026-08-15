@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "EnSyntaxTaggerEnvelope",
-  "description": "外壳。analysis 形状见 versions/v{1,2,3}/output.schema.json",
+  "description": "外壳。LS skill=sentence.analyze 时业务结果在信封 output（ls.output.schema.json）；工作台仍读 analysis。",
   "type": "object",
   "properties": {
     "input": { "type": "string" },

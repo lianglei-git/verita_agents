@@ -1,0 +1,37 @@
+{
+  "title": "LS · 英文转写",
+  "description": "language=en。output 对齐 §4.1。",
+  "request": {
+    "request_id": "01JEXAMPLEASR0000000000001",
+    "audio_url": "https://example.com/clip.mp3",
+    "language": "en",
+    "enable_word_timestamps": true
+  },
+  "response": {
+    "request_id": "01JEXAMPLEASR0000000000001",
+    "skill": "asr.transcribe",
+    "output": {
+      "text": "I am. We're in a competitive industry.",
+      "duration_sec": 83.2,
+      "timestamp_granularity": "word",
+      "words": [
+        { "text": "I", "start_ms": 21805, "end_ms": 21910, "confidence": 0.98 }
+      ],
+      "cues": [
+        { "text": "I am.", "start_ms": 21805, "end_ms": 23000 }
+      ]
+    },
+    "usage": {
+      "provider": "aliyun",
+      "model": "paraformer-v2",
+      "tokens": 0,
+      "usage_sec": 83.2,
+      "cost_micros": null,
+      "latency_ms": 4100
+    },
+    "versions": {
+      "skill_version": "1.2.0",
+      "package_version": "1.2.0"
+    }
+  }
+}

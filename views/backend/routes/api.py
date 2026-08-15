@@ -1,9 +1,19 @@
 import json
 import os
+import time
 
 from flask import Blueprint, Response, jsonify, request, send_file, stream_with_context
 
-from backend.agents import get_agent, list_agents, run_agent
+from backend.agents import get_agent, list_agents, public_agent, run_agent
+from backend.agents.envelope import (
+    IDEMPOTENCY,
+    agent_error,
+    build_envelope,
+    elapsed_ms,
+    error_payload,
+    idempotency_key,
+    parse_run_payload,
+)
 from backend.agents.loader import load_manifest, load_workflow
 from backend.config import SHARED_DIR
 from backend.history.context import build_agent_context, resolve_agent_upstream_input
@@ -65,53 +75,72 @@ def api_get_file():
 def api_get_agent(agent_id: str):
     agent = get_agent(agent_id)
     if not agent:
-        return jsonify({"error": "agent not found"}), 404
-    return jsonify(
-        {
-            "id": agent["id"],
-            "name": agent["name"],
-            "description": agent["description"],
-            "view": agent.get("view", {"type": "default"}),
-            "schema": agent.get("schema"),
-            "source": agent.get("source"),
-        }
-    )
+        return jsonify(error_payload("agent_not_found", "agent not found")), 404
+    return jsonify(public_agent(agent, detail=True))
 
 
 @api_bp.post("/agents/<agent_id>/run")
 def api_run_agent(agent_id: str):
-    payload = request.get_json(silent=True) or {}
-    user_input = payload.get("input", "")
-    options = payload.get("options") or {}
-    run_id = payload.get("run_id")
+    spec = get_agent(agent_id)
+    if not spec:
+        return jsonify(error_payload("agent_not_found", "agent not found")), 404
 
+    parsed = parse_run_payload(request.get_json(silent=True) or {})
+    user_input = parsed["user_input"]
+    options = parsed["options"]
+    run_id = parsed["run_id"]
+    request_id = parsed["request_id"]
+    canonical_id = spec["id"]
+    skill = spec.get("skill") or canonical_id
+
+    if request_id:
+        cached = IDEMPOTENCY.get(idempotency_key(skill, request_id))
+        if cached is not None:
+            status, body = cached
+            return jsonify(body), status
+
+    started = time.perf_counter()
     try:
-        result = run_agent(agent_id, user_input, **options)
+        result = run_agent(canonical_id, user_input, **options)
     except KeyError:
-        return jsonify({"error": "agent not found"}), 404
+        return jsonify(error_payload("agent_not_found", "agent not found")), 404
     except Exception as exc:  # noqa: BLE001 — surface agent errors to the UI
-        return jsonify({"error": str(exc)}), 500
+        body = error_payload(
+            "internal_error",
+            str(exc),
+            request_id=request_id,
+            skill=skill,
+        )
+        if request_id:
+            IDEMPOTENCY.put(idempotency_key(skill, request_id), 500, body)
+        return jsonify(body), 500
 
-    response = {
-        "agent_id": agent_id,
-        "input": user_input,
-        "result": result,
-    }
+    response = build_envelope(
+        spec=spec,
+        request_id=request_id,
+        user_input=user_input,
+        result=result,
+        latency_ms=elapsed_ms(started),
+    )
+    biz_error = agent_error(result)
+    status = 400 if biz_error else 200
+    if biz_error:
+        response["error"] = biz_error
 
     if run_id:
         run = run_store.get_run(run_id)
         _, execution_order, node_map = _run_workflow_meta(run)
         agent_node_id = next(
-            (nid for nid in execution_order if node_map.get(nid, {}).get("agent_id") == agent_id),
+            (nid for nid in execution_order if node_map.get(nid, {}).get("agent_id") == canonical_id),
             None,
         )
-        record_node_id = agent_node_id or agent_id
+        record_node_id = agent_node_id or canonical_id
         run_store.record_agent_step(
             run_id,
             node_id=record_node_id,
-            agent_id=agent_id,
+            agent_id=canonical_id,
             params={"input": user_input, "options": options},
-            result=_history_result_for_agent(agent_id, result),
+            result=_history_result_for_agent(canonical_id, result),
         )
         if isinstance(user_input, str) and user_input.strip().startswith("{"):
             run_store.update_source_input(run_id, user_input)
@@ -122,10 +151,12 @@ def api_run_agent(agent_id: str):
         response["run"] = run_store.get_run(run_id)
         if agent_node_id:
             response["context"] = build_agent_context(
-                response["run"], agent_id, execution_order, node_map
+                response["run"], canonical_id, execution_order, node_map
             )
 
-    return jsonify(response)
+    if request_id:
+        IDEMPOTENCY.put(idempotency_key(skill, request_id), status, response)
+    return jsonify(response), status
 
 
 @api_bp.post("/agents/<agent_id>/stream")

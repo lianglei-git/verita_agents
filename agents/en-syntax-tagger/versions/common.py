@@ -31,6 +31,8 @@ def normalize_sentence(user_input: str, **kwargs: Any) -> str:
     sentence = (user_input or "").strip()
     if not sentence and isinstance(kwargs.get("sentence"), str):
         sentence = kwargs["sentence"].strip()
+    if not sentence and isinstance(kwargs.get("text"), str):
+        sentence = kwargs["text"].strip()
     return sentence
 
 

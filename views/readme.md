@@ -27,6 +27,8 @@
 |------|------|
 | [docs/DESIGN.md](docs/DESIGN.md) | 架构：全链路 Console + 单 Agent 工作台 + 嵌套自定义 UI |
 | [docs/AGENT-CONFIG.md](docs/AGENT-CONFIG.md) | **极简 3 步**把 `agents/` 下小项目接入 Views |
+| [docs/Agent 原子 API 需求（LS 对接）.md](docs/Agent%20原子%20API%20需求（LS%20对接）.md) | LS 对接：五个 MVP skill 的字段契约 |
+| [docs/Agent 原子 API roadmap.md](docs/Agent%20原子%20API%20roadmap.md) | 按现有架构分阶段落地（不另起网关） |
 | [../agents/README.md](../agents/README.md) | 仓库根 `agents/` 目录约定 |
 
 ## 目录结构

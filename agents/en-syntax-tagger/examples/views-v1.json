@@ -1,0 +1,12 @@
+{
+  "title": "Views · v1 academic",
+  "description": "工作台现用 body。options.version=v1。",
+  "request": {
+    "input": "Although she was tired, she kept working.",
+    "options": {
+      "version": "v1",
+      "native_lang": "中文",
+      "learn_lang": "英语"
+    }
+  }
+}

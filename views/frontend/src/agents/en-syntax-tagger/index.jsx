@@ -79,6 +79,8 @@ export default function EnSyntaxTaggerView({
   const [apiVersion, setApiVersion] = useState('v1')
   const [nativeLang, setNativeLang] = useState('中文')
   const [learnLang, setLearnLang] = useState('英语')
+  const [userLevel, setUserLevel] = useState('B1')
+  const [goal, setGoal] = useState('')
 
   const handleVersionChange = (next) => {
     setApiVersion(next)
@@ -87,6 +89,8 @@ export default function EnSyntaxTaggerView({
 
   const payload = result?.result || result || {}
   const analysis = payload.analysis || {}
+  const lsOutput =
+    payload.output && typeof payload.output === 'object' ? payload.output : null
   const spacyTokens = payload.spacy_tokens || []
   const meta = payload.meta || {}
   const hasError = Boolean(payload.error)
@@ -123,6 +127,11 @@ export default function EnSyntaxTaggerView({
         version: apiVersion,
         native_lang: nativeLang.trim() || '中文',
         learn_lang: learnLang.trim() || '英语',
+        support_language: nativeLang.trim() || 'zh-CN',
+        learning_language: learnLang.trim() || 'en',
+        user_level: userLevel.trim() || undefined,
+        goal: goal.trim() || undefined,
+        profile: apiVersion === 'v1' ? 'academic' : apiVersion === 'v2' ? 'teaching' : 'json',
       })
     }
   }
@@ -146,6 +155,28 @@ export default function EnSyntaxTaggerView({
               <option value="v3">v3 · JSON 数据版（C）</option>
             </select>
           </label>
+          <div className="lang-row">
+            <label>
+              <span>等级 user_level</span>
+              <input
+                type="text"
+                value={userLevel}
+                placeholder="B1"
+                onChange={(e) => setUserLevel(e.target.value)}
+                disabled={loading}
+              />
+            </label>
+            <label>
+              <span>目标 goal</span>
+              <input
+                type="text"
+                value={goal}
+                placeholder="商务口语（可选）"
+                onChange={(e) => setGoal(e.target.value)}
+                disabled={loading}
+              />
+            </label>
+          </div>
           <div className="lang-row">
             <label>
               <span>母语 native_lang</span>
@@ -235,6 +266,14 @@ export default function EnSyntaxTaggerView({
                       <p className="sentence">{analysis.sentence || payload.input}</p>
                       {analysis.translation && (
                         <p className="translation">{analysis.translation}</p>
+                      )}
+                      {lsOutput?.i18n && (
+                        <p className="translation">
+                          {lsOutput.target_lang} / {lsOutput.explain_lang}
+                          {lsOutput.i18n[lsOutput.target_lang]?.phonetic?.notation
+                            ? ` · ${lsOutput.i18n[lsOutput.target_lang].phonetic.notation}`
+                            : ''}
+                        </p>
                       )}
                     </div>
                     <div className="meta-chips">

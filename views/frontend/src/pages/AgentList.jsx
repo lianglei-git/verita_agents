@@ -29,7 +29,10 @@ export default function AgentList() {
             <li key={agent.id}>
               <Link to={`/agent/${agent.id}`} className="agent-card">
                 <div className="card-top">
-                  <span className="agent-id">{agent.id}</span>
+                  <span className="agent-id">
+                    {agent.id}
+                    {agent.skill ? ` · ${agent.skill}` : ''}
+                  </span>
                   <span className={`view-tag ${agent.view?.type || 'default'}`}>
                     {agent.view?.type === 'custom' ? '自定义 UI' : '通用 UI'}
                   </span>

@@ -2,6 +2,7 @@
   "id": "en-syntax-tagger",
   "name": "英文句法全量标记",
   "version": "3.0.0",
+  "skill": "sentence.analyze",
   "description": "三版 Prompt：v1学术 / v2教学 / v3 JSON数据；均附 spaCy tokens。",
   "phase": "experimental",
   "view": {
