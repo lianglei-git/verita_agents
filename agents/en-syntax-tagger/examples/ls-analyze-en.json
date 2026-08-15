@@ -1,25 +1,37 @@
 {
-  "title": "LS · 单句分析",
-  "description": "一次一句。output 对齐 sentence/1.0，无 activity_id。",
+  "title": "LS · 单句分析 v1",
+  "description": "一次一句。output.api_version=v1，analysis 为学术版结构。无 activity_id。",
   "request": {
     "request_id": "01JEXAMPLESENT000000000001",
-    "text": "I am. We're in a competitive industry.",
+    "text": "We're in a competitive industry.",
+    "api_version": "v1",
     "learning_language": "en",
     "support_language": "zh-CN",
     "user_level": "B1",
-    "goal": "商务口语",
-    "profile": "academic"
+    "goal": "商务口语"
   },
   "response": {
     "request_id": "01JEXAMPLESENT000000000001",
     "skill": "sentence.analyze",
     "output": {
+      "api_version": "v1",
       "target_lang": "en",
       "explain_lang": "zh-CN",
-      "profile": "academic",
-      "sentence_type": "复合句",
-      "tree": "[S …]",
-      "translation": "我是。我们在竞争激烈的行业中。"
+      "analysis": {
+        "sentence": "We're in a competitive industry.",
+        "translation": "我们处在一个竞争激烈的行业。",
+        "sentence_type": "简单句",
+        "tree": "[S …]",
+        "trunk": { "subject": { "text": "We" }, "predicate": { "text": "are" } }
+      },
+      "spacy_tokens": [],
+      "meta": {
+        "agent": "en-syntax-tagger",
+        "profile": "academic",
+        "status": "success",
+        "package_version": "3.0.0",
+        "api_version": "v1"
+      }
     },
     "usage": {
       "provider": "",

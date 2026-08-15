@@ -75,6 +75,51 @@ def normalize_ls_kwargs(user_input: str, kwargs: dict[str, Any]) -> dict[str, An
     return out
 
 
+def _strip_activity_id(obj: Any) -> Any:
+    if isinstance(obj, dict):
+        return {k: _strip_activity_id(v) for k, v in obj.items() if k != "activity_id"}
+    if isinstance(obj, list):
+        return [_strip_activity_id(item) for item in obj]
+    return obj
+
+
+def to_versioned_ls_output(
+    result: dict[str, Any],
+    *,
+    api_version: str,
+    learning_language: str,
+    support_language: str,
+    profile: str | None = None,
+    user_level: str | None = None,
+    goal: str | None = None,
+) -> dict[str, Any]:
+    """LS 信封 output：按 api_version 原样交出 analysis，不收成单一 schema。"""
+    analysis = result.get("analysis") if isinstance(result.get("analysis"), dict) else {}
+    src_meta = result.get("meta") if isinstance(result.get("meta"), dict) else {}
+    status = "error" if result.get("error") else "success"
+    meta: dict[str, Any] = {
+        "agent": src_meta.get("agent") or "en-syntax-tagger",
+        "profile": profile or src_meta.get("profile") or "",
+        "status": status,
+        "package_version": str(src_meta.get("package_version") or "3.0.0"),
+        "api_version": api_version,
+    }
+    if user_level:
+        meta["user_level"] = user_level
+    if goal:
+        meta["goal"] = goal
+
+    tokens = result.get("spacy_tokens")
+    return {
+        "api_version": api_version,
+        "analysis": _strip_activity_id(analysis),
+        "spacy_tokens": tokens if isinstance(tokens, list) else [],
+        "target_lang": to_bcp47(learning_language, "en"),
+        "explain_lang": to_bcp47(support_language, "zh-CN"),
+        "meta": meta,
+    }
+
+
 def to_sentence_analyze_output(
     result: dict[str, Any],
     *,

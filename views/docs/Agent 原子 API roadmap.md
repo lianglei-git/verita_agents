@@ -132,13 +132,13 @@ P1 / P2 可并行（底座已在）。P3–P5 依赖 P0 信封稳定。P6 不挡
   - `tree` / `trunk` / `constituent_table` 都要
   - `i18n`：学习语言正文 + 讲解语言译文；`phonetic.notation` = `IPA` | `pinyin` | `kana` | `romaji`
 - **禁止**返回 `activity_id`。需求稿示例里的该字段以总则为准。
-- `meta.api_version` 继续区分结构版本；本期 LS 默认 academic / v1。
-- 输出用 JSON Schema 校验（可基于现有 `versions/v1/output.schema.json` 扩一版 LS schema）。
+- `api_version`（v1/v2/v3）是一等字段；`analysis` 随版本不同。LS 只存和展示，前端按版本换组件。
+- 默认仍是 v1 / academic。不要 `activity_id`。
 
 **前端**
 
-- 现有成分表 / 树 / 主干可视化继续吃 remap 后的字段（加一层适配，避免重做 UI）。
-- v2 / v3 仍可在工作台切换，**不**暴露给 LS。
+- 工作台已按 v1/v2/v3 切换视图。
+- LS 侧同样按 `output.api_version` 选展示，不要把三版收成一种结构。
 - 补 API 文档。
 
 **验收**

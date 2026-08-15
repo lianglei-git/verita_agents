@@ -17,7 +17,7 @@ for path in (_AGENTS_ROOT, _AGENT_DIR):
 from ls_output import (  # noqa: E402
     normalize_ls_kwargs,
     to_bcp47,
-    to_sentence_analyze_output,
+    to_versioned_ls_output,
 )
 from versions.registry import (  # noqa: E402
     DEFAULT_VERSION,
@@ -151,23 +151,22 @@ def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
 
     learning = kwargs.get("learning_language") or ls_kwargs.get("learn_lang")
     support = kwargs.get("support_language") or ls_kwargs.get("native_lang")
-    profile = str(kwargs.get("profile") or meta.get("profile") or "academic")
-    if api_version == "v1":
-        ls_out = to_sentence_analyze_output(
-            result,
-            learning_language=to_bcp47(learning, "en"),
-            support_language=to_bcp47(support, "zh-CN"),
-            profile=profile,
-            user_level=str(kwargs["user_level"]) if kwargs.get("user_level") else None,
-            goal=str(kwargs["goal"]) if kwargs.get("goal") else None,
-        )
-        ls_out.get("meta", {}).pop("activity_id", None)
-        verrs = _validate_ls_output(ls_out)
-        if verrs:
-            result["error"] = result.get("error") or "invalid_ls_output"
-            result["message"] = result.get("message") or "; ".join(verrs)
-            meta["ls_validation_errors"] = verrs
-        result["output"] = ls_out
+    profile = str(kwargs.get("profile") or meta.get("profile") or "")
+    ls_out = to_versioned_ls_output(
+        result,
+        api_version=api_version,
+        learning_language=to_bcp47(learning, "en"),
+        support_language=to_bcp47(support, "zh-CN"),
+        profile=profile,
+        user_level=str(kwargs["user_level"]) if kwargs.get("user_level") else None,
+        goal=str(kwargs["goal"]) if kwargs.get("goal") else None,
+    )
+    verrs = _validate_ls_output(ls_out)
+    if verrs:
+        result["error"] = result.get("error") or "invalid_ls_output"
+        result["message"] = result.get("message") or "; ".join(verrs)
+        meta["ls_validation_errors"] = verrs
+    result["output"] = ls_out
 
     return result
 

@@ -91,7 +91,7 @@ LS 封装：`internal/infra/agents`（薄 HTTP `Run`），**不要**建根目录
 | 1 | `asr.transcribe` | 音视频转写 + 时间戳 | 媒体 URL、识别语言 | 全文 + 词级（无则句级）时间戳 | ASR 秒 |
 | 2 | `translate` | 字幕/句子翻译 | 文本或带时间戳片段、源/目标语言 | 对齐后的译文 | LLM 次 |
 | 3 | `sentence.extract` | 从转写/正文拆出学习句 | 文本或 timed 片段、学习语言 | 句子列表（可带起止 ms） | LLM 次 |
-| 4 | `sentence.analyze` | 句析：成分 / 语法 / 翻译 | 一句 + 学习/讲解语言 + 等级 | 见 §4.4，对齐 `sentence/1.0` 的 `analysis[]` 元素 | LLM 次 |
+| 4 | `sentence.analyze` | 句析：成分 / 语法 / 翻译 | 一句 + 学习/讲解语言 + 等级 + **api_version** | 见 §4.4；`analysis` 随 v1/v2/v3 不同，LS 只存和展示 | LLM 次 |
 | 5 | `vocabulary.generate` | 词条生成 | 词/短语 + 语言 + 等级 + goal | 见 §4.5；例句给**文本**，不要 object_id | LLM 次 |
 
 **不要做的（本期）**
@@ -214,81 +214,48 @@ LS 封装：`internal/infra/agents`（薄 HTTP `Run`），**不要**建根目录
 
 `POST /api/agents/sentence.analyze/run`
 
-对齐补充设计 **sentence/1.0** 的单条 `analysis`（不要 `activity_id`）。
+**版本是一等公民。** `api_version` = `v1` | `v2` | `v3`（也可用 `profile`：`academic` / `teaching` / `json`）。  
+三版 `analysis` 字段不同，这是预期行为：LS **只存 JSON、按版本换前端展示**，不要收成单一 schema。不要 `activity_id`。
 
 **Request**
 
 ```json
 {
   "request_id": "01J…",
-  "text": "I am. We're in a competitive industry.",
+  "text": "We're in a competitive industry.",
+  "api_version": "v1",
   "learning_language": "en",
   "support_language": "zh-CN",
   "user_level": "B1",
-  "goal": "商务口语",
-  "profile": "academic"
+  "goal": "商务口语"
 }
 ```
 
-**Response `output`**
+**Response `output`（外壳三版相同，`analysis` 随版本变）**
 
 ```json
 {
+  "api_version": "v1",
   "target_lang": "en",
   "explain_lang": "zh-CN",
-  "profile": "academic",
-  "sentence_type": "复合句",
-  "tree": "[S …]",
-  "trunk": {
-    "subject": {},
-    "predicate": {},
-    "object": null,
-    "complement": null,
-    "direct_object": null,
-    "indirect_object": null
-  },
-  "modifiers": [
-    {
-      "kind": "attributive",
-      "text": "…",
-      "label": "Attrib",
-      "modifies": "We're",
-      "semantic": "…",
-      "phrase_type": "CP"
-    }
-  ],
-  "constituent_table": [
-    {
-      "role": "S",
-      "text": "[SIMON]",
-      "level": "主句",
-      "function": "主语",
-      "position": "句首",
-      "pos_or_type": "NP"
-    }
-  ],
-  "special_structures": { "clauses": [], "non_finites": [] },
-  "semantic_roles": [],
-  "translation": "我是。我们在竞争激烈的行业中。",
-  "i18n": {
-    "en": { "content": "I am. We're in a competitive industry.", "phonetic": { "notation": "IPA", "value": "…" } },
-    "zh-CN": { "content": "我是。…", "phonetic": { "notation": "pinyin", "value": "…" } }
-  },
+  "analysis": {},
+  "spacy_tokens": [],
   "meta": {
-        "agent": "en-syntax-tagger",
-        "profile": "academic",
-        "status": "success",
-        "activity_id": "01J…",
-        "package_version": "3.0.0",
-        "api_version":"1.0" // 每个版本都对应不同俄analysis结构
+    "agent": "en-syntax-tagger",
+    "profile": "academic",
+    "status": "success",
+    "package_version": "3.0.0",
+    "api_version": "v1"
   }
 }
 ```
 
+- `v1` analysis：`tree` / `trunk` / `modifiers` / `constituent_table`（精读）
+- `v2` analysis：`trunk`（一句话）/ `segment_table` / `structure_tree` / `difficulty_notes`（教学）
+- `v3` analysis：`constituents`（含 `start_index`/`end_index`）/ `chunks` / `grammars`（高亮对齐）
 - `target_lang` 必须等于 `learning_language`。
-- `tree` / `trunk` / `constituent_table` 都要：表给 UI，树给高级视图。
-- `i18n` 至少包含学习语言正文 + 讲解语言译文；`phonetic.notation` 为 `IPA` | `pinyin` | `kana` | `romaji`。
 - 一次只分析**一句**。批量由 LS 循环调用。
+- 示例与对照见 `LS API.md` §4。
 
 ### 4.5 `vocabulary.generate`
 
@@ -373,6 +340,6 @@ Collection Studio 右栏。仍是**原子 JSON**，LS 拿结果去建 Unit。E9 
 1. 五个 E9 接口均能用内部 token 打通，错误码稳定。
 2. ASR：`en` / `ja` / `zh-CN` 各一条；有时间戳；`usage_sec` 有值。
 3. `translate` 片段 `id` 往返一致。
-4. `sentence.analyze` 输出可被 JSON Schema 校验（无 `activity_id`）。
+4. `sentence.analyze` 带 `api_version`；`analysis` 随版本变；无 `activity_id`。
 5. **没有**「一键处理整段媒体」的接口。
 6. 提供 OpenAPI 或等价示例请求；LS 接入时抄进 `dev/api.llms.txt`。
