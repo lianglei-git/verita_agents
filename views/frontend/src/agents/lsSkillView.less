@@ -1,0 +1,107 @@
+@import '../styles/global.less';
+
+.ls-skill-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  .input-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: @ash;
+  }
+
+  input,
+  textarea,
+  select {
+    border: 1px solid @rail;
+    border-radius: @radius-sm;
+    padding: 8px 10px;
+    background: @chassis;
+    color: @ink;
+  }
+
+  .lang-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+  }
+
+  .check-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    color: @ink;
+  }
+
+  .run-btn {
+    align-self: flex-start;
+    border: 0;
+    border-radius: @radius-sm;
+    padding: 8px 14px;
+    background: @ink;
+    color: @on-accent;
+  }
+
+  .run-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .hint {
+    margin: 0;
+    font-size: 12px;
+    color: @ash;
+  }
+
+  .error-banner {
+    padding: 10px 12px;
+    border-radius: @radius-sm;
+    background: @fault-dim;
+    color: @fault;
+    font-size: 13px;
+  }
+
+  .align-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th,
+    td {
+      border-bottom: 1px solid @rail;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      font-family: @font-mono;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: @ash;
+    }
+
+    input {
+      width: 100%;
+    }
+
+    &.result-table tr.mismatch {
+      background: @fault-dim;
+    }
+
+    .bad {
+      color: @fault;
+      font-size: 12px;
+    }
+  }
+}

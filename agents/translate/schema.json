@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "translate",
+  "description": "LS skill translate。items.id / 时间戳原样回传。",
+  "input": {
+    "type": "object",
+    "properties": {
+      "request_id": { "type": "string" },
+      "source_lang": { "type": "string", "description": "BCP-47，如 en" },
+      "target_lang": { "type": "string", "description": "BCP-47，如 zh-CN" },
+      "text": { "type": "string", "description": "整段翻译（与 items 二选一）" },
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] }
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] }
+          }
+        }
+      }
+    }
+  }
+}

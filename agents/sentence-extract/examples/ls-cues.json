@@ -1,0 +1,34 @@
+{
+  "title": "LS · 从 cue 拆句",
+  "description": "合并碎 cue；保留 cue_ids 与起止 ms。",
+  "request": {
+    "request_id": "01JEXAMPLEEX0000000000001",
+    "learning_language": "en",
+    "cues": [
+      { "id": "c1", "text": "I am.", "start_ms": 21805, "end_ms": 23000 },
+      { "id": "c2", "text": "We're in a competitive industry.", "start_ms": 23010, "end_ms": 25900 }
+    ]
+  },
+  "response": {
+    "request_id": "01JEXAMPLEEX0000000000001",
+    "skill": "sentence.extract",
+    "output": {
+      "sentences": [
+        {
+          "text": "I am.",
+          "start_ms": 21805,
+          "end_ms": 23000,
+          "cue_ids": ["c1"]
+        },
+        {
+          "text": "We're in a competitive industry.",
+          "start_ms": 23010,
+          "end_ms": 25900,
+          "cue_ids": ["c2"]
+        }
+      ]
+    },
+    "usage": { "provider": "", "model": "", "tokens": 0, "usage_sec": 0, "cost_micros": null, "latency_ms": 40 },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

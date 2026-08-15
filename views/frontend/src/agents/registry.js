@@ -11,6 +11,9 @@ const views = {
   'en-syntax-tagger': () => import('./en-syntax-tagger'),
   'text-to-speech': () => import('./text-to-speech'),
   'speech-to-text': () => import('./speech-to-text'),
+  'translate': () => import('./translate'),
+  'sentence-extract': () => import('./sentence-extract'),
+  'vocabulary-generate': () => import('./vocabulary-generate'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "vocabulary.generate",
+  "description": "vocabulary/1.0，例句为文本。禁止 object_id / asset_id。",
+  "input": {
+    "type": "object",
+    "properties": {
+      "request_id": { "type": "string" },
+      "lemma": { "type": "string" },
+      "context": { "type": "string" },
+      "learning_language": { "type": "string" },
+      "support_language": { "type": "string" },
+      "user_level": { "type": "string" },
+      "goal": { "type": "string" }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "lemma": { "type": "string" },
+      "phonetic": {
+        "type": "object",
+        "properties": {
+          "notation": { "type": "string", "enum": ["IPA", "pinyin", "kana", "romaji"] },
+          "value": { "type": "string" }
+        }
+      },
+      "pos": { "type": "array", "items": { "type": "string" } },
+      "level": { "type": "string" },
+      "forms": { "type": "object" },
+      "senses": { "type": "array" }
+    }
+  }
+}

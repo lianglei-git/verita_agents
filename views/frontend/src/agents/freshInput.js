@@ -10,6 +10,9 @@ const SELF_MANAGED = new Set([
   'text-to-speech',
   'speech-to-text',
   'en-syntax-tagger',
+  'translate',
+  'sentence-extract',
+  'vocabulary-generate',
 ])
 
 export function isSelfManagedAgent(agentId) {

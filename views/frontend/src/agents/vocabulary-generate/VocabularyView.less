@@ -1,0 +1,41 @@
+@import '../lsSkillView.less';
+
+.vocabulary-view .vocab-card {
+  border: 1px solid @rail;
+  border-radius: @radius-md;
+  padding: 14px 16px;
+  background: @chassis;
+
+  header {
+    margin-bottom: 10px;
+
+    h3 {
+      margin: 0 0 4px;
+      font-family: @font-display;
+      font-size: 22px;
+    }
+
+    span {
+      font-size: 13px;
+      color: @ash;
+    }
+  }
+
+  .gloss {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0 0 8px;
+
+    code {
+      margin-right: 6px;
+      color: @signal;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    color: @ink;
+  }
+}

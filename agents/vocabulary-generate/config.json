@@ -1,0 +1,10 @@
+{
+  "id": "vocabulary-generate",
+  "name": "词条生成",
+  "description": "生成词条：音标、词性、义项、文本例句。不返回 object_id。",
+  "version": "1.0.0",
+  "skill": "vocabulary.generate",
+  "phase": "mvp",
+  "view": { "type": "custom" },
+  "schema_ref": "schema.json"
+}

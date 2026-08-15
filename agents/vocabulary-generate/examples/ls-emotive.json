@@ -1,0 +1,36 @@
+{
+  "title": "LS · 词条 emotive",
+  "description": "例句为文本。无 object_id / asset_id。",
+  "request": {
+    "request_id": "01JEXAMPLEVC0000000000001",
+    "lemma": "emotive",
+    "context": "an emotive issue",
+    "learning_language": "en",
+    "support_language": "zh-CN",
+    "user_level": "C1",
+    "goal": "商务口语"
+  },
+  "response": {
+    "request_id": "01JEXAMPLEVC0000000000001",
+    "skill": "vocabulary.generate",
+    "output": {
+      "lemma": "emotive",
+      "phonetic": { "notation": "IPA", "value": "ɪˈməʊtɪv" },
+      "pos": ["adj"],
+      "level": "C1",
+      "forms": { "comparative": null, "superlative": null, "derived": ["emotively"] },
+      "senses": [
+        {
+          "sense_id": "s1",
+          "gloss": {
+            "zh-CN": "易引起强烈感情的",
+            "en": "arousing intense feeling"
+          },
+          "example_texts": [{ "lang": "en", "text": "an emotive issue" }]
+        }
+      ]
+    },
+    "usage": { "provider": "llm", "model": "deepseek-chat", "tokens": 200, "usage_sec": 0, "cost_micros": null, "latency_ms": 1100 },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

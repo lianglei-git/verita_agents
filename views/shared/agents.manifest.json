@@ -68,6 +68,21 @@
       "enabled": true
     },
     {
+      "id": "translate",
+      "dir": "translate",
+      "enabled": true
+    },
+    {
+      "id": "sentence-extract",
+      "dir": "sentence-extract",
+      "enabled": true
+    },
+    {
+      "id": "vocabulary-generate",
+      "dir": "vocabulary-generate",
+      "enabled": true
+    },
+    {
       "id": "summarize",
       "dir": null,
       "enabled": true,

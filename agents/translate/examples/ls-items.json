@@ -1,0 +1,32 @@
+{
+  "title": "LS · 带时间戳片段",
+  "description": "id / start_ms / end_ms 原样回传，只换 text。",
+  "request": {
+    "request_id": "01JEXAMPLETR0000000000001",
+    "source_lang": "en",
+    "target_lang": "zh-CN",
+    "items": [
+      { "id": "c1", "text": "I am.", "start_ms": 21805, "end_ms": 23000 },
+      { "id": "c2", "text": "We're in a competitive industry.", "start_ms": 23010, "end_ms": 25900 }
+    ]
+  },
+  "response": {
+    "request_id": "01JEXAMPLETR0000000000001",
+    "skill": "translate",
+    "output": {
+      "items": [
+        { "id": "c1", "text": "我是。", "start_ms": 21805, "end_ms": 23000 },
+        { "id": "c2", "text": "我们处在一个竞争激烈的行业。", "start_ms": 23010, "end_ms": 25900 }
+      ]
+    },
+    "usage": {
+      "provider": "llm",
+      "model": "deepseek-chat",
+      "tokens": 120,
+      "usage_sec": 0,
+      "cost_micros": null,
+      "latency_ms": 900
+    },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

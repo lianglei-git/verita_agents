@@ -1,0 +1,21 @@
+{
+  "title": "LS · 纯文本拆句",
+  "description": "无媒体时 start_ms / end_ms 为 null。",
+  "request": {
+    "request_id": "01JEXAMPLEEX0000000000002",
+    "learning_language": "en",
+    "text": "I am. We're in a competitive industry."
+  },
+  "response": {
+    "request_id": "01JEXAMPLEEX0000000000002",
+    "skill": "sentence.extract",
+    "output": {
+      "sentences": [
+        { "text": "I am.", "start_ms": null, "end_ms": null, "cue_ids": [] },
+        { "text": "We're in a competitive industry.", "start_ms": null, "end_ms": null, "cue_ids": [] }
+      ]
+    },
+    "usage": { "provider": "", "model": "", "tokens": 0, "usage_sec": 0, "cost_micros": null, "latency_ms": 20 },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

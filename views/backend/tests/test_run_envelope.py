@@ -28,6 +28,22 @@ class RunEnvelopeHttpTest(unittest.TestCase):
         self.assertIn("usage", data)
         self.assertIn("versions", data)
 
+    def test_translate_skill_path(self):
+        res = self.client.post(
+            "/api/agents/translate/run",
+            json={
+                "request_id": "01JTRTEST",
+                "source_lang": "en",
+                "target_lang": "zh-CN",
+                "items": [{"id": "c1", "text": "I am.", "start_ms": 1, "end_ms": 2}],
+            },
+        )
+        self.assertIn(res.status_code, (200, 400))
+        data = res.get_json()
+        self.assertEqual(data["skill"], "translate")
+        self.assertEqual(data["output"]["items"][0]["id"], "c1")
+        self.assertEqual(data["output"]["items"][0]["start_ms"], 1)
+
     def test_unknown_skill_404(self):
         res = self.client.post("/api/agents/not.a.skill/run", json={"request_id": "01J404"})
         self.assertEqual(res.status_code, 404)

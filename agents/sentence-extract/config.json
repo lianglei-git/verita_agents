@@ -1,0 +1,10 @@
+{
+  "id": "sentence-extract",
+  "name": "学习句拆分",
+  "description": "从转写/正文/字幕 cue 拆出学习句，合并碎 cue、切开长句。",
+  "version": "1.0.0",
+  "skill": "sentence.extract",
+  "phase": "mvp",
+  "view": { "type": "custom" },
+  "schema_ref": "schema.json"
+}

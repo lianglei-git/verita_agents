@@ -1,0 +1,10 @@
+{
+  "id": "translate",
+  "name": "片段翻译",
+  "description": "对齐翻译字幕/句子片段，id 与时间戳原样回传。",
+  "version": "1.0.0",
+  "skill": "translate",
+  "phase": "mvp",
+  "view": { "type": "custom" },
+  "schema_ref": "schema.json"
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "sentence.extract",
+  "input": {
+    "type": "object",
+    "properties": {
+      "request_id": { "type": "string" },
+      "learning_language": { "type": "string", "description": "BCP-47" },
+      "text": { "type": "string", "description": "与 cues 二选一或同时给" },
+      "cues": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] }
+          }
+        }
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "sentences": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "text": { "type": "string" },
+            "start_ms": { "type": ["integer", "null"] },
+            "end_ms": { "type": ["integer", "null"] },
+            "cue_ids": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}
