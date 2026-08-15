@@ -8,18 +8,8 @@
   },
   "agents": [
     {
-      "id": "echo",
-      "dir": "echo",
-      "enabled": true
-    },
-    {
       "id": "user-profile",
       "dir": "user-profile",
-      "enabled": true
-    },
-    {
-      "id": "gap-diagnosis",
-      "dir": "gap-diagnosis",
       "enabled": true
     },
     {
@@ -45,11 +35,6 @@
     {
       "id": "life-script-author",
       "dir": "life-script-author",
-      "enabled": true
-    },
-    {
-      "id": "english-grammar-analyzer",
-      "dir": "english-grammar-analyzer",
       "enabled": true
     },
     {

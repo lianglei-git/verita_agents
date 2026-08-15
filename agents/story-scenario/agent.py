@@ -232,7 +232,6 @@ def run(user_input: str = "", **kwargs) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
-    gap_fixture = Path(__file__).parent.parent / "gap-diagnosis" / "fixtures" / "sample_profile.json"
     default = json.dumps({
         "profile": {
             "anchors": {"goal": "转行产品经理", "current": "运营 2 年"},
@@ -240,5 +239,5 @@ if __name__ == "__main__":
         },
         "heuristic_only": True,
     }, ensure_ascii=False)
-    raw = resolve_cli_input(default=default, fixture=gap_fixture)
+    raw = resolve_cli_input(default=default)
     print(json.dumps(run(raw), ensure_ascii=False, indent=2))

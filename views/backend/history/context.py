@@ -78,12 +78,6 @@ def build_planning_handoff(
 
     handoff = dict(merged)
 
-    if target_agent_id == "gap-diagnosis":
-        # gap-diagnosis accepts handoff from user-profile or explicit profile
-        if handoff.get("profile") and not handoff.get("handoff"):
-            pass
-        return {k: handoff[k] for k in ("handoff", "profile", "planning_profile", "universal", "collection", "twin") if k in handoff}
-
     if target_agent_id == "story-scenario":
         keys = ("profile", "planning_profile", "handoff", "gap_diagnosis", "heuristic_only")
         out = {k: handoff[k] for k in keys if k in handoff}

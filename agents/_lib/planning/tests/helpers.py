@@ -104,8 +104,10 @@ def assert_contract_valid(payload: dict[str, Any], contract: str) -> list[str]:
 
 
 def run_gap(payload: dict[str, Any]) -> dict[str, Any]:
+    from _lib.planning.gap_run import run as run_gap_fn
+
     raw = json.dumps(payload, ensure_ascii=False)
-    return _load_agent_run("gap-diagnosis")(raw)
+    return run_gap_fn(raw)
 
 
 def run_scenario(payload: dict[str, Any]) -> dict[str, Any]:

@@ -1,10 +1,7 @@
-"""Step 4 — 差距评估（调用 gap-diagnosis Agent）。"""
+"""Step 4 — 差距评估（调用规划库 gap_run）。"""
 
 from __future__ import annotations
 
-import importlib.util
-import sys
-from pathlib import Path
 from typing import Any
 
 from contract import STEP_GAP
@@ -14,23 +11,9 @@ from state import (
     record_turn,
     step3_info_complete,
 )
+from _lib.planning.gap_run import run as run_gap_diagnosis
 
 STEP = STEP_GAP
-_AGENTS_ROOT = Path(__file__).resolve().parents[2]
-
-
-def _load_gap_agent():
-    agent_path = _AGENTS_ROOT / "gap-diagnosis" / "agent.py"
-    gap_dir = str(_AGENTS_ROOT / "gap-diagnosis")
-    if gap_dir not in sys.path:
-        sys.path.insert(0, gap_dir)
-    spec = importlib.util.spec_from_file_location("gap_diagnosis_agent", agent_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load gap-diagnosis agent: {agent_path}")
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["gap_diagnosis_agent"] = mod
-    spec.loader.exec_module(mod)
-    return mod
 
 
 def _profile_from_session(session: dict) -> dict[str, Any]:
@@ -104,9 +87,8 @@ def run(session: dict, user_input: str, answer: dict | None = None) -> dict[str,
             "source": "guard",
         }
 
-    gap_mod = _load_gap_agent()
     profile = _profile_from_session(session)
-    result = gap_mod.run(profile=profile, force=True)
+    result = run_gap_diagnosis(profile=profile, force=True)
 
     diagnosis = result.get("gap_diagnosis")
     session = dict(session)

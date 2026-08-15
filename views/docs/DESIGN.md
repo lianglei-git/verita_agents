@@ -122,7 +122,7 @@ AgentWorkbench
 
 | 文件 | 用途 |
 |------|------|
-| `demo-pipeline.json` | 本地 echo / summarize 测试 |
+| `demo-pipeline.json` | 本地 summarize 联通性测试 |
 | `mvp-pipeline.json` | prd MVP 7 agent 占位（节点 `status: planned`） |
 
 manifest 指定默认工作流：

@@ -48,7 +48,6 @@ views/
 ```
 agents/                        # 仓库根目录（与 views 平级）
 ├── _template/                 # 复制此目录新建 agent
-├── echo/                      # 接入示例
 └── user-profile/              # 按 prd 逐步添加
 ```
 

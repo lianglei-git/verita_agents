@@ -7,7 +7,6 @@ const views = {
   'route-planner': () => import('./route-planner'),
   'story-scenario': () => import('./story-scenario'),
   'life-script-author': () => import('./life-script-author'),
-  'english-grammar-analyzer': () => import('./english-grammar-analyzer'),
   'en-syntax-tagger': () => import('./en-syntax-tagger'),
   'text-to-speech': () => import('./text-to-speech'),
   'speech-to-text': () => import('./speech-to-text'),

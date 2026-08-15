@@ -1,11 +1,10 @@
 {
   "version": "1",
   "name": "mvp-pipeline",
-  "description": "MVP 闭环：用户画像 → 差距诊断 → 情景推演 → 路线规划 → …",
+  "description": "MVP 闭环：用户画像 → 情景推演 → 路线规划 → …",
   "nodes": [
     { "id": "input", "type": "source", "label": "用户目标与画像输入" },
     { "id": "user-profile", "type": "agent", "agent_id": "user-profile", "label": "用户画像" },
-    { "id": "gap-diagnosis", "type": "agent", "agent_id": "gap-diagnosis", "label": "差距诊断" },
     { "id": "story-scenario", "type": "agent", "agent_id": "story-scenario", "label": "情景推演" },
     { "id": "route-planner", "type": "agent", "agent_id": "route-planner", "label": "路线规划" },
     { "id": "life-script-author", "type": "agent", "agent_id": "life-script-author", "label": "人生剧本", "status": "planned" },
@@ -15,8 +14,7 @@
   ],
   "edges": [
     { "from": "input", "to": "user-profile" },
-    { "from": "user-profile", "to": "gap-diagnosis" },
-    { "from": "gap-diagnosis", "to": "story-scenario" },
+    { "from": "user-profile", "to": "story-scenario" },
     { "from": "story-scenario", "to": "route-planner" },
     { "from": "route-planner", "to": "life-script-author" },
     { "from": "life-script-author", "to": "knowledge-mapping" },
@@ -26,7 +24,6 @@
   "execution_order": [
     "input",
     "user-profile",
-    "gap-diagnosis",
     "story-scenario",
     "route-planner",
     "life-script-author",

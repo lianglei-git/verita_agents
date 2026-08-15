@@ -1,34 +1,29 @@
-"""差距诊断 Agent — 从 PlanningProfile 输出结构化 GapDiagnosis。"""
+"""差距诊断 — 从 PlanningProfile 输出结构化 GapDiagnosis。
+
+原独立 agent `gap-diagnosis` 已收敛为规划库，供 GoalBridge 与闭环测试调用。
+"""
 
 from __future__ import annotations
 
 import json
-import sys
 import uuid
 from pathlib import Path
 from typing import Any
 
-_AGENTS_ROOT = Path(__file__).resolve().parents[1]
-_AGENT_DIR = Path(__file__).resolve().parent
-for path in (_AGENTS_ROOT, _AGENT_DIR):
-    path_str = str(path)
-    if path_str not in sys.path:
-        sys.path.insert(0, path_str)
-
-from _lib.planning import (  # noqa: E402
+from _lib.planning import (
     audit_document_text_fields,
     build_safety_system_prompt,
     normalize_gap_diagnosis,
     profile_ready_for_gap,
     validate_contract,
 )
-from _lib.planning.input import _parse_json_payload, resolve_planning_profile  # noqa: E402
+from _lib.planning.gap_prompt import build_user_prompt
+from _lib.planning.input import _parse_json_payload, resolve_planning_profile
 
-from _lib.cli import resolve_cli_input  # noqa: E402
-from diagnose_prompt import build_user_prompt  # noqa: E402
+from _lib.cli import resolve_cli_input
 
 try:
-    from _lib.llm import get_client, is_llm_available  # noqa: E402
+    from _lib.llm import get_client, is_llm_available
 except ImportError:
 
     def is_llm_available() -> bool:  # type: ignore[misc]
