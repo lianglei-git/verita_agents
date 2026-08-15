@@ -310,3 +310,10 @@ asr.transcribe
 ```
 
 本期**没有** pipeline 入口，也没有 TTS。
+
+---
+
+## 录制样本（给 LS E4）
+
+`views/shared/ls-fixtures/`：五个 skill 的请求/响应 JSON，含 `sentence.analyze` v1/v2/v3、ASR cues 无 `id`、`cost_micros=null`。  
+Gateway / 薄客户端可对着样本开发和单测，不必真打 Agent。说明见该目录 `README.md`。

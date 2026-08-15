@@ -206,7 +206,7 @@ P1 / P2 可并行（底座已在）。P3–P5 依赖 P0 信封稳定。P6 不挡
 3. `translate` id 往返一致。
 4. `sentence.analyze` 过 schema，无 `activity_id`。
 5. **没有**「一键处理整段媒体」的接口。
-6. 每 skill 一份可复制示例（工作台 API 面板 = LS 抄进 `dev/api.llms.txt` 的来源）。
+6. 每 skill 一份可复制示例；**LS E4 fixtures** 在 `views/shared/ls-fixtures/`（含 analyze 三版本、ASR cues 无 id、`cost_micros=null`）。
 
 其余非 E9 Agent（画像、TTS、GoalBridge…）按同一文档面板补齐契约说明，不改 LS 范围。
 
