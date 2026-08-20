@@ -1,6 +1,6 @@
 {
   "title": "LS · tts.speak",
-  "description": "合成 MP3 后预签 PUT。output 无 URL / base64 / asset_id。usage.usage_sec = duration_sec。",
+  "description": "合成 WAV 后预签 PUT。output 无 URL / base64 / asset_id。usage.usage_sec = duration_sec。",
   "request": {
     "request_id": "01JEXAMPLETTS0000000000001",
     "text": "Hello. This is a test.",
@@ -9,7 +9,7 @@
     "upload": {
       "url": "https://…presigned-put…",
       "method": "PUT",
-      "headers": { "Content-Type": "audio/mpeg" },
+      "headers": { "Content-Type": "audio/wav" },
       "expires_at": "2026-08-19T04:00:00.000Z",
       "max_bytes": 104857600
     }
@@ -20,8 +20,8 @@
     "output": {
       "uploaded": true,
       "bytes": 184320,
-      "mime": "audio/mpeg",
-      "filename": "tts.mp3",
+      "mime": "audio/wav",
+      "filename": "tts.wav",
       "duration_sec": 12.4
     },
     "usage": {

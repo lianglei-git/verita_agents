@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "tts.speak / text-to-speech",
-  "description": "LS tts.speak：MP3 预签 PUT，output 只含元数据。工作台仍支持 stream SSE 与 full 整段资料。",
+  "description": "LS tts.speak：WAV 预签 PUT，output 只含元数据。工作台仍支持 stream SSE 与 full 整段资料。",
   "input": {
     "type": "object",
     "properties": {
@@ -18,8 +18,8 @@
     "properties": {
       "uploaded": { "type": "boolean" },
       "bytes": { "type": "integer" },
-      "mime": { "const": "audio/mpeg" },
-      "filename": { "const": "tts.mp3" },
+      "mime": { "const": "audio/wav" },
+      "filename": { "const": "tts.wav" },
       "duration_sec": { "type": "number" }
     }
   },

@@ -255,7 +255,7 @@ LS 封装：`internal/infra/agents`（薄 HTTP `Run`），**不要**建根目录
 - `v3` analysis：`constituents`（含 `start_index`/`end_index`）/ `chunks` / `grammars`（高亮对齐）
 - `target_lang` 必须等于 `learning_language`。
 - 一次只分析**一句**。批量由 LS 循环调用。
-- 示例与对照见 `LS API.md` §4。
+- 示例与对照见 [`agentsapi对接ls.md`](./agentsapi对接ls.md) §4。
 
 ### 4.5 `vocabulary.generate`
 

@@ -1,12 +1,9 @@
 # Agent API（给 LS）
 
-> LS 已按本文冻成 **D-LS-10**（2026-08-15）。二进制 skill（`tts.speak` / `image.generate`）字段于 2026-08-20 补进 §6。  
-> 给 LS 的交接入口：[`给LS.md`](./给LS.md)。本仓消费说明：[`Agent 原子 API 需求（LS 对接）.md`](./Agent%20原子%20API%20需求（LS%20对接）.md)。
+> **已归档（2026-08-20）。** 现行契约：[agentsapi对接ls.md](../agentsapi对接ls.md)。本文仅为五个 JSON skill 的旧副本。
 
-五个 JSON skill，另加两个二进制 skill（`tts.speak` / `image.generate`）。LS 按任务图**分别调用**，不要指望一条接口跑完整条媒体流水线。  
+五个原子 skill。LS 按任务图**分别调用**，不要指望一条接口跑完整条媒体流水线。  
 Agent **不**返回 `object_id` / `asset_id` / `activity_id`。
-
-二进制产物（TTS / 出图）的端到端流程见 [`TTS+png需求文档.md`](./TTS+png需求文档.md)。本节 §6 是字段定稿。
 
 ---
 
@@ -314,175 +311,11 @@ asr.transcribe
   → vocabulary.generate（每个词一次）
 ```
 
-本期 JSON skill **没有** pipeline 入口。二进制 skill 见 §6。
+本期 JSON skill **没有** pipeline 入口。二进制 skill（`tts.speak` / `image.generate`）字段见 [`agentsapi对接ls.md`](./agentsapi对接ls.md) §6。
 
 ---
 
-## 6. 二进制 skill（方案 A，2026-08-19）
+## 录制样本（给 LS E4）
 
-TTS / 出图走 **预签 PUT**：LS 在 `run` body 里注入 `upload`，Agent 把文件 PUT 到 `upload.url`，`output` 只回元数据。流程见 [`TTS+png需求文档.md`](./TTS+png需求文档.md)。
-
-工作台无 `upload` 时 Agent 可落本地 `/media/tts/` 或 `/media/images/`，预览放在信封 `result.preview`，**不进** LS `output`。
-
-禁止：`output` 里给文件 URL 或 base64；返回 `asset_id`。
-
-### 6.0 `upload`（LS 注入，两个 skill 共用）
-
-```json
-{
-  "upload": {
-    "url": "https://…presigned-put…",
-    "method": "PUT",
-    "headers": { "Content-Type": "audio/wav" },
-    "expires_at": "2026-08-19T04:00:00.000Z",
-    "max_bytes": 104857600
-  }
-}
-```
-
-- PUT **必须**带 `headers` 里列出的键，否则签名失败。
-- 只 PUT **一次**完整对象；不要分片。
-- `max_bytes`：音频 ≤ 104857600（100MB），图片 ≤ 10485760（10MB）。超限 400 `payload_too_large`，不要截断上传。
-- `uploaded=false` 或缺省、或 LS `Exists` 为假 → 该 step **失败**。
-
----
-
-### 6.1 `tts.speak` — 文本转 WAV
-
-Agent id：`text-to-speech`。配额：`usage.usage_sec` = `output.duration_sec`。
-
-```http
-POST /api/agents/tts.speak/run
-```
-
-```json
-{
-  "request_id": "01JEXAMPLETTS0000000000001",
-  "text": "Hello. This is a test.",
-  "language": "en",
-  "voice": "Cherry",
-  "upload": {
-    "url": "https://…presigned-put…",
-    "method": "PUT",
-    "headers": { "Content-Type": "audio/wav" },
-    "expires_at": "2026-08-19T04:00:00.000Z",
-    "max_bytes": 104857600
-  }
-}
-```
-
-| 字段 | 说明 |
-|---|---|
-| `text` | 必填。待合成文本 |
-| `language` | `en` / `ja` / `zh-CN` |
-| `voice` | 可选。缺省走环境 `TTS_VOICE` |
-| `upload` | LS 必填。工作台可省略 |
-
-`output`：
-
-```json
-{
-  "uploaded": true,
-  "bytes": 184320,
-  "mime": "audio/wav",
-  "filename": "tts.wav",
-  "duration_sec": 12.4
-}
-```
-
-业务错误（HTTP 400，不重试）：`empty_input` · `tts_unavailable` · `missing_upload` · `unsupported_upload_method` · `upload_expired` · `payload_too_large` · `upload_failed`。
-
----
-
-### 6.2 `image.generate` — PNG（一个 skill + `mode`）
-
-Agent id：`image-generate`。风格锚锁死 `STYLE_VERSION = v1.0`（手册一字不改）。配额：`usage.tokens = 1`（每次生成计 1）。
-
-模式之间输入相近、配额相同，**不拆 skill**。LS 原样转发 `mode` 与附属字段。
-
-```http
-POST /api/agents/image.generate/run
-```
-
-| `mode` | 手册槽位 | 尺寸 | 透明 | 附属字段 |
-|---|---|---|---|---|
-| `cover` | Collection 封面 | 1920×1080 16:9 | 否 | `subject` 必填；`composition`：`centered` \| `thirds` \| `panorama`（默认 `centered`） |
-| `goal` | 目标插画 | 1920×1080 16:9 | 否 | 轨道 A：`motif`（默认 `mountain_path`）。轨道 B：`profile` `{identity,current,goal,language}`（`goal` ≥10 字且 identity/current 已填；LLM 失败或过虚则回退 A） |
-| `spot` | 功能插画 | 1024×1024 1:1 | 是 | `kind`：`empty` \| `onboarding` \| `badge` \| `error`；`subject` 可空（空则用 kind 默认主体） |
-| `vocabulary` | 单词图 | 1024×1024 1:1 | 是 | `lemma` / `pos` / `sense`；或直接给 `visual`（义项→视觉短语，禁止裸单词直填模型） |
-| `sentence` | 句子配图 | 1536×1024 3:2 | 否 | `text` 必填 |
-
-`goal.motif`：`mountain_path` · `skyline` · `book_steps` · `bridge` · `harbor` · `doorway` · `runway` · `compass`。
-
-**cover 示例**
-
-```json
-{
-  "request_id": "01JEXAMPLEIMG0000000000001",
-  "mode": "cover",
-  "subject": "A hotel reception bell and a key card on a counter, a suitcase standing nearby",
-  "composition": "thirds",
-  "upload": {
-    "url": "https://…presigned-put…",
-    "method": "PUT",
-    "headers": { "Content-Type": "image/png" },
-    "expires_at": "2026-08-19T04:00:00.000Z",
-    "max_bytes": 10485760
-  }
-}
-```
-
-**goal 轨道 A**（`upload` 同 §6.0，`Content-Type: image/png`，`max_bytes: 10485760`）
-
-```json
-{ "mode": "goal", "motif": "skyline" }
-```
-
-**goal 轨道 B**（LLM 视觉翻译；失败回退 motif）
-
-```json
-{
-  "mode": "goal",
-  "profile": {
-    "identity": "frontend engineer",
-    "current": "desk job, B1 English",
-    "goal": "work overseas as a global engineer",
-    "language": "en"
-  },
-  "motif": "mountain_path"
-}
-```
-
-**spot / vocabulary / sentence**
-
-```json
-{ "mode": "spot", "kind": "empty" }
-```
-
-```json
-{
-  "mode": "vocabulary",
-  "lemma": "ambulance",
-  "pos": "noun",
-  "sense": "a single ambulance with a cross symbol, side view"
-}
-```
-
-```json
-{ "mode": "sentence", "text": "We're in a competitive industry." }
-```
-
-`output`（所有 mode 同形；`filename` 以 `.png` 结尾）：
-
-```json
-{
-  "uploaded": true,
-  "bytes": 220184,
-  "mime": "image/png",
-  "filename": "spot.png",
-  "width": 1024,
-  "height": 1024
-}
-```
-
-业务错误：`invalid_mode` · `empty_subject` · `image_unavailable` · `image_failed` · 以及与 TTS 相同的 upload 错误。
+`views/shared/ls-fixtures/`：JSON skill 录制样本 + `tts.speak` / `image.generate` 契约样本。  
+Gateway / 薄客户端可对着样本开发和单测。二进制字段以 [`agentsapi对接ls.md`](./agentsapi对接ls.md) §6 为准。

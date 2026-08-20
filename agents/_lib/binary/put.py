@@ -1,12 +1,15 @@
-"""预签 PUT（方案 A）。LS 注入 upload，Agent 只 PUT 一次完整对象。"""
+"""预签 PUT（方案 A）。LS 注入 upload，Agent 只 PUT 一次完整对象。腾讯云 COS / 任意 S3 兼容桶都走 HTTP PUT，不用 COS SDK。"""
 
 from __future__ import annotations
 
-import json
+import logging
 from datetime import datetime, timezone
 from typing import Any
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
+
+logger = logging.getLogger(__name__)
 
 
 class BinaryError(Exception):
@@ -65,12 +68,17 @@ def put_bytes(upload: dict[str, Any], data: bytes, *, default_content_type: str)
     headers = dict(spec["headers"])
     if not any(k.lower() == "content-type" for k in headers):
         headers["Content-Type"] = default_content_type
+    if not any(k.lower() == "content-length" for k in headers):
+        headers["Content-Length"] = str(len(data))
+    host = urlsplit(spec["url"]).netloc or "?"
+    logger.warning("presigned PUT host=%s bytes=%s content-type=%s", host, len(data), headers.get("Content-Type"))
     req = Request(spec["url"], data=data, method="PUT", headers=headers)
     try:
-        with urlopen(req, timeout=120) as resp:  # noqa: S310 — LS presigned URL
+        with urlopen(req, timeout=120) as resp:  # noqa: S310 — LS / COS presigned URL
             status = getattr(resp, "status", 200) or 200
             if int(status) >= 400:
                 raise BinaryError("upload_failed", f"PUT status {status}")
+            logger.warning("presigned PUT ok host=%s status=%s", host, status)
     except BinaryError:
         raise
     except HTTPError as exc:

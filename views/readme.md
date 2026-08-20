@@ -23,12 +23,17 @@
 
 ## 文档
 
+给 LS 对接：**从 [docs/给LS.md](docs/给LS.md) 读起。**
+
 | 文档 | 内容 |
 |------|------|
-| [docs/DESIGN.md](docs/DESIGN.md) | 架构：全链路 Console + 单 Agent 工作台 + 嵌套自定义 UI |
+| [docs/给LS.md](docs/给LS.md) | **给 LS 的交接清单**（HTTP 契约 + 二进制流程 + 夹具） |
+| [docs/agentsapi对接ls.md](docs/agentsapi对接ls.md) | D-LS-10 字段契约（升字段先改这份） |
+| [docs/TTS+png需求文档.md](docs/TTS+png需求文档.md) | 预签 PUT / TTSIMG 接入清单 |
+| [docs/Agent 原子 API 需求（LS 对接）.md](docs/Agent%20原子%20API%20需求（LS%20对接）.md) | LS 消费侧纪律 |
+| [docs/DESIGN.md](docs/DESIGN.md) | 本仓工作台架构 |
 | [docs/AGENT-CONFIG.md](docs/AGENT-CONFIG.md) | **极简 3 步**把 `agents/` 下小项目接入 Views |
-| [docs/Agent 原子 API 需求（LS 对接）.md](docs/Agent%20原子%20API%20需求（LS%20对接）.md) | LS 对接：五个 MVP skill 的字段契约 |
-| [docs/Agent 原子 API roadmap.md](docs/Agent%20原子%20API%20roadmap.md) | 按现有架构分阶段落地（不另起网关） |
+| [docs/archive/](docs/archive/) | 已交付 / 过期副本 |
 | [../agents/README.md](../agents/README.md) | 仓库根 `agents/` 目录约定 |
 
 ## 目录结构

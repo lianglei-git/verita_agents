@@ -17,7 +17,7 @@
     "upload": {
       "url": "https://example.invalid/presigned-put",
       "method": "PUT",
-      "headers": { "Content-Type": "audio/mpeg" },
+      "headers": { "Content-Type": "audio/wav" },
       "expires_at": "2026-08-19T04:00:00.000Z",
       "max_bytes": 104857600
     }
@@ -28,8 +28,8 @@
     "output": {
       "uploaded": true,
       "bytes": 184320,
-      "mime": "audio/mpeg",
-      "filename": "tts.mp3",
+      "mime": "audio/wav",
+      "filename": "tts.wav",
       "duration_sec": 12.4
     },
     "usage": {

@@ -197,22 +197,22 @@ class TtsSpeakTest(unittest.TestCase):
         upload = {
             "url": "https://example.invalid/put",
             "method": "PUT",
-            "headers": {"Content-Type": "audio/mpeg"},
+            "headers": {"Content-Type": "audio/wav"},
             "max_bytes": 104857600,
         }
+        wav = b"RIFF....WAVEfmt "
         with (
             patch.object(mod, "is_tts_available", return_value=True),
             patch.object(
                 mod,
                 "_synthesize_wav",
                 return_value={
-                    "wav": b"RIFF....",
+                    "wav": wav,
                     "duration_ms": 12400,
                     "sentence_count": 2,
                     "provider": "aliyun",
                 },
             ),
-            patch.object(mod, "wav_to_mp3", return_value=b"ID3fake-mp3"),
             patch.object(mod, "put_bytes") as pb,
         ):
             result = run_agent(
@@ -224,8 +224,8 @@ class TtsSpeakTest(unittest.TestCase):
             )
         pb.assert_called_once()
         out = result["output"]
-        self.assertEqual(out["mime"], "audio/mpeg")
-        self.assertEqual(out["filename"], "tts.mp3")
+        self.assertEqual(out["mime"], "audio/wav")
+        self.assertEqual(out["filename"], "tts.wav")
         self.assertTrue(out["uploaded"])
         self.assertEqual(out["duration_sec"], 12.4)
         self.assertEqual(result["usage"]["usage_sec"], 12.4)

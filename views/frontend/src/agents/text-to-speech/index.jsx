@@ -44,6 +44,7 @@ export default function TextToSpeechView({
   const [activeIndex, setActiveIndex] = useState(null)
   const [voice, setVoice] = useState('Cherry')
   const [language, setLanguage] = useState('en')
+  const [uploadUrl, setUploadUrl] = useState('')
   const [fullResult, setFullResult] = useState(null)
   const [speakResult, setSpeakResult] = useState(null)
   const playerRef = useRef(null)
@@ -59,7 +60,7 @@ export default function TextToSpeechView({
       setError(payload.error || '')
     }
     const out = result?.output || payload?.output
-    if (out && out.mime === 'audio/mpeg') {
+    if (out && out.mime === 'audio/wav') {
       setSpeakResult({
         output: out,
         preview: payload?.preview,
@@ -191,12 +192,22 @@ export default function TextToSpeechView({
     setFullResult(null)
     setSpeakResult(null)
     setActiveIndex(null)
-    onRun({
+    const options = {
       mode: 'speak',
       text,
       language,
       voice: voice.trim() || 'Cherry',
-    })
+    }
+    const putUrl = uploadUrl.trim()
+    if (putUrl) {
+      options.upload = {
+        url: putUrl,
+        method: 'PUT',
+        headers: { 'Content-Type': 'audio/wav' },
+        max_bytes: 104857600,
+      }
+    }
+    onRun(options)
   }
 
   const handleStop = () => {
@@ -238,7 +249,7 @@ export default function TextToSpeechView({
             >
               <option value="stream">试听（流式边播）</option>
               <option value="full">生成资料（单音频 + 字幕）</option>
-              <option value="speak">LS tts.speak（MP3 元数据）</option>
+              <option value="speak">LS tts.speak（WAV 元数据）</option>
             </select>
           </label>
           <label>
@@ -269,6 +280,18 @@ export default function TextToSpeechView({
               placeholder="输入文章，按句号/问号/叹号/省略号分句…"
             />
           </label>
+          {mode === 'speak' && (
+            <label>
+              <span>COS 预签 PUT URL（可选）</span>
+              <textarea
+                rows={3}
+                value={uploadUrl}
+                onChange={(e) => setUploadUrl(e.target.value)}
+                disabled={busy}
+                placeholder="https://bucket.cos.ap-xxx.myqcloud.com/key?q-sign-algorithm=sha1&…"
+              />
+            </label>
+          )}
           <div className="btn-row">
             {mode === 'stream' ? (
               <>
@@ -293,7 +316,7 @@ export default function TextToSpeechView({
                 onClick={handleSpeak}
                 disabled={busy || !String(userInput || '').trim()}
               >
-                {loading ? '合成中…' : '合成 MP3（tts.speak）'}
+                {loading ? '合成中…' : '合成 WAV（tts.speak）'}
               </button>
             ) : (
               <button
@@ -399,7 +422,7 @@ export default function TextToSpeechView({
           {mode === 'stream'
             ? '选择试听模式后点击「流式合成并播放」'
             : mode === 'speak'
-              ? '选择 tts.speak 后合成 MP3；工作台无 upload，只做本地预览'
+              ? '选择 tts.speak 后合成 WAV。可贴 COS 预签 PUT URL；不填只落本地'
               : '选择生成资料后点击「生成整段音频 + 字幕」'}
         </div>
       )}

@@ -1,7 +1,7 @@
 {
   "id": "text-to-speech",
   "name": "文字转语音",
-  "description": "LS tts.speak：文本合成 MP3 并预签 PUT。工作台仍可流式试听 / 整段落盘。",
+  "description": "LS tts.speak：文本合成 WAV 并预签 PUT。工作台仍可流式试听 / 整段落盘。",
   "version": "1.2.0",
   "skill": "tts.speak",
   "phase": "mvp",

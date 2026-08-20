@@ -37,6 +37,7 @@ export default function ImageGenerateView({
   const [goal, setGoal] = useState('work overseas as a global engineer')
   const [language, setLanguage] = useState('en')
   const [useProfile, setUseProfile] = useState(false)
+  const [uploadUrl, setUploadUrl] = useState('')
 
   const payload = result?.result || result || null
   const output = result?.output && typeof result.output === 'object' ? result.output : payload?.output
@@ -75,6 +76,15 @@ export default function ImageGenerateView({
     } else {
       options.text = sentence.trim()
       onInputChange(options.text)
+    }
+    const putUrl = uploadUrl.trim()
+    if (putUrl) {
+      options.upload = {
+        url: putUrl,
+        method: 'PUT',
+        headers: { 'Content-Type': 'image/png' },
+        max_bytes: 10485760,
+      }
     }
     onRun(options)
   }
@@ -219,12 +229,22 @@ export default function ImageGenerateView({
             </label>
           )}
 
+          <label>
+            <span>COS 预签 PUT URL（可选）</span>
+            <textarea
+              rows={3}
+              value={uploadUrl}
+              onChange={(e) => setUploadUrl(e.target.value)}
+              disabled={loading}
+              placeholder="https://bucket.cos.ap-xxx.myqcloud.com/key?q-sign-algorithm=sha1&…"
+            />
+          </label>
           <button type="button" className="run-btn" onClick={handleRun} disabled={loading || !canRun}>
             {loading ? '生成中…' : '生成 PNG'}
           </button>
           <p className="hint">
-            工作台无 upload，落本地 /media/images/。LS 信封 output 只有 uploaded / bytes / mime / filename /
-            width / height。
+            不填预签 URL 则落本地 /media/images/。填了则 Agent 对 COS 做一次 PUT，output.uploaded=true。不要把
+            SecretId/Key 贴到这里。
           </p>
         </div>
       )}

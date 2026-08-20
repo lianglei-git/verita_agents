@@ -26,7 +26,6 @@ from _lib.tts import (  # noqa: E402
     is_tts_available,
     synthesize_utterance,
 )
-from _lib.tts.encode import wav_to_mp3  # noqa: E402
 from _lib.binary import BinaryError, put_bytes  # noqa: E402
 
 AGENT_ID = "text-to-speech"
@@ -329,7 +328,7 @@ def _synthesize_wav(text: str, cfg: TtsConfig) -> dict[str, Any]:
 
 
 def run_speak(user_input: str, **kwargs: Any) -> dict[str, Any]:
-    """LS tts.speak：合成 MP3，有 upload 则预签 PUT，output 只回元数据。"""
+    """LS tts.speak：合成 WAV，有 upload 则预签 PUT，output 只回元数据。"""
     text = str(kwargs.get("text") or user_input or "").strip()
     language = str(kwargs.get("language") or "").strip() or None
     cfg = _build_cfg(**kwargs)
@@ -352,20 +351,20 @@ def run_speak(user_input: str, **kwargs: Any) -> dict[str, Any]:
         }
     try:
         synth = _synthesize_wav(text, cfg)
-        mp3 = wav_to_mp3(synth["wav"])
+        wav = synth["wav"]
     except TtsError as exc:
         return {"error": str(exc) or "tts_failed", "message": str(exc), "output": None, "meta": meta}
     except Exception as exc:  # noqa: BLE001
         return {"error": "tts_failed", "message": str(exc), "output": None, "meta": meta}
 
     duration_sec = round(synth["duration_ms"] / 1000.0, 3)
-    mime = "audio/mpeg"
-    filename = "tts.mp3"
+    mime = "audio/wav"
+    filename = "tts.wav"
     upload = kwargs.get("upload")
     ls_mode = isinstance(upload, dict)
     if ls_mode:
         try:
-            put_bytes(upload, mp3, default_content_type=mime)
+            put_bytes(upload, wav, default_content_type=mime)
         except BinaryError as exc:
             return {"error": exc.code, "message": exc.message, "output": None, "meta": meta}
 
@@ -375,12 +374,12 @@ def run_speak(user_input: str, **kwargs: Any) -> dict[str, Any]:
         job_dir = resolve_media_root(cfg) / job_id
         job_dir.mkdir(parents=True, exist_ok=True)
         path = job_dir / filename
-        path.write_bytes(mp3)
+        path.write_bytes(wav)
         preview = {"url": f"/media/tts/{job_id}/{filename}", "path": str(path)}
     return {
         "output": {
             "uploaded": bool(ls_mode),
-            "bytes": len(mp3),
+            "bytes": len(wav),
             "mime": mime,
             "filename": filename,
             "duration_sec": duration_sec,

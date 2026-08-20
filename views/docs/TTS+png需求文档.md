@@ -1,3 +1,5 @@
+> **状态（2026-08-20）**：Agent 侧 `tts.speak` / `image.generate` 已交付。HTTP 字段以 [`agentsapi对接ls.md`](./agentsapi对接ls.md) §6 为准。TTS 产物为 **WAV**。LS 交接见 [`给LS.md`](./给LS.md)。
+
 二进制 skill（方案 A，LS 提案 2026-08-19）
 
 TTS / 出图走 **预签 PUT**：LS 在 `run` body 里注入 `upload`，Agent 把文件 PUT 到 `upload.url`，`output` 只回元数据。流程见 [`agentsapi对接ls.md`](./agentsapi对接ls.md) §6。
@@ -9,7 +11,7 @@ TTS / 出图走 **预签 PUT**：LS 在 `run` body 里注入 `upload`，Agent �
   "upload": {
     "url": "https://…presigned-put…",
     "method": "PUT",
-    "headers": { "Content-Type": "audio/mpeg" },
+    "headers": { "Content-Type": "audio/wav" },
     "expires_at": "2026-08-19T04:00:00.000Z",
     "max_bytes": 104857600
   }
@@ -22,8 +24,8 @@ TTS / 出图走 **预签 PUT**：LS 在 `run` body 里注入 `upload`，Agent �
 {
   "uploaded": true,
   "bytes": 184320,
-  "mime": "audio/mpeg",
-  "filename": "tts.mp3",
+  "mime": "audio/wav",
+  "filename": "tts.wav",
   "duration_sec": 12.4
 }
 ```
@@ -34,8 +36,8 @@ TTS / 出图走 **预签 PUT**：LS 在 `run` body 里注入 `upload`，Agent �
 
 ### `tts.speak`
 
-- 请求：`text`（必填）、`language`（`en` / `ja` / `zh-CN`）、可选 `voice`、LS 注入 `upload`（`Content-Type: audio/mpeg`，`max_bytes` ≤ 100MB）
-- `output`：`uploaded` / `bytes` / `mime=audio/mpeg` / `filename=tts.mp3` / `duration_sec`
+- 请求：`text`（必填）、`language`（`en` / `ja` / `zh-CN`）、可选 `voice`、LS 注入 `upload`（`Content-Type: audio/wav`，`max_bytes` ≤ 100MB）
+- `output`：`uploaded` / `bytes` / `mime=audio/wav` / `filename=tts.wav` / `duration_sec`
 - 配额：`usage.usage_sec` = `duration_sec`
 
 ### `image.generate`（一个 skill + `mode`）
@@ -116,7 +118,7 @@ Studio POST /ai/tasks
 
 ### 2.2 二进制文件（方案 A，2026-08-19 冻结）
 
-TTS（`*.mp3`）/ 出图（`*.png`）。字节不进 Gateway JSON、不进 `output`。
+TTS（`*.wav`）/ 出图（`*.png`）。字节不进 Gateway JSON、不进 `output`。
 
 ```
 Studio POST /ai/tasks（task_type 将进白名单后才能 shipped）
@@ -163,7 +165,7 @@ Studio          LS api/worker           对象存储              Agent
   "upload": {
     "url": "https://…presigned-put…",
     "method": "PUT",
-    "headers": { "Content-Type": "audio/mpeg" },
+    "headers": { "Content-Type": "audio/wav" },
     "expires_at": "2026-08-19T04:00:00.000Z",
     "max_bytes": 104857600
   }
@@ -181,8 +183,8 @@ Agent `output`（文件已在我们的桶里之后）：
 {
   "uploaded": true,
   "bytes": 184320,
-  "mime": "audio/mpeg",
-  "filename": "tts.mp3",
+  "mime": "audio/wav",
+  "filename": "tts.wav",
   "duration_sec": 12.4,
   "sha256": "可选"
 }
@@ -213,7 +215,7 @@ Agent `output`（文件已在我们的桶里之后）：
 
 | 产品按钮 | 建议 skill | 产物 | 配额意向 |
 |---|---|---|---|
-| TTS / 新闻转音频 / 小说朗读 | `tts.speak` | `audio` `.mp3` | `usage_sec`（类 ASR） |
+| TTS / 新闻转音频 / 小说朗读 | `tts.speak` | `audio` `.wav` | `usage_sec`（类 ASR） |
 | AI 配图 / 插画 | `image.generate` | `image` `.png` | 先按 LLM 次计数，点名再拆 |
 
 ### LS 侧接线（TTSIMG 开工时做，现在不要提前标 shipped）
