@@ -1,0 +1,10 @@
+{
+  "id": "image-generate",
+  "name": "AI 配图",
+  "description": "LS image.generate：cover / goal / spot / vocabulary / sentence。PNG 走预签 PUT。",
+  "version": "1.0.0",
+  "skill": "image.generate",
+  "phase": "mvp",
+  "view": { "type": "custom" },
+  "schema_ref": "schema.json"
+}

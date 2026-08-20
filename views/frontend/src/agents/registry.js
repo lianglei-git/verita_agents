@@ -13,6 +13,7 @@ const views = {
   'translate': () => import('./translate'),
   'sentence-extract': () => import('./sentence-extract'),
   'vocabulary-generate': () => import('./vocabulary-generate'),
+  'image-generate': () => import('./image-generate'),
   'goal-bridge': () => import('./goal-bridge'),
   'demo-goal-image': () => import('./demo-goal-image'),
 }

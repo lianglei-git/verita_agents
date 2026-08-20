@@ -20,5 +20,10 @@ MEDIA_ASR_DIR = os.getenv(
     os.path.join(MEDIA_ROOT, "asr"),
 ).strip() or os.path.join(MEDIA_ROOT, "asr")
 
+MEDIA_IMAGES_DIR = os.getenv(
+    "IMAGE_MEDIA_DIR",
+    os.path.join(MEDIA_ROOT, "images"),
+).strip() or os.path.join(MEDIA_ROOT, "images")
+
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 5000

@@ -26,9 +26,12 @@ from _lib.tts import (  # noqa: E402
     is_tts_available,
     synthesize_utterance,
 )
+from _lib.tts.encode import wav_to_mp3  # noqa: E402
+from _lib.binary import BinaryError, put_bytes  # noqa: E402
 
 AGENT_ID = "text-to-speech"
-PACKAGE_VERSION = "1.1.0"
+PACKAGE_VERSION = "1.2.0"
+SKILL = "tts.speak"
 
 # 仅按句号 / 问号 / 叹号 / 省略号拆分（保留标点在句末；不再按换行拆）
 _SENTENCE_END_RE = re.compile(
@@ -304,12 +307,109 @@ def run_full(user_input: str, **kwargs: Any) -> dict[str, Any]:
         )
 
 
+def _synthesize_wav(text: str, cfg: TtsConfig) -> dict[str, Any]:
+    sentences = split_sentences(text)
+    if not sentences:
+        raise TtsError("empty_input")
+    provider = get_provider(cfg)
+    if not is_tts_available(cfg):
+        raise TtsError("tts_unavailable")
+    wav_parts: list[bytes] = []
+    cursor_ms = 0
+    for sentence in sentences:
+        utt = synthesize_utterance(provider, sentence, voice=cfg.voice)
+        wav_parts.append(utt["audio_bytes"])
+        cursor_ms += int(utt["duration_ms"] or 0)
+    return {
+        "wav": concat_wavs(wav_parts),
+        "duration_ms": cursor_ms,
+        "sentence_count": len(sentences),
+        "provider": getattr(provider, "name", cfg.provider),
+    }
+
+
+def run_speak(user_input: str, **kwargs: Any) -> dict[str, Any]:
+    """LS tts.speak：合成 MP3，有 upload 则预签 PUT，output 只回元数据。"""
+    text = str(kwargs.get("text") or user_input or "").strip()
+    language = str(kwargs.get("language") or "").strip() or None
+    cfg = _build_cfg(**kwargs)
+    meta = {
+        "agent": AGENT_ID,
+        "package_version": PACKAGE_VERSION,
+        "skill": SKILL,
+        "language": language,
+        "voice": cfg.voice,
+        "model": cfg.model,
+    }
+    if not text:
+        return {"error": "empty_input", "message": "provide text", "output": None, "meta": meta}
+    if not is_tts_available(cfg):
+        return {
+            "error": "tts_unavailable",
+            "message": "TTS 未配置或已禁用",
+            "output": None,
+            "meta": meta,
+        }
+    try:
+        synth = _synthesize_wav(text, cfg)
+        mp3 = wav_to_mp3(synth["wav"])
+    except TtsError as exc:
+        return {"error": str(exc) or "tts_failed", "message": str(exc), "output": None, "meta": meta}
+    except Exception as exc:  # noqa: BLE001
+        return {"error": "tts_failed", "message": str(exc), "output": None, "meta": meta}
+
+    duration_sec = round(synth["duration_ms"] / 1000.0, 3)
+    mime = "audio/mpeg"
+    filename = "tts.mp3"
+    upload = kwargs.get("upload")
+    ls_mode = isinstance(upload, dict)
+    if ls_mode:
+        try:
+            put_bytes(upload, mp3, default_content_type=mime)
+        except BinaryError as exc:
+            return {"error": exc.code, "message": exc.message, "output": None, "meta": meta}
+
+    preview = None
+    if not ls_mode:
+        job_id = uuid.uuid4().hex[:12]
+        job_dir = resolve_media_root(cfg) / job_id
+        job_dir.mkdir(parents=True, exist_ok=True)
+        path = job_dir / filename
+        path.write_bytes(mp3)
+        preview = {"url": f"/media/tts/{job_id}/{filename}", "path": str(path)}
+    return {
+        "output": {
+            "uploaded": bool(ls_mode),
+            "bytes": len(mp3),
+            "mime": mime,
+            "filename": filename,
+            "duration_sec": duration_sec,
+        },
+        "preview": preview,
+        "usage": {
+            "provider": synth["provider"],
+            "model": cfg.model,
+            "tokens": 0,
+            "usage_sec": duration_sec,
+            "cost_micros": None,
+        },
+        "meta": {**meta, "sentence_count": synth["sentence_count"]},
+    }
+
+
 def run(user_input: str, **kwargs: Any) -> dict[str, Any]:
     """
-    mode=full → teaching asset (single audio + subtitles).
-    otherwise → lightweight summary (stream UI should use /stream).
+    upload 或 mode=speak 或 LS 扁平 text 字段 → tts.speak。
+    mode=full → 工作台整段资料。
+    otherwise → 工作台轻量摘要（试听走 /stream）。
     """
-    mode = str(kwargs.get("mode") or "stream").strip().lower()
+    mode = str(kwargs.get("mode") or "").strip().lower()
+    if (
+        isinstance(kwargs.get("upload"), dict)
+        or mode == "speak"
+        or ("text" in kwargs and mode not in {"stream", "full", "asset", "material"})
+    ):
+        return run_speak(user_input, **kwargs)
     if mode in {"full", "asset", "material"}:
         return run_full(user_input, **kwargs)
 

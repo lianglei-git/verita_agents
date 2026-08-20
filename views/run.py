@@ -28,9 +28,16 @@ def _env() -> dict[str, str]:
     # env["OPENAI_API_KEY"] = "6b3533994438447faa9ad0e352304262.qKnvd4t9MOMu2DQY"
     # env["OPENAI_BASE_URL"] = "https://open.bigmodel.cn/api/paas/v4"
     # env["LLM_MODEL"] = "glm-4"
-    # env["IMAGE_API_KEY"] = env["OPENAI_API_KEY"]
-    # env["IMAGE_BASE_URL"] = "https://open.bigmodel.cn/api/paas/v4"
-    # env["IMAGE_MODEL"] = "glm-image"
+
+    # 模型费用： glm-image 0.1元/张, cogview-4-250304 0.06 元 / 次, cogview-4 0.06 元 / 次, cogview-3-flash 说是免费
+    env["IMAGE_API_KEY"] ="0bb64a0d54fc42529aa85771d502887a.9C2yKwClXfd5oWPA"
+    env["IMAGE_BASE_URL"] = "https://open.bigmodel.cn/api/paas/v4"
+    env["IMAGE_MODEL"] = "cogview-3-flash" 
+
+    # 不支持阿里云
+    # env["IMAGE_API_KEY"] = "sk-ws-H.EIERDDR.MgTJ.MEUCIHTVfF7FukMNcqsiLY6MbelMb1xRn9hhgRzryMlaB8fnAiEAsnptqhwE03qITDNcETNJxghWKNZEftCY8kg1N_sOx_o"
+    # env["IMAGE_BASE_URL"] = "https://ws-kkrlrbsx1emep5u9.cn-beijing.maas.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation"
+    # env["IMAGE_MODEL"] = "z-image-turbo"
 
 
     # for company llm
@@ -50,6 +57,18 @@ def _env() -> dict[str, str]:
     # env["TTS_DISABLED"]=0
     env["DASHSCOPE_BASE_HTTP_API_URL"]="https://ws-kkrlrbsx1emep5u9.cn-beijing.maas.aliyuncs.com/api/v1"
     env["DASHSCOPE_API_KEY"]="sk-ws-H.EIERDDR.MgTJ.MEUCIHTVfF7FukMNcqsiLY6MbelMb1xRn9hhgRzryMlaB8fnAiEAsnptqhwE03qITDNcETNJxghWKNZEftCY8kg1N_sOx_o"
+
+
+
+    # env["TTS_PROVIDER"] = "aliyun"
+    # env["TTS_MODEL"] = "glm-tts"
+    # env["TTS_VOICE"] = "tongtong" # Katerina Aiden Ryan Jennifer
+    # env["TTS_SAMPLE_RATE"] = "24000"
+    # env["TTS_MIME"] = "audio/pcm"
+    # # env["TTS_DISABLED"]=0
+    # env["DASHSCOPE_BASE_HTTP_API_URL"]="https://open.bigmodel.cn/api/paas/v4/audio/speech"
+    # env["DASHSCOPE_API_KEY"]="0bb64a0d54fc42529aa85771d502887a.9C2yKwClXfd5oWPA"
+    
     return env
 
 

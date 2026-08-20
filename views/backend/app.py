@@ -12,6 +12,7 @@ from backend.config import (
     DEFAULT_PORT,
     FRONTEND_DIST,
     MEDIA_ASR_DIR,
+    MEDIA_IMAGES_DIR,
     MEDIA_TTS_DIR,
 )
 from backend.routes import api_bp
@@ -35,6 +36,7 @@ def create_app(serve_static: bool = False) -> Flask:
 
     os.makedirs(MEDIA_TTS_DIR, exist_ok=True)
     os.makedirs(MEDIA_ASR_DIR, exist_ok=True)
+    os.makedirs(MEDIA_IMAGES_DIR, exist_ok=True)
 
     @app.get("/media/tts/<path:relpath>")
     def media_tts(relpath: str):
@@ -45,6 +47,11 @@ def create_app(serve_static: bool = False) -> Flask:
     def media_asr(relpath: str):
         """Read-only serve of ASR artifacts (audio / subtitles.json)."""
         return _serve_under(MEDIA_ASR_DIR, relpath)
+
+    @app.get("/media/images/<path:relpath>")
+    def media_images(relpath: str):
+        """Read-only serve of image.generate workbench previews."""
+        return _serve_under(MEDIA_IMAGES_DIR, relpath)
 
     if serve_static and os.path.isdir(FRONTEND_DIST):
 

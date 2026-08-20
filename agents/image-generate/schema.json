@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "image.generate",
+  "description": "一个 skill + mode。output 只含 PNG 元数据，禁止 URL / base64 / asset_id。",
+  "input": {
+    "type": "object",
+    "required": ["mode"],
+    "properties": {
+      "request_id": { "type": "string" },
+      "mode": {
+        "type": "string",
+        "enum": ["cover", "goal", "spot", "vocabulary", "sentence"]
+      },
+      "subject": { "type": "string" },
+      "composition": { "type": "string", "enum": ["centered", "thirds", "panorama"] },
+      "motif": {
+        "type": "string",
+        "enum": ["mountain_path", "skyline", "book_steps", "bridge", "harbor", "doorway", "runway", "compass"]
+      },
+      "profile": { "type": "object" },
+      "kind": { "type": "string", "enum": ["empty", "onboarding", "badge", "error"] },
+      "lemma": { "type": "string" },
+      "pos": { "type": "string" },
+      "sense": { "type": "string" },
+      "visual": { "type": "string" },
+      "text": { "type": "string" },
+      "upload": { "type": "object" }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "uploaded": { "type": "boolean" },
+      "bytes": { "type": "integer" },
+      "mime": { "const": "image/png" },
+      "filename": { "type": "string" },
+      "width": { "type": "integer" },
+      "height": { "type": "integer" }
+    }
+  }
+}

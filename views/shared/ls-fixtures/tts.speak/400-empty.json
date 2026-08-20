@@ -1,0 +1,21 @@
+{
+  "request_id": "01JEXAMPLETTS0000000000002",
+  "skill": "tts.speak",
+  "title": "tts.speak 400 empty_input",
+  "http": {
+    "method": "POST",
+    "path": "/api/agents/tts.speak/run",
+    "status": 400
+  },
+  "request": {
+    "request_id": "01JEXAMPLETTS0000000000002",
+    "text": "",
+    "language": "en"
+  },
+  "response": {
+    "request_id": "01JEXAMPLETTS0000000000002",
+    "skill": "tts.speak",
+    "output": null,
+    "error": { "code": "empty_input", "message": "provide text" }
+  }
+}

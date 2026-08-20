@@ -1,0 +1,38 @@
+{
+  "title": "LS · image.generate cover",
+  "description": "Collection 封面 1920x1080。output 无 URL / base64 / asset_id。usage.tokens=1。",
+  "request": {
+    "request_id": "01JEXAMPLEIMG0000000000001",
+    "mode": "cover",
+    "subject": "A hotel reception bell and a key card on a counter, a suitcase standing nearby",
+    "composition": "thirds",
+    "upload": {
+      "url": "https://…presigned-put…",
+      "method": "PUT",
+      "headers": { "Content-Type": "image/png" },
+      "expires_at": "2026-08-19T04:00:00.000Z",
+      "max_bytes": 10485760
+    }
+  },
+  "response": {
+    "request_id": "01JEXAMPLEIMG0000000000001",
+    "skill": "image.generate",
+    "output": {
+      "uploaded": true,
+      "bytes": 412088,
+      "mime": "image/png",
+      "filename": "cover.png",
+      "width": 1920,
+      "height": 1080
+    },
+    "usage": {
+      "provider": "image",
+      "model": "glm-image",
+      "tokens": 1,
+      "usage_sec": 0,
+      "cost_micros": null,
+      "latency_ms": 8200
+    },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

@@ -97,6 +97,7 @@ def api_run_agent(agent_id: str):
     run_id = parsed["run_id"]
     request_id = parsed["request_id"]
     canonical_id = spec["id"]
+    print("parsed", parsed)
     skill = spec.get("skill") or canonical_id
 
     if request_id:

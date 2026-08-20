@@ -1,0 +1,44 @@
+{
+  "recorded_at": "2026-08-19T00:00:00Z",
+  "note": "契约样本（mock）。output 无 URL / base64 / asset_id。",
+  "skill": "image.generate",
+  "title": "image.generate 200 spot",
+  "http": {
+    "method": "POST",
+    "path": "/api/agents/image.generate/run",
+    "status": 200
+  },
+  "request": {
+    "request_id": "01JEXAMPLEIMG0000000000002",
+    "mode": "spot",
+    "kind": "empty",
+    "upload": {
+      "url": "https://example.invalid/presigned-put",
+      "method": "PUT",
+      "headers": { "Content-Type": "image/png" },
+      "expires_at": "2026-08-19T04:00:00.000Z",
+      "max_bytes": 10485760
+    }
+  },
+  "response": {
+    "request_id": "01JEXAMPLEIMG0000000000002",
+    "skill": "image.generate",
+    "output": {
+      "uploaded": true,
+      "bytes": 88012,
+      "mime": "image/png",
+      "filename": "spot.png",
+      "width": 1024,
+      "height": 1024
+    },
+    "usage": {
+      "provider": "image",
+      "model": "glm-image",
+      "tokens": 1,
+      "usage_sec": 0,
+      "cost_micros": null,
+      "latency_ms": 6400
+    },
+    "versions": { "skill_version": "1.0.0", "package_version": "1.0.0" }
+  }
+}

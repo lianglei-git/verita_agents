@@ -43,7 +43,9 @@ export default function TextToSpeechView({
   const [sentences, setSentences] = useState([])
   const [activeIndex, setActiveIndex] = useState(null)
   const [voice, setVoice] = useState('Cherry')
+  const [language, setLanguage] = useState('en')
   const [fullResult, setFullResult] = useState(null)
+  const [speakResult, setSpeakResult] = useState(null)
   const playerRef = useRef(null)
   const abortRef = useRef(null)
   const audioRef = useRef(null)
@@ -53,9 +55,21 @@ export default function TextToSpeechView({
   useEffect(() => {
     if (payload?.mode === 'full' && payload.audio) {
       setFullResult(payload)
+      setSpeakResult(null)
       setError(payload.error || '')
     }
-  }, [payload])
+    const out = result?.output || payload?.output
+    if (out && out.mime === 'audio/mpeg') {
+      setSpeakResult({
+        output: out,
+        preview: payload?.preview,
+        error: payload?.error,
+        message: payload?.message,
+      })
+      setFullResult(null)
+      setError(payload?.error || result?.error?.code || '')
+    }
+  }, [payload, result])
 
   const busy = streaming || loading
 
@@ -66,6 +80,7 @@ export default function TextToSpeechView({
     setError('')
     setSentences([])
     setFullResult(null)
+    setSpeakResult(null)
     setActiveIndex(null)
     setStreaming(true)
 
@@ -163,8 +178,25 @@ export default function TextToSpeechView({
     setError('')
     setSentences([])
     setFullResult(null)
+    setSpeakResult(null)
     setActiveIndex(null)
     onRun({ mode: 'full', voice: voice.trim() || 'Cherry' })
+  }
+
+  const handleSpeak = () => {
+    const text = String(userInput || '').trim()
+    if (!text || busy || typeof onRun !== 'function') return
+    setError('')
+    setSentences([])
+    setFullResult(null)
+    setSpeakResult(null)
+    setActiveIndex(null)
+    onRun({
+      mode: 'speak',
+      text,
+      language,
+      voice: voice.trim() || 'Cherry',
+    })
   }
 
   const handleStop = () => {
@@ -206,6 +238,15 @@ export default function TextToSpeechView({
             >
               <option value="stream">试听（流式边播）</option>
               <option value="full">生成资料（单音频 + 字幕）</option>
+              <option value="speak">LS tts.speak（MP3 元数据）</option>
+            </select>
+          </label>
+          <label>
+            <span>language</span>
+            <select value={language} onChange={(e) => setLanguage(e.target.value)} disabled={busy}>
+              <option value="en">en</option>
+              <option value="ja">ja</option>
+              <option value="zh-CN">zh-CN</option>
             </select>
           </label>
           <label>
@@ -245,6 +286,15 @@ export default function TextToSpeechView({
                   </button>
                 )}
               </>
+            ) : mode === 'speak' ? (
+              <button
+                type="button"
+                className="run-btn"
+                onClick={handleSpeak}
+                disabled={busy || !String(userInput || '').trim()}
+              >
+                {loading ? '合成中…' : '合成 MP3（tts.speak）'}
+              </button>
             ) : (
               <button
                 type="button"
@@ -262,6 +312,20 @@ export default function TextToSpeechView({
       {error && (
         <div className="error-banner">
           <strong>{error}</strong>
+        </div>
+      )}
+
+      {speakResult?.output && (
+        <div className="full-panel">
+          <h4>tts.speak</h4>
+          {speakResult.preview?.url && (
+            <audio controls src={speakResult.preview.url} className="full-audio" />
+          )}
+          <p className="meta-line">
+            {speakResult.output.filename} · {speakResult.output.mime} · {speakResult.output.bytes}{' '}
+            bytes · {speakResult.output.duration_sec}s · uploaded=
+            {String(speakResult.output.uploaded)}
+          </p>
         </div>
       )}
 
@@ -330,11 +394,13 @@ export default function TextToSpeechView({
         </div>
       )}
 
-      {!sentences.length && !fullResult && !busy && !error && !reviewMode && (
+      {!sentences.length && !fullResult && !speakResult && !busy && !error && !reviewMode && (
         <div className="empty-state">
           {mode === 'stream'
             ? '选择试听模式后点击「流式合成并播放」'
-            : '选择生成资料后点击「生成整段音频 + 字幕」'}
+            : mode === 'speak'
+              ? '选择 tts.speak 后合成 MP3；工作台无 upload，只做本地预览'
+              : '选择生成资料后点击「生成整段音频 + 字幕」'}
         </div>
       )}
     </div>

@@ -1,20 +1,26 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "TextToSpeech",
-  "description": "stream 试听 SSE；full 整段单音频+句级字幕",
+  "title": "tts.speak / text-to-speech",
+  "description": "LS tts.speak：MP3 预签 PUT，output 只含元数据。工作台仍支持 stream SSE 与 full 整段资料。",
   "input": {
     "type": "object",
     "properties": {
-      "input": { "type": "string", "description": "待合成文本" },
-      "options": {
-        "type": "object",
-        "properties": {
-          "mode": { "type": "string", "enum": ["stream", "full"], "default": "stream" },
-          "voice": { "type": "string" },
-          "model": { "type": "string" },
-          "provider": { "type": "string" }
-        }
-      }
+      "request_id": { "type": "string" },
+      "text": { "type": "string", "description": "待合成文本（LS tts.speak）" },
+      "language": { "type": "string", "enum": ["en", "ja", "zh-CN"] },
+      "voice": { "type": "string" },
+      "upload": { "type": "object" },
+      "mode": { "type": "string", "enum": ["stream", "full", "speak"], "default": "stream" }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "uploaded": { "type": "boolean" },
+      "bytes": { "type": "integer" },
+      "mime": { "const": "audio/mpeg" },
+      "filename": { "const": "tts.mp3" },
+      "duration_sec": { "type": "number" }
     }
   },
   "sse_events": {
@@ -23,32 +29,5 @@
     "sentence_end": ["sentence_index", "audio_url", "duration_ms"],
     "error": ["error"],
     "done": []
-  },
-  "output_full": {
-    "type": "object",
-    "properties": {
-      "mode": { "const": "full" },
-      "audio": {
-        "type": "object",
-        "properties": {
-          "path": { "type": "string" },
-          "url": { "type": "string" },
-          "mime": { "type": "string" },
-          "duration_ms": { "type": "integer" }
-        }
-      },
-      "subtitles": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "index": { "type": "integer" },
-            "text": { "type": "string" },
-            "start_ms": { "type": "integer" },
-            "end_ms": { "type": "integer" }
-          }
-        }
-      }
-    }
   }
 }

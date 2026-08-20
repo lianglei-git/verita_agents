@@ -1,0 +1,45 @@
+{
+  "recorded_at": "2026-08-19T00:00:00Z",
+  "note": "契约样本（mock）。output 无 URL / base64 / asset_id。LS E4 可对字段，不必真打供应商。",
+  "request_id": "01JEXAMPLETTS0000000000001",
+  "skill": "tts.speak",
+  "title": "tts.speak 200",
+  "http": {
+    "method": "POST",
+    "path": "/api/agents/tts.speak/run",
+    "status": 200
+  },
+  "request": {
+    "request_id": "01JEXAMPLETTS0000000000001",
+    "text": "Hello. This is a test.",
+    "language": "en",
+    "voice": "Cherry",
+    "upload": {
+      "url": "https://example.invalid/presigned-put",
+      "method": "PUT",
+      "headers": { "Content-Type": "audio/mpeg" },
+      "expires_at": "2026-08-19T04:00:00.000Z",
+      "max_bytes": 104857600
+    }
+  },
+  "response": {
+    "request_id": "01JEXAMPLETTS0000000000001",
+    "skill": "tts.speak",
+    "output": {
+      "uploaded": true,
+      "bytes": 184320,
+      "mime": "audio/mpeg",
+      "filename": "tts.mp3",
+      "duration_sec": 12.4
+    },
+    "usage": {
+      "provider": "aliyun",
+      "model": "qwen3-tts-flash",
+      "tokens": 0,
+      "usage_sec": 12.4,
+      "cost_micros": null,
+      "latency_ms": 2100
+    },
+    "versions": { "skill_version": "1.2.0", "package_version": "1.2.0" }
+  }
+}

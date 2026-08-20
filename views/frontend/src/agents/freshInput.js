@@ -13,6 +13,7 @@ const SELF_MANAGED = new Set([
   'translate',
   'sentence-extract',
   'vocabulary-generate',
+  'image-generate',
 ])
 
 export function isSelfManagedAgent(agentId) {

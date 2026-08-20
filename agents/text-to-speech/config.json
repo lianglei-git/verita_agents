@@ -1,12 +1,13 @@
 {
   "id": "text-to-speech",
   "name": "文字转语音",
-  "description": "流式试听 + 整段教学资料（单音频落盘与句级字幕 JSON）",
-  "version": "1.1.0",
+  "description": "LS tts.speak：文本合成 MP3 并预签 PUT。工作台仍可流式试听 / 整段落盘。",
+  "version": "1.2.0",
+  "skill": "tts.speak",
   "phase": "mvp",
   "view": {
     "type": "custom",
-    "comment": "custom UI: stream SSE preview + full mode asset"
+    "comment": "custom UI: stream SSE preview + full mode asset + LS speak"
   },
   "schema_ref": "schema.json"
 }

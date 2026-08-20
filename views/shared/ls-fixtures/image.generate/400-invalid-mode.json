@@ -1,0 +1,22 @@
+{
+  "skill": "image.generate",
+  "title": "image.generate 400 invalid_mode",
+  "http": {
+    "method": "POST",
+    "path": "/api/agents/image.generate/run",
+    "status": 400
+  },
+  "request": {
+    "request_id": "01JEXAMPLEIMG0000000000009",
+    "mode": "wallpaper"
+  },
+  "response": {
+    "request_id": "01JEXAMPLEIMG0000000000009",
+    "skill": "image.generate",
+    "output": null,
+    "error": {
+      "code": "invalid_mode",
+      "message": "mode must be one of cover, goal, spot, vocabulary, sentence"
+    }
+  }
+}

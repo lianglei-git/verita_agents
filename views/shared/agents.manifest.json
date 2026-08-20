@@ -68,6 +68,11 @@
       "enabled": true
     },
     {
+      "id": "image-generate",
+      "dir": "image-generate",
+      "enabled": true
+    },
+    {
       "id": "summarize",
       "dir": null,
       "enabled": true,
